@@ -38,6 +38,8 @@ class PinyinDefenderGame {
     this.activeWords = [];
     this.wordPool = [];
     this.hskLevel = 'all';
+    this.meaningLang = 'vi';
+    this.pinyinVisible = true;
     this.baseSpeed = 1.0;
     this.speedMultiplier = 1.0;
 
@@ -87,16 +89,34 @@ class PinyinDefenderGame {
      EVENT LISTENERS & CONTROLS
      ======================================================================== */
   setupEventListeners() {
-    // Start Game Button
+    // Start Game Button - Unlocks audio & starts BGM by default
     document.getElementById('startGameBtn').addEventListener('click', () => {
       document.getElementById('startModal').style.display = 'none';
       gameAudio.ensureContext();
+      if (!gameAudio.bgmMuted) {
+        gameAudio.startBgm();
+      }
+      gameAudio.playGameStart();
       this.startGame();
     });
+
+    // Global audio context unlock on any first user touch/click/press
+    const unlockSound = () => {
+      gameAudio.ensureContext();
+      if (this.isStarted && !this.isGameOver && !gameAudio.bgmMuted && !gameAudio.bgmTimer) {
+        gameAudio.startBgm();
+      }
+    };
+    document.addEventListener('pointerdown', unlockSound, { once: true });
+    document.addEventListener('keydown', unlockSound, { once: true });
 
     // Restart Game Button
     document.getElementById('restartGameBtn').addEventListener('click', () => {
       document.getElementById('gameOverModal').style.display = 'none';
+      gameAudio.ensureContext();
+      if (!gameAudio.bgmMuted && !gameAudio.bgmTimer) {
+        gameAudio.startBgm();
+      }
       this.restartGame();
     });
 
@@ -125,6 +145,37 @@ class PinyinDefenderGame {
       this.focusInput();
     });
 
+    // Prominent Pinyin Toggle Button (Memorization Challenge Mode)
+    const togglePinyinBtn = document.getElementById('togglePinyinBtn');
+    const pinyinStatusPill = document.getElementById('pinyinStatusPill');
+    if (togglePinyinBtn) {
+      togglePinyinBtn.addEventListener('click', () => {
+        this.pinyinVisible = !this.pinyinVisible;
+        togglePinyinBtn.classList.toggle('mode-hidden', !this.pinyinVisible);
+        this.arenaEl.classList.toggle('pinyin-hidden-mode', !this.pinyinVisible);
+
+        const iconSpan = togglePinyinBtn.querySelector('.pinyin-btn-icon');
+        if (this.pinyinVisible) {
+          if (iconSpan) iconSpan.textContent = '👁️';
+          if (pinyinStatusPill) pinyinStatusPill.textContent = 'HIỆN';
+          togglePinyinBtn.title = 'Chế độ ghi nhớ: Bấm để ẨN Pinyin';
+        } else {
+          if (iconSpan) iconSpan.textContent = '🙈';
+          if (pinyinStatusPill) pinyinStatusPill.textContent = 'ẨN (THỬ THÁCH)';
+          togglePinyinBtn.title = 'Chế độ ghi nhớ: Bấm để HIỆN Pinyin';
+        }
+        this.focusInput();
+      });
+    }
+
+    // Keyboard shortcut F2 or Alt+P to toggle Pinyin on-the-fly
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'F2' || (e.altKey && (e.key === 'p' || e.key === 'P'))) {
+        e.preventDefault();
+        if (togglePinyinBtn) togglePinyinBtn.click();
+      }
+    });
+
     // HSK Level Selector
     const hskSelect = document.getElementById('hskSelect');
     hskSelect.addEventListener('change', (e) => {
@@ -141,12 +192,22 @@ class PinyinDefenderGame {
       this.focusInput();
     });
 
+    // Meaning Language Selector (Vietnamese / Bilingual / English)
+    const langSelect = document.getElementById('langSelect');
+    if (langSelect) {
+      langSelect.addEventListener('change', (e) => {
+        this.meaningLang = e.target.value;
+        this.updateActiveWordsMeanings();
+        this.focusInput();
+      });
+    }
+
     // Toggle Voice Button
     const voiceBtn = document.getElementById('voiceToggleBtn');
     voiceBtn.addEventListener('click', () => {
       gameAudio.voiceEnabled = !gameAudio.voiceEnabled;
       voiceBtn.classList.toggle('active', gameAudio.voiceEnabled);
-      voiceBtn.querySelector('.btn-txt').textContent = gameAudio.voiceEnabled ? 'VOICE: ON' : 'VOICE: OFF';
+      voiceBtn.querySelector('.btn-txt').textContent = gameAudio.voiceEnabled ? 'GIỌNG ĐỌC: BẬT' : 'GIỌNG ĐỌC: TẮT';
       this.focusInput();
     });
 
@@ -156,7 +217,7 @@ class PinyinDefenderGame {
       gameAudio.ensureContext();
       gameAudio.sfxMuted = !gameAudio.sfxMuted;
       sfxBtn.classList.toggle('active', !gameAudio.sfxMuted);
-      sfxBtn.querySelector('.btn-txt').textContent = !gameAudio.sfxMuted ? 'SFX: ON' : 'SFX: OFF';
+      sfxBtn.querySelector('.btn-txt').textContent = !gameAudio.sfxMuted ? 'HIỆU ỨNG: BẬT' : 'HIỆU ỨNG: TẮT';
       this.focusInput();
     });
 
@@ -166,7 +227,7 @@ class PinyinDefenderGame {
       gameAudio.ensureContext();
       const active = gameAudio.toggleBgm();
       bgmBtn.classList.toggle('active', active);
-      bgmBtn.querySelector('.btn-txt').textContent = active ? 'BGM: ON' : 'BGM: OFF';
+      bgmBtn.querySelector('.btn-txt').textContent = active ? 'NHẠC: BẬT' : 'NHẠC: TẮT';
       this.focusInput();
     });
 
@@ -202,10 +263,10 @@ class PinyinDefenderGame {
 
     if (this.isPaused) {
       modal.style.display = 'flex';
-      pauseBtn.querySelector('.btn-txt').textContent = 'RESUME';
+      pauseBtn.querySelector('.btn-txt').textContent = 'TIẾP TỤC';
     } else {
       modal.style.display = 'none';
-      pauseBtn.querySelector('.btn-txt').textContent = 'PAUSE';
+      pauseBtn.querySelector('.btn-txt').textContent = 'TẠM DỪNG';
       this.focusInput();
       this.lastTime = performance.now();
     }
@@ -233,6 +294,7 @@ class PinyinDefenderGame {
     this.arenaEl.querySelectorAll('.falling-word').forEach(el => el.remove());
     this.updateHud();
     this.focusInput();
+    gameAudio.playComboChime(6);
 
     this.lastTime = performance.now();
     this.scheduleNextSpawn();
@@ -268,14 +330,22 @@ class PinyinDefenderGame {
     if (!data) return;
 
     const arenaRect = this.arenaEl.getBoundingClientRect();
-    const wordWidth = 140;
-    const minX = 70;
-    const maxX = arenaRect.width - 70;
+    const charCount = (data.hanzi || '').length;
+    const wordWidth = Math.max(130, 70 + charCount * 38);
+    const minX = wordWidth / 2 + 15;
+    const maxX = Math.max(minX + 20, arenaRect.width - wordWidth / 2 - 15);
     const x = minX + Math.random() * (maxX - minX);
-    const y = -60;
+    const y = -70;
 
     // Word falling speed: slightly varies per word + increases with progression
     const speed = (28 + Math.random() * 12 + Math.min(30, this.kills * 0.4)) * this.baseSpeed;
+
+    let displayMeaning = data.meaning_vn || data.meaning || '';
+    if (this.meaningLang === 'bi') {
+      displayMeaning = data.meaning_vn ? `${data.meaning_vn} • ${data.meaning}` : data.meaning;
+    } else if (this.meaningLang === 'en') {
+      displayMeaning = data.meaning || data.meaning_vn || '';
+    }
 
     // Create DOM element for crisp rendering
     const el = document.createElement('div');
@@ -289,7 +359,7 @@ class PinyinDefenderGame {
       <div class="word-pinyin-badge" id="badge_${data.id}">
         <span class="pinyin-text">${data.pinyin}</span>
       </div>
-      <div class="word-meaning">${data.meaning || ''}</div>
+      <div class="word-meaning" title="${data.meaning_vn || data.meaning || ''}">${displayMeaning}</div>
     `;
 
     this.arenaEl.appendChild(el);
@@ -301,17 +371,35 @@ class PinyinDefenderGame {
       clean: data.clean,
       spaced: data.spaced,
       num: data.num,
-      meaning: data.meaning,
+      meaning_vn: data.meaning_vn || '',
+      meaning_en: data.meaning || '',
+      meaning: data.meaning_vn || data.meaning || '',
       level: data.level,
       x,
       y,
       speed,
       el,
       width: wordWidth,
-      height: 70
+      height: 80
     };
 
     this.activeWords.push(wordObj);
+  }
+
+  updateActiveWordsMeanings() {
+    this.activeWords.forEach(w => {
+      const meaningEl = w.el.querySelector('.word-meaning');
+      if (meaningEl) {
+        let txt = w.meaning_vn || w.meaning_en || '';
+        if (this.meaningLang === 'bi') {
+          txt = w.meaning_vn ? `${w.meaning_vn} • ${w.meaning_en}` : w.meaning_en;
+        } else if (this.meaningLang === 'en') {
+          txt = w.meaning_en || w.meaning_vn || '';
+        }
+        meaningEl.textContent = txt;
+        meaningEl.title = w.meaning_vn || w.meaning_en || '';
+      }
+    });
   }
 
   gameLoop(currentTime) {
@@ -429,6 +517,13 @@ class PinyinDefenderGame {
       matches.sort((a, b) => b.y - a.y);
       const target = matches[0];
 
+      if (this.lockedTargetId !== target.id) {
+        this.lockedTargetId = target.id;
+        if (window.gameAudio && typeof window.gameAudio.playTargetLock === 'function') {
+          window.gameAudio.playTargetLock();
+        }
+      }
+
       this.highlightLockedTarget(target, cleanVal);
       this.aimTurretAt(target.x, target.y);
 
@@ -469,6 +564,7 @@ class PinyinDefenderGame {
   }
 
   clearTargetHighlights() {
+    this.lockedTargetId = null;
     this.activeWords.forEach(w => {
       w.el.classList.remove('locked-target');
       const badge = w.el.querySelector('.pinyin-text');
@@ -499,6 +595,7 @@ class PinyinDefenderGame {
   destroyWord(word) {
     // Clear input immediately for rapid successive typing
     this.inputEl.value = '';
+    this.lockedTargetId = null;
 
     // Remove from active words
     const idx = this.activeWords.indexOf(word);
@@ -513,9 +610,9 @@ class PinyinDefenderGame {
     const turretY = arenaRect.height + 15;
     this.fireLaser(turretX, turretY, word.x, word.y + 25);
 
-    // Audio SFX & Voice Pronunciation
-    gameAudio.playLaser();
-    gameAudio.playExplosion();
+    // 8-Bit Audio SFX (scales with combo) & Voice Pronunciation
+    gameAudio.playLaser(this.combo);
+    gameAudio.playExplosion(this.combo);
     gameAudio.speakChinese(word.hanzi);
 
     // Score & Combo Update
@@ -537,11 +634,47 @@ class PinyinDefenderGame {
       gameAudio.playComboChime(this.streak);
     }
 
-    const basePts = 100 * word.level;
-    this.score += basePts * this.combo;
+    // HSK Level Point Scaling: Higher HSK level words grant significantly more points!
+    const HSK_TIER_POINTS = {
+      1: 100,    // HSK 1: 100 pts
+      2: 250,    // HSK 2: 250 pts
+      3: 500,    // HSK 3: 500 pts
+      4: 1000,   // HSK 4: 1,000 pts
+      5: 2000,   // HSK 5: 2,000 pts
+      6: 4000    // HSK 6: 4,000 pts
+    };
+    const basePts = HSK_TIER_POINTS[word.level] || (100 * (word.level || 1));
+    const earnedPts = basePts * this.combo;
+    this.score += earnedPts;
+
+    // Spawn visual feedback showing character and Vietnamese meaning
+    this.spawnDestroyedPopup(word.x, word.y, word, earnedPts);
 
     this.updateHud();
     this.aimTurretAtCenter();
+  }
+
+  spawnDestroyedPopup(x, y, word, pts) {
+    const popup = document.createElement('div');
+    popup.className = 'destroyed-popup';
+    popup.style.left = `${x}px`;
+    popup.style.top = `${y}px`;
+
+    let meaningText = word.meaning_vn || word.meaning_en || '';
+    if (this.meaningLang === 'bi') {
+      meaningText = word.meaning_vn ? `${word.meaning_vn} • ${word.meaning_en}` : word.meaning_en;
+    } else if (this.meaningLang === 'en') {
+      meaningText = word.meaning_en || word.meaning_vn || '';
+    }
+
+    popup.innerHTML = `
+      <span class="popup-hanzi">${word.hanzi}</span>
+      <span class="popup-meaning">${meaningText}</span>
+      <span class="popup-pts">+${pts.toLocaleString()} [HSK ${word.level}]</span>
+    `;
+
+    this.arenaEl.appendChild(popup);
+    setTimeout(() => popup.remove(), 1200);
   }
 
   fireLaser(startX, startY, endX, endY) {
@@ -595,7 +728,7 @@ class PinyinDefenderGame {
 
     this.scoreDisplay.textContent = this.score.toLocaleString();
     this.comboDisplay.textContent = `x${this.combo}`;
-    this.streakDisplay.textContent = `${this.streak} STREAK`;
+    this.streakDisplay.textContent = `${this.streak} CHUỖI`;
     this.killsDisplay.textContent = this.kills;
 
     const total = this.kills + this.missed;

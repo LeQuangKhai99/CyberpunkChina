@@ -6,10 +6,10 @@
   <meta name="description" content="Cyberpunk China: Pinyin Defender - An intense cyber typing arcade game. Destroy falling Chinese words with exact Pinyin before they breach your 100 HP shield! 5,000 common words included.">
   <title>CYBERPUNK CHINA // 赛博拼音 - Pinyin Defender</title>
 
-  <!-- Google Fonts: Orbitron, ZCOOL QingKe HuangYou, Rajdhani, Fira Code -->
+  <!-- Google Fonts: Orbitron, Rajdhani, Fira Code, Noto Sans SC (Sharp & Crisp Chinese) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Orbitron:wght@600;800;900&family=Rajdhani:wght@600;700&family=ZCOOL+QingKe+HuangYou&family=Noto+Sans+SC:wght@500;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Orbitron:wght@600;800;900&family=Rajdhani:wght@600;700&family=Noto+Sans+SC:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css">
 </head>
@@ -35,14 +35,15 @@
         <div class="brand-kanji">赛博拼音</div>
         <div class="brand-text">
           <span class="glitch-title" data-text="CYBERPUNK CHINA">CYBERPUNK CHINA</span>
-          <span class="sub-title">PINYIN DEFENDER // v2.0</span>
+          <span class="sub-title">PINYIN DEFENDER // PHÒNG THỦ PINYIN</span>
+          <div class="brand-author-badge">TÁC GIẢ: KHAI LE</div>
         </div>
       </div>
 
       <!-- Health Meter (100 HP Shield) -->
       <div class="hud-health-card">
         <div class="health-meta">
-          <span class="shield-label"><span class="shield-icon">🛡️</span> CORE DEFENSE SHIELD</span>
+          <span class="shield-label"><span class="shield-icon">🛡️</span> KHIÊN PHÒNG THỦ // SHIELD</span>
           <span class="health-numeric" id="healthDisplay">100 / 100 HP</span>
         </div>
         <div class="health-bar-track">
@@ -53,53 +54,69 @@
       <!-- Score & Combo Streak -->
       <div class="hud-score-card">
         <div class="score-row">
-          <span class="score-label">SCORE:</span>
+          <span class="score-label">ĐIỂM:</span>
           <span class="score-val" id="scoreDisplay">0</span>
         </div>
         <div class="combo-row">
           <span class="combo-label">COMBO:</span>
           <span class="combo-badge" id="comboDisplay">x1</span>
-          <span class="streak-count" id="streakDisplay">0 STREAK</span>
+          <span class="streak-count" id="streakDisplay">0 CHUỖI</span>
         </div>
       </div>
 
       <!-- Level & Options Menu -->
       <div class="hud-controls">
         <div class="control-group">
-          <label for="hskSelect">HSK LEVEL:</label>
+          <label for="hskSelect">CẤP HSK:</label>
           <select id="hskSelect" class="cyber-select">
-            <option value="all">ALL HSK (5,000 Words)</option>
-            <option value="1">HSK 1 (150 Words)</option>
-            <option value="2">HSK 2 (150 Words)</option>
-            <option value="3">HSK 3 (300 Words)</option>
-            <option value="4">HSK 4 (600 Words)</option>
-            <option value="5">HSK 5 (1,300 Words)</option>
-            <option value="6">HSK 6 (2,500 Words)</option>
+            <option value="all">TẤT CẢ HSK (5.000 Từ)</option>
+            <option value="1">HSK 1 (150 Từ)</option>
+            <option value="2">HSK 2 (150 Từ)</option>
+            <option value="3">HSK 3 (300 Từ)</option>
+            <option value="4">HSK 4 (600 Từ)</option>
+            <option value="5">HSK 5 (1.300 Từ)</option>
+            <option value="6">HSK 6 (2.500 Từ)</option>
           </select>
         </div>
 
         <div class="control-group">
-          <label for="speedSelect">SPEED:</label>
+          <label for="speedSelect">TỐC ĐỘ:</label>
           <select id="speedSelect" class="cyber-select">
-            <option value="0.75">RELAXED (0.75x)</option>
-            <option value="1.0" selected>NORMAL (1.0x)</option>
-            <option value="1.4">NETRUNNER (1.4x)</option>
-            <option value="2.0">OVERDRIVE (2.0x)</option>
+            <option value="0.75">THƯ THÁI (0.75x)</option>
+            <option value="1.0" selected>CHUẨN (1.0x)</option>
+            <option value="1.4">NHANH (1.4x)</option>
+            <option value="2.0">CỰC NHANH (2.0x)</option>
           </select>
         </div>
 
+        <div class="control-group">
+          <label for="langSelect">CHÚ THÍCH:</label>
+          <select id="langSelect" class="cyber-select">
+            <option value="vi" selected>🇻🇳 TIẾNG VIỆT</option>
+            <option value="bi">🇻🇳🇬🇧 SONG NGỮ</option>
+            <option value="en">🇬🇧 TIẾNG ANH</option>
+          </select>
+        </div>
+
+        <!-- Prominent Pinyin Toggle Button (Memorization Challenge Mode) -->
+        <button class="pinyin-toggle-btn" id="togglePinyinBtn" title="Chế độ ghi nhớ: Bấm để Ẩn hoặc Hiện Pinyin để tự nhớ mặt chữ Hán">
+          <span class="pinyin-btn-icon">👁️</span>
+          <span class="pinyin-btn-title">PINYIN:</span>
+          <span class="pinyin-status-pill" id="pinyinStatusPill">HIỆN</span>
+        </button>
+
         <div class="btn-group">
-          <button class="icon-toggle active" id="voiceToggleBtn" title="Toggle Mandarin Pronunciation (zh-CN)">
-            🗣️ <span class="btn-txt">VOICE: ON</span>
+          <button class="icon-toggle active" id="voiceToggleBtn" title="Bật/Tắt phát âm tiếng Trung chuẩn (zh-CN)">
+            🗣️ <span class="btn-txt">GIỌNG ĐỌC: BẬT</span>
           </button>
-          <button class="icon-toggle active" id="sfxToggleBtn" title="Toggle SFX">
-            🔊 <span class="btn-txt">SFX: ON</span>
+          <button class="icon-toggle active" id="sfxToggleBtn" title="Bật/Tắt hiệu ứng âm thanh 8-bit">
+            🔊 <span class="btn-txt">HIỆU ỨNG: BẬT</span>
           </button>
-          <button class="icon-toggle" id="bgmToggleBtn" title="Toggle Synthwave Music">
-            🎵 <span class="btn-txt">BGM: OFF</span>
+          <button class="icon-toggle active" id="bgmToggleBtn" title="Bật/Tắt nhạc nền 8-bit chiptune">
+            🎵 <span class="btn-txt">NHẠC: BẬT</span>
           </button>
-          <button class="icon-toggle" id="pauseBtn" title="Pause Game">
-            ⏸️ <span class="btn-txt">PAUSE</span>
+          <button class="icon-toggle" id="pauseBtn" title="Tạm dừng">
+            ⏸️ <span class="btn-txt">TẠM DỪNG</span>
           </button>
         </div>
       </div>
@@ -113,7 +130,7 @@
       <!-- Ground Laser Defense Grid Barrier -->
       <div class="ground-defense-grid" id="groundGrid">
         <div class="ground-energy-line"></div>
-        <div class="ground-warning-text">⚠️ CYBER CORE DEFENSE PERIMETER // DO NOT LET TARGETS BREACH ⚠️</div>
+        <div class="ground-warning-text">⚠️ VÀNH ĐAI BẢO VỆ LÕI // KHÔNG ĐỂ MỤC TIÊU XÂM NHẬP ⚠️</div>
       </div>
     </main>
 
@@ -139,7 +156,7 @@
             autocorrect="off" 
             autocapitalize="off" 
             spellcheck="false" 
-            placeholder="Type pinyin (e.g. ni, hao, nihao, zhongguo)..." 
+            placeholder="Gõ Pinyin không dấu (vd: ni, hao, nihao, zhongguo)..." 
             autofocus
           >
           <div class="input-glow-indicator"></div>
@@ -147,13 +164,18 @@
         <div class="stats-mini-summary">
           <div class="stat-bubble">
             <span class="bubble-num" id="killsCount">0</span>
-            <span class="bubble-txt">DESTROYED</span>
+            <span class="bubble-txt">TIÊU DIỆT</span>
           </div>
           <div class="stat-bubble">
             <span class="bubble-num" id="accuracyDisplay">100%</span>
-            <span class="bubble-txt">ACCURACY</span>
+            <span class="bubble-txt">CHÍNH XÁC</span>
           </div>
         </div>
+      </div>
+
+      <!-- Copyright Bar -->
+      <div class="console-copyright">
+        BẢN QUYỀN © 2026 <strong>KHAI LE</strong> // ALL RIGHTS RESERVED // CYBERPUNK CHINA
       </div>
 
     </footer>
@@ -171,29 +193,29 @@
         <div class="rule-card">
           <span class="rule-icon">☄️</span>
           <div>
-            <strong>Chinese Words Fall From Sky:</strong>
-            <p>5,000 common Chinese words (HSK 1-6) will drop continuously towards your city.</p>
+            <strong>Từ tiếng Trung rơi từ bầu trời:</strong>
+            <p>5.000 từ vựng thông dụng (HSK 1-6) rơi liên tục với chữ Hán sắc nét, Pinyin và <strong>chú thích nghĩa tiếng Việt</strong>.</p>
           </div>
         </div>
         <div class="rule-card">
           <span class="rule-icon">⌨️</span>
           <div>
-            <strong>Type Exact Pinyin:</strong>
-            <p>Type the Pinyin (e.g. <code>ni</code>, <code>hao</code>, <code>nihao</code>, <code>zhongwen</code>). No need to type tones!</p>
+            <strong>Gõ Pinyin không dấu:</strong>
+            <p>Gõ Pinyin của bất kỳ từ nào (vd: <code>ni</code>, <code>hao</code>, <code>nihao</code>, <code>zhongwen</code>). Không cần gõ dấu thanh điệu!</p>
           </div>
         </div>
         <div class="rule-card">
-          <span class="rule-icon">⚡</span>
+          <span class="rule-icon">🛡️</span>
           <div>
-            <strong>100 HP Shield:</strong>
-            <p>Every word touching the ground damages your shield by <strong>-1 HP</strong>. Reaching 0 HP = City Falls!</p>
+            <strong>Khiên phòng thủ 100 HP:</strong>
+            <p>Mỗi từ chạm đáy sẽ gây sát thương <strong>-1 HP</strong> cho khiên. Khiên về 0 = Lõi sụp đổ, thất thủ!</p>
           </div>
         </div>
         <div class="rule-card">
-          <span class="rule-icon">🔊</span>
+          <span class="rule-icon">🗣️</span>
           <div>
-            <strong>Listen & Learn:</strong>
-            <p>Each destroyed word is pronounced aloud in native Mandarin with English/Vietnamese meaning!</p>
+            <strong>Luyện nghe & Nhớ nghĩa:</strong>
+            <p>Mỗi khi bắn hạ một từ, hệ thống sẽ phát âm tiếng Trung chuẩn (zh-CN) cùng chú thích nghĩa tiếng Việt giúp nhớ từ cực nhanh!</p>
           </div>
         </div>
       </div>
@@ -201,8 +223,12 @@
       <div class="modal-actions">
         <button class="cyber-launch-btn" id="startGameBtn">
           <span class="btn-laser-glow"></span>
-          INITIALIZE CANNON & START DEFENSE
+          KHỞI ĐỘNG PHÁO LASER & BẮT ĐẦU PHÒNG THỦ
         </button>
+      </div>
+
+      <div class="modal-copyright-tag">
+        Bản quyền © 2026 <strong>Khai Le</strong> // Tác giả: <strong>Khai Le</strong>
       </div>
     </div>
   </div>
@@ -211,25 +237,25 @@
   <div class="modal-overlay" id="gameOverModal" style="display: none;">
     <div class="cyber-modal game-over-modal">
       <div class="game-over-header">
-        <span class="game-over-glitch" data-text="SHIELD BREACHED">SHIELD BREACHED</span>
-        <div class="game-over-sub">CYBER CORE DESTROYED // GAME OVER</div>
+        <span class="game-over-glitch" data-text="KHIÊN BỊ PHÁ HỦY">KHIÊN BỊ PHÁ HỦY</span>
+        <div class="game-over-sub">LÕI NĂNG LƯỢNG SỤP ĐỔ // KẾT THÚC TRÒ CHƠI</div>
       </div>
 
       <div class="stats-summary-grid">
         <div class="summary-card">
-          <span class="summary-label">FINAL SCORE</span>
+          <span class="summary-label">TỔNG ĐIỂM</span>
           <span class="summary-val" id="finalScore">0</span>
         </div>
         <div class="summary-card">
-          <span class="summary-label">WORDS DESTROYED</span>
+          <span class="summary-label">TỪ ĐÃ DIỆT</span>
           <span class="summary-val accent-val" id="finalKills">0</span>
         </div>
         <div class="summary-card">
-          <span class="summary-label">MAX COMBO STREAK</span>
+          <span class="summary-label">CHUỖI COMBO TỐI ĐA</span>
           <span class="summary-val" id="finalMaxCombo">0</span>
         </div>
         <div class="summary-card">
-          <span class="summary-label">WORDS MISSED</span>
+          <span class="summary-label">TỪ BỎ LỠ</span>
           <span class="summary-val alert-val" id="finalMissed">0</span>
         </div>
       </div>
@@ -237,8 +263,12 @@
       <div class="modal-actions">
         <button class="cyber-launch-btn" id="restartGameBtn">
           <span class="btn-laser-glow"></span>
-          REBOOT SHIELD (PLAY AGAIN)
+          TÁI KHỞI ĐỘNG KHIÊN (CHƠI LẠI)
         </button>
+      </div>
+
+      <div class="modal-copyright-tag">
+        Bản quyền © 2026 <strong>Khai Le</strong>
       </div>
     </div>
   </div>
@@ -246,19 +276,23 @@
   <!-- Pause Modal -->
   <div class="modal-overlay" id="pauseModal" style="display: none;">
     <div class="cyber-modal pause-modal">
-      <h2 class="modal-title">TACTICAL PAUSE</h2>
-      <p style="color: var(--text-muted); margin: 15px 0;">All cyber defense systems on standby.</p>
+      <h2 class="modal-title">TẠM DỪNG CHIẾN THUẬT</h2>
+      <p style="color: var(--text-muted); margin: 15px 0;">Toàn bộ hệ thống phòng thủ đang ở trạng thái chờ.</p>
       <button class="cyber-launch-btn" id="resumeGameBtn">
-        RESUME DEFENSE
+        TIẾP TỤC PHÒNG THỦ
       </button>
+
+      <div class="modal-copyright-tag">
+        Bản quyền © 2026 <strong>Khai Le</strong>
+      </div>
     </div>
   </div>
 
   <!-- 5000 Words Vocabulary Library Script -->
-  <script src="words.js"></script>
+  <script src="words.js?v=8bit"></script>
   <!-- Audio Synthesizer & Speech Engine -->
-  <script src="audio.js"></script>
+  <script src="audio.js?v=8bit"></script>
   <!-- Main Game Mechanics Script -->
-  <script src="game.js"></script>
+  <script src="game.js?v=8bit"></script>
 </body>
 </html>

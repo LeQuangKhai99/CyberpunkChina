@@ -19,7 +19,7 @@
   --text-dim: #3a4f66;
 
   --font-cyber: 'Orbitron', sans-serif;
-  --font-chinese: 'ZCOOL QingKe HuangYou', 'Noto Sans SC', sans-serif;
+  --font-chinese: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   --font-mono: 'Fira Code', monospace;
   --font-tech: 'Rajdhani', sans-serif;
 
@@ -97,7 +97,7 @@ body {
   );
   pointer-events: none;
   z-index: 90;
-  opacity: 0.8;
+  opacity: 0.10;
 }
 
 .crt-vignette {
@@ -177,10 +177,17 @@ body {
 .brand-kanji {
   font-family: var(--font-chinese);
   font-size: 26px;
-  color: var(--neon-crimson);
-  text-shadow: var(--glow-crimson);
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.95),
+    0 -1px 2px rgba(0, 0, 0, 0.95),
+    1px 0 2px rgba(0, 0, 0, 0.95),
+    -1px 0 2px rgba(0, 0, 0, 0.95),
+    0 0 8px var(--neon-crimson);
   line-height: 1;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
+  -webkit-font-smoothing: antialiased;
 }
 
 .brand-text {
@@ -392,32 +399,42 @@ body {
   overflow: hidden;
 }
 
-/* Falling Word Cards */
+/* Falling Word Cards - Crisp Contrast & Cyber Elevation */
 .falling-word {
   position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: var(--bg-card);
-  border: 1px solid rgba(0, 243, 255, 0.45);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6), inset 0 0 10px rgba(0, 243, 255, 0.08);
-  padding: 6px 14px;
+  background: linear-gradient(180deg, rgba(8, 16, 32, 0.96) 0%, rgba(4, 9, 20, 0.98) 100%);
+  border: 1.5px solid rgba(0, 243, 255, 0.55);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.85), inset 0 0 12px rgba(0, 243, 255, 0.1);
+  padding: 10px 22px 8px 22px;
   clip-path: var(--corner-cut);
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(12px);
   transform: translate(-50%, 0);
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
   pointer-events: none;
+  min-width: 142px;
 }
 
-/* Hanzi Typography */
+/* Hanzi Typography - Ultra Sharp, High Contrast & Effortlessly Legible */
 .word-hanzi {
   font-family: var(--font-chinese);
-  font-size: 32px;
-  font-weight: 900;
-  line-height: 1.1;
-  color: #fff;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.7), var(--glow-cyan);
-  letter-spacing: 2px;
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1.15;
+  color: #ffffff;
+  letter-spacing: 3px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.95),
+    0 -1px 2px rgba(0, 0, 0, 0.95),
+    1px 0 2px rgba(0, 0, 0, 0.95),
+    -1px 0 2px rgba(0, 0, 0, 0.95),
+    0 0 6px rgba(0, 243, 255, 0.75);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.9));
 }
 
 /* Pinyin Badge */
@@ -425,63 +442,110 @@ body {
   display: flex;
   align-items: center;
   gap: 1px;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(0, 243, 255, 0.3);
-  padding: 1px 8px;
+  background: rgba(0, 15, 30, 0.85);
+  border: 1px solid rgba(0, 243, 255, 0.4);
+  padding: 2px 10px;
   border-radius: 3px;
-  margin-top: 3px;
+  margin-top: 4px;
   font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 700;
   color: var(--neon-gold);
+  letter-spacing: 0.5px;
 }
 
 .pinyin-matched {
   color: var(--neon-green);
-  text-shadow: var(--glow-green);
+  text-shadow: 0 0 6px rgba(0, 255, 136, 0.8);
 }
 
 .pinyin-unmatched {
   color: var(--neon-gold);
 }
 
-/* Meaning Tag */
+/* Vietnamese Annotation / Meaning Tag */
 .word-meaning {
-  font-size: 10px;
-  color: var(--text-muted);
-  margin-top: 2px;
-  max-width: 180px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 12px;
+  font-weight: 600;
+  color: #00ffc2;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+  margin-top: 4px;
+  max-width: 220px;
+  white-space: normal;
   text-align: center;
+  line-height: 1.25;
+  letter-spacing: 0.3px;
 }
 
-/* HSK Level Pill */
+/* HSK Level Pill - Fully visible inside card without polygon clipping */
 .word-hsk-pill {
   position: absolute;
-  top: -8px;
-  right: 6px;
-  font-size: 9px;
+  top: 5px;
+  right: 8px;
+  font-size: 10px;
   font-family: var(--font-cyber);
-  font-weight: 700;
-  background: var(--neon-crimson);
-  color: #fff;
-  padding: 0 5px;
-  border-radius: 2px;
-  box-shadow: 0 0 6px var(--neon-crimson);
+  font-weight: 800;
+  background: #ff0055;
+  background: linear-gradient(135deg, #ff0055 0%, #d90429 100%);
+  color: #ffffff;
+  padding: 2px 7px;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 0 10px rgba(255, 0, 85, 0.85), inset 0 0 4px rgba(255, 255, 255, 0.35);
+  z-index: 10;
+  letter-spacing: 0.6px;
+  line-height: 1.1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.95);
+  pointer-events: none;
+}
+
+/* Pinyin Hidden / Memory Challenge Mode */
+.pinyin-hidden-mode .word-pinyin-badge {
+  background: rgba(35, 10, 22, 0.88);
+  border-color: rgba(255, 0, 85, 0.45);
+}
+
+.pinyin-hidden-mode .word-pinyin-badge .pinyin-text,
+.pinyin-hidden-mode .word-pinyin-badge .pinyin-unmatched {
+  filter: blur(7px);
+  opacity: 0.22;
+  user-select: none;
+  transition: filter 0.15s, opacity 0.15s;
+}
+
+/* When word is targeted/locked by typing, reveal matched letters */
+.pinyin-hidden-mode .falling-word.locked-target .word-pinyin-badge {
+  border-color: var(--neon-green);
+  background: rgba(0, 25, 15, 0.92);
+}
+
+.pinyin-hidden-mode .falling-word.locked-target .word-pinyin-badge .pinyin-matched {
+  filter: none;
+  opacity: 1;
+  color: var(--neon-green);
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.9);
+}
+
+.pinyin-hidden-mode .falling-word.locked-target .word-pinyin-badge .pinyin-unmatched {
+  filter: blur(4px);
+  opacity: 0.4;
 }
 
 /* Locked-on Targeted Status */
 .falling-word.locked-target {
   border-color: var(--neon-green);
-  box-shadow: 0 0 20px rgba(0, 255, 136, 0.5), inset 0 0 15px rgba(0, 255, 136, 0.2);
-  transform: translate(-50%, 0) scale(1.06);
+  box-shadow: 0 0 25px rgba(0, 255, 136, 0.5), inset 0 0 15px rgba(0, 255, 136, 0.2);
+  transform: translate(-50%, 0) scale(1.08);
 }
 
 .falling-word.locked-target .word-hanzi {
-  color: var(--neon-green);
-  text-shadow: var(--glow-green);
+  color: #ffffff;
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.95),
+    0 -1px 2px rgba(0, 0, 0, 0.95),
+    1px 0 2px rgba(0, 0, 0, 0.95),
+    -1px 0 2px rgba(0, 0, 0, 0.95),
+    0 0 8px rgba(0, 255, 136, 0.9);
 }
 
 /* Danger Near Ground */
@@ -867,6 +931,57 @@ body {
   max-width: 380px;
 }
 
+/* Destroyed Word Combat Log Popup */
+.destroyed-popup {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: rgba(4, 12, 28, 0.92);
+  border: 1px solid var(--neon-cyan);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.4), inset 0 0 8px rgba(0, 243, 255, 0.1);
+  padding: 4px 12px;
+  border-radius: 4px;
+  color: #fff;
+  font-family: var(--font-tech);
+  font-size: 13px;
+  font-weight: 700;
+  pointer-events: none;
+  z-index: 40;
+  animation: floatUpFade 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.destroyed-popup .popup-hanzi {
+  font-family: var(--font-chinese);
+  color: #fff;
+  font-weight: 800;
+  font-size: 18px;
+  text-shadow: 0 0 6px var(--neon-cyan);
+  margin-right: 2px;
+}
+
+.destroyed-popup .popup-meaning {
+  color: #00ffc2;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.destroyed-popup .popup-pts {
+  color: var(--neon-gold);
+  font-family: var(--font-cyber);
+  font-size: 11px;
+}
+
+@keyframes floatUpFade {
+  0% { opacity: 0; transform: translate(-50%, 0) scale(0.85); }
+  15% { opacity: 1; transform: translate(-50%, -10px) scale(1.05); }
+  30% { transform: translate(-50%, -16px) scale(1); }
+  80% { opacity: 0.9; }
+  100% { opacity: 0; transform: translate(-50%, -50px) scale(0.95); }
+}
+
 /* Responsive adjustments */
 @media (max-width: 900px) {
   .modal-rules {
@@ -876,3 +991,128 @@ body {
     min-width: 170px;
   }
 }
+
+/* ==========================================================================
+   PROMINENT PINYIN TOGGLE BUTTON (MEMORIZATION CHALLENGE MODE)
+   ========================================================================== */
+.pinyin-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, rgba(0, 243, 255, 0.22), rgba(0, 70, 130, 0.45));
+  border: 1.5px solid var(--neon-cyan);
+  border-radius: 4px;
+  color: #ffffff;
+  cursor: pointer;
+  font-family: var(--font-cyber);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  box-shadow: 0 0 14px rgba(0, 243, 255, 0.45), inset 0 0 8px rgba(0, 243, 255, 0.25);
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  text-transform: uppercase;
+  user-select: none;
+  outline: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.pinyin-toggle-btn:hover {
+  transform: translateY(-1px);
+  border-color: #ffffff;
+  box-shadow: 0 0 22px rgba(0, 243, 255, 0.75), inset 0 0 12px rgba(0, 243, 255, 0.35);
+}
+
+.pinyin-toggle-btn .pinyin-btn-icon {
+  font-size: 16px;
+  filter: drop-shadow(0 0 4px var(--neon-cyan));
+}
+
+.pinyin-toggle-btn .pinyin-btn-title {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.pinyin-toggle-btn .pinyin-status-pill {
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  background: rgba(0, 255, 136, 0.25);
+  color: var(--neon-green);
+  border: 1px solid var(--neon-green);
+  text-shadow: 0 0 6px var(--neon-green);
+}
+
+/* Hidden Pinyin Mode (Challenge Mode: Practice Hanzi Memory) */
+.pinyin-toggle-btn.mode-hidden {
+  background: linear-gradient(135deg, rgba(255, 0, 85, 0.30), rgba(130, 0, 45, 0.50));
+  border-color: var(--neon-crimson);
+  box-shadow: 0 0 18px rgba(255, 0, 85, 0.65), inset 0 0 10px rgba(255, 0, 85, 0.3);
+  animation: pinyinAlertPulse 1.6s infinite alternate;
+}
+
+.pinyin-toggle-btn.mode-hidden .pinyin-status-pill {
+  background: rgba(255, 0, 85, 0.35);
+  color: #ff3377;
+  border-color: #ff3377;
+  text-shadow: 0 0 8px #ff0055;
+}
+
+@keyframes pinyinAlertPulse {
+  0% { box-shadow: 0 0 12px rgba(255, 0, 85, 0.5); }
+  100% { box-shadow: 0 0 24px rgba(255, 0, 85, 0.9); }
+}
+
+/* ==========================================================================
+   COPYRIGHT BRANDING & ATTRIBUTION: KHAI LE
+   ========================================================================== */
+.brand-author-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-family: var(--font-cyber);
+  font-weight: 700;
+  color: var(--neon-gold);
+  letter-spacing: 1px;
+  text-shadow: 0 0 6px rgba(255, 190, 11, 0.7);
+  background: rgba(255, 190, 11, 0.12);
+  padding: 2px 7px;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 190, 11, 0.4);
+  margin-top: 2px;
+  width: fit-content;
+}
+
+.console-copyright {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(0, 243, 255, 0.75);
+  letter-spacing: 0.8px;
+  text-align: center;
+  padding: 4px 10px;
+  text-transform: uppercase;
+}
+
+.console-copyright strong {
+  color: var(--neon-gold);
+  text-shadow: 0 0 8px rgba(255, 190, 11, 0.8);
+}
+
+.modal-copyright-tag {
+  margin-top: 18px;
+  font-size: 12px;
+  font-family: var(--font-cyber);
+  color: rgba(255, 255, 255, 0.75);
+  letter-spacing: 0.6px;
+  border-top: 1px solid rgba(0, 243, 255, 0.25);
+  padding-top: 12px;
+  text-align: center;
+}
+
+.modal-copyright-tag strong {
+  color: var(--neon-cyan);
+  text-shadow: 0 0 8px rgba(0, 243, 255, 0.9);
+}
+
