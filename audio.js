@@ -1,16 +1,18 @@
 /**
- * CYBERNET OS // Procedural Web Audio Synthesizer
- * Pure Web Audio API - Zero external audio file dependencies
+ * CYBERPUNK CHINA // Web Audio API Synthesizer & Speech Engine
+ * Procedural SFX, Chinese TTS Pronunciation & Ambient Synthwave BGM
  */
 
-class CyberAudioSystem {
+class CyberPinyinAudio {
   constructor() {
     this.ctx = null;
-    this.isMuted = false;
-    this.bgmEnabled = false;
+    this.sfxMuted = false;
+    this.bgmMuted = false;
+    this.voiceEnabled = true;
     this.bgmInterval = null;
     this.masterGain = null;
     this.bgmGain = null;
+    this.chineseVoice = null;
     this.initialized = false;
   }
 
@@ -21,18 +23,17 @@ class CyberAudioSystem {
       this.ctx = new AudioCtx();
 
       this.masterGain = this.ctx.createGain();
-      this.masterGain.gain.setValueAtTime(0.18, this.ctx.currentTime);
+      this.masterGain.gain.setValueAtTime(0.25, this.ctx.currentTime);
       this.masterGain.connect(this.ctx.destination);
 
       this.bgmGain = this.ctx.createGain();
-      this.bgmGain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+      this.bgmGain.gain.setValueAtTime(0.06, this.ctx.currentTime);
       this.bgmGain.connect(this.ctx.destination);
 
       this.initialized = true;
-      const statusEl = document.getElementById('audioStateIndicator');
-      if (statusEl) statusEl.textContent = 'AUDIO SYNTH: ACTIVE (WEB AUDIO API)';
+      this.loadVoices();
     } catch (e) {
-      console.warn('Web Audio could not be initialized:', e);
+      console.warn('Web Audio initialization error:', e);
     }
   }
 
@@ -43,101 +44,114 @@ class CyberAudioSystem {
     }
   }
 
-  toggleSound() {
-    this.isMuted = !this.isMuted;
-    if (this.masterGain) {
-      this.masterGain.gain.setValueAtTime(this.isMuted ? 0 : 0.18, this.ctx.currentTime);
+  loadVoices() {
+    if ('speechSynthesis' in window) {
+      const setVoice = () => {
+        const voices = window.speechSynthesis.getVoices();
+        // Find Chinese zh-CN or zh-HK voice
+        this.chineseVoice = voices.find(v => v.lang.startsWith('zh')) || null;
+      };
+      setVoice();
+      if (window.speechSynthesis.onvoiceschanged !== undefined) {
+        window.speechSynthesis.onvoiceschanged = setVoice;
+      }
     }
-    return !this.isMuted;
   }
 
   /**
-   * Mechanical futuristic key click with random variance
+   * Speak Chinese character using native SpeechSynthesis
    */
-  playKeyClick() {
-    if (this.isMuted || !this.initialized) return;
+  speakChinese(text) {
+    if (!this.voiceEnabled || !('speechSynthesis' in window)) return;
+    try {
+      window.speechSynthesis.cancel(); // Stop any pending speech
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'zh-CN';
+      utter.rate = 0.95;
+      utter.pitch = 1.0;
+      if (this.chineseVoice) {
+        utter.voice = this.chineseVoice;
+      }
+      window.speechSynthesis.speak(utter);
+    } catch (e) {
+      console.warn('Speech error:', e);
+    }
+  }
+
+  /**
+   * Laser cannon blast sound
+   */
+  playLaser() {
+    if (this.sfxMuted || !this.initialized) return;
     this.ensureContext();
 
     const t = this.ctx.currentTime;
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
-    const filter = this.ctx.createBiquadFilter();
 
-    // Subtle randomize
-    const freq = 900 + Math.random() * 400;
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(1400, t);
+    osc.frequency.exponentialRampToValueAtTime(180, t + 0.14);
+
+    gain.gain.setValueAtTime(0.35, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+
+    osc.connect(gain);
+    gain.connect(this.masterGain);
+
+    osc.start(t);
+    osc.stop(t + 0.14);
+  }
+
+  /**
+   * Neon particle explosion sound
+   */
+  playExplosion() {
+    if (this.sfxMuted || !this.initialized) return;
+    this.ensureContext();
+
+    const t = this.ctx.currentTime;
+    
+    // Low punch
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
     osc.type = 'triangle';
-    osc.frequency.setValueAtTime(freq, t);
-    osc.frequency.exponentialRampToValueAtTime(200, t + 0.04);
+    osc.frequency.setValueAtTime(260, t);
+    osc.frequency.exponentialRampToValueAtTime(45, t + 0.25);
 
-    filter.type = 'bandpass';
-    filter.frequency.setValueAtTime(1400, t);
-    filter.Q.setValueAtTime(2.5, t);
-
-    gain.gain.setValueAtTime(0.25, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
-
-    osc.connect(filter);
-    filter.connect(gain);
-    gain.connect(this.masterGain);
-
-    osc.start(t);
-    osc.stop(t + 0.04);
-  }
-
-  /**
-   * Action Confirmation / Enter Key tone
-   */
-  playEnter() {
-    if (this.isMuted || !this.initialized) return;
-    this.ensureContext();
-
-    const t = this.ctx.currentTime;
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(520, t);
-    osc.frequency.exponentialRampToValueAtTime(880, t + 0.08);
-
-    gain.gain.setValueAtTime(0.3, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+    gain.gain.setValueAtTime(0.5, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
 
     osc.connect(gain);
     gain.connect(this.masterGain);
 
     osc.start(t);
-    osc.stop(t + 0.08);
+    osc.stop(t + 0.25);
+
+    // Chime harmonics
+    [880, 1320].forEach((freq, idx) => {
+      setTimeout(() => {
+        if (!this.ctx) return;
+        const ct = this.ctx.currentTime;
+        const o = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        o.type = 'sine';
+        o.frequency.setValueAtTime(freq, ct);
+        g.gain.setValueAtTime(0.15, ct);
+        g.gain.exponentialRampToValueAtTime(0.001, ct + 0.15);
+        o.connect(g);
+        g.connect(this.masterGain);
+        o.start(ct);
+        o.stop(ct + 0.15);
+      }, idx * 40);
+    });
   }
 
   /**
-   * Standard sci-fi chirp
+   * Ground Shield Damage sound (Metallic crash + alarm)
    */
-  playBeep(freq = 880, duration = 0.08, type = 'sine') {
-    if (this.isMuted || !this.initialized) return;
-    this.ensureContext();
-
-    const t = this.ctx.currentTime;
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, t);
-
-    gain.gain.setValueAtTime(0.2, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
-
-    osc.connect(gain);
-    gain.connect(this.masterGain);
-
-    osc.start(t);
-    osc.stop(t + duration);
-  }
-
-  /**
-   * Low harsh error / access denied buzzer
-   */
-  playError() {
-    if (this.isMuted || !this.initialized) return;
+  playShieldDamage() {
+    if (this.sfxMuted || !this.initialized) return;
     this.ensureContext();
 
     const t = this.ctx.currentTime;
@@ -145,15 +159,15 @@ class CyberAudioSystem {
     const osc2 = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
 
-    osc1.type = 'sawtooth';
-    osc2.type = 'square';
-    osc1.frequency.setValueAtTime(140, t);
-    osc1.frequency.linearRampToValueAtTime(80, t + 0.22);
-    osc2.frequency.setValueAtTime(138, t);
-    osc2.frequency.linearRampToValueAtTime(78, t + 0.22);
+    osc1.type = 'square';
+    osc2.type = 'sawtooth';
+    osc1.frequency.setValueAtTime(120, t);
+    osc1.frequency.linearRampToValueAtTime(60, t + 0.3);
+    osc2.frequency.setValueAtTime(185, t);
+    osc2.frequency.linearRampToValueAtTime(75, t + 0.3);
 
-    gain.gain.setValueAtTime(0.4, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+    gain.gain.setValueAtTime(0.6, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
 
     osc1.connect(gain);
     osc2.connect(gain);
@@ -161,45 +175,15 @@ class CyberAudioSystem {
 
     osc1.start(t);
     osc2.start(t);
-    osc1.stop(t + 0.25);
-    osc2.stop(t + 0.25);
+    osc1.stop(t + 0.35);
+    osc2.stop(t + 0.35);
   }
 
   /**
-   * Ascending high-tech triumph chord
+   * Typing keystroke sound
    */
-  playSuccess() {
-    if (this.isMuted || !this.initialized) return;
-    this.ensureContext();
-
-    const notes = [440, 554.37, 659.25, 880]; // A major cyber chime
-    notes.forEach((freq, idx) => {
-      setTimeout(() => {
-        if (!this.ctx) return;
-        const t = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, t);
-
-        gain.gain.setValueAtTime(0.25, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
-
-        osc.connect(gain);
-        gain.connect(this.masterGain);
-
-        osc.start(t);
-        osc.stop(t + 0.22);
-      }, idx * 60);
-    });
-  }
-
-  /**
-   * Cyber Matrix code select ping
-   */
-  playMatrixPick() {
-    if (this.isMuted || !this.initialized) return;
+  playKeypress() {
+    if (this.sfxMuted || !this.initialized) return;
     this.ensureContext();
 
     const t = this.ctx.currentTime;
@@ -207,24 +191,51 @@ class CyberAudioSystem {
     const gain = this.ctx.createGain();
 
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(1200, t);
-    osc.frequency.exponentialRampToValueAtTime(1800, t + 0.05);
+    osc.frequency.setValueAtTime(900 + Math.random() * 300, t);
 
-    gain.gain.setValueAtTime(0.22, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+    gain.gain.setValueAtTime(0.12, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.03);
 
     osc.connect(gain);
     gain.connect(this.masterGain);
 
     osc.start(t);
-    osc.stop(t + 0.05);
+    osc.stop(t + 0.03);
   }
 
   /**
-   * Glitch burst noise
+   * Combo streak sound
    */
-  playGlitch() {
-    if (this.isMuted || !this.initialized) return;
+  playComboChime(streak) {
+    if (this.sfxMuted || !this.initialized) return;
+    this.ensureContext();
+
+    const baseFreq = 523.25; // C5
+    const multiplier = 1 + (streak % 8) * 0.12;
+    const freq = baseFreq * multiplier;
+
+    const t = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, t);
+
+    gain.gain.setValueAtTime(0.25, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+
+    osc.connect(gain);
+    gain.connect(this.masterGain);
+
+    osc.start(t);
+    osc.stop(t + 0.2);
+  }
+
+  /**
+   * Critical Health Alarm
+   */
+  playCriticalAlarm() {
+    if (this.sfxMuted || !this.initialized) return;
     this.ensureContext();
 
     const t = this.ctx.currentTime;
@@ -232,29 +243,53 @@ class CyberAudioSystem {
     const gain = this.ctx.createGain();
 
     osc.type = 'square';
-    osc.frequency.setValueAtTime(250, t);
-    osc.frequency.setValueAtTime(1600, t + 0.02);
-    osc.frequency.setValueAtTime(100, t + 0.04);
-    osc.frequency.setValueAtTime(800, t + 0.06);
+    osc.frequency.setValueAtTime(750, t);
+    osc.frequency.setValueAtTime(600, t + 0.1);
 
-    gain.gain.setValueAtTime(0.25, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+    gain.gain.setValueAtTime(0.3, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
 
     osc.connect(gain);
     gain.connect(this.masterGain);
 
     osc.start(t);
-    osc.stop(t + 0.08);
+    osc.stop(t + 0.2);
   }
 
   /**
-   * Generative Ambient Synthwave Drone / Arpeggiator (BGM)
+   * Game Over Sound
    */
-  toggleBgm() {
-    this.bgmEnabled = !this.bgmEnabled;
+  playGameOver() {
+    if (this.sfxMuted || !this.initialized) return;
     this.ensureContext();
 
-    if (!this.bgmEnabled) {
+    const notes = [440, 392, 349, 293, 220];
+    notes.forEach((freq, idx) => {
+      setTimeout(() => {
+        if (!this.ctx) return;
+        const t = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, t);
+        gain.gain.setValueAtTime(0.3, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+        osc.connect(gain);
+        gain.connect(this.masterGain);
+        osc.start(t);
+        osc.stop(t + 0.4);
+      }, idx * 140);
+    });
+  }
+
+  /**
+   * Generative Cyberpunk Synthwave Drone (Chinese Pentatonic Minor)
+   */
+  toggleBgm() {
+    this.bgmMuted = !this.bgmMuted;
+    this.ensureContext();
+
+    if (this.bgmMuted) {
       if (this.bgmInterval) {
         clearInterval(this.bgmInterval);
         this.bgmInterval = null;
@@ -262,30 +297,28 @@ class CyberAudioSystem {
       return false;
     }
 
-    // Scale notes: Synthwave minor pentatonic (D minor: D, F, G, A, C)
-    const scale = [146.83, 174.61, 196.00, 220.00, 261.63, 293.66, 349.23, 392.00, 440.00];
+    // Chinese pentatonic scale in D: D, F, G, A, C
+    const scale = [146.83, 174.61, 196.00, 220.00, 261.63, 293.66, 349.23, 392.00];
     let step = 0;
 
     this.bgmInterval = setInterval(() => {
-      if (!this.ctx || this.isMuted || !this.bgmEnabled) return;
+      if (!this.ctx || this.bgmMuted) return;
       const t = this.ctx.currentTime;
-
-      // Arpeggio note
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       const filter = this.ctx.createBiquadFilter();
 
       const note = scale[step % scale.length];
-      step = (step + Math.floor(Math.random() * 3) + 1) % scale.length;
+      step = (step + Math.floor(Math.random() * 2) + 1) % scale.length;
 
       osc.type = 'sawtooth';
       osc.frequency.setValueAtTime(note, t);
 
       filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(600 + Math.sin(t * 0.5) * 300, t);
+      filter.frequency.setValueAtTime(500 + Math.sin(t * 0.4) * 250, t);
       filter.Q.setValueAtTime(3, t);
 
-      gain.gain.setValueAtTime(0.06, t);
+      gain.gain.setValueAtTime(0.05, t);
       gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.28);
 
       osc.connect(filter);
@@ -294,11 +327,11 @@ class CyberAudioSystem {
 
       osc.start(t);
       osc.stop(t + 0.28);
-    }, 220);
+    }, 240);
 
     return true;
   }
 }
 
-// Global Audio Instance
-const cyberAudio = new CyberAudioSystem();
+// Global instance
+const gameAudio = new CyberPinyinAudio();

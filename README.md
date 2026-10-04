@@ -1,25 +1,35 @@
-# CYBERNET // OS v3.84 - Cyberpunk Terminal & Netrunner Hacking Game
+# 赛博拼音 // CYBERPUNK CHINA: PINYIN DEFENDER
 
-An immersive, retro-futuristic Cyberpunk Terminal and Netrunner Cyberdeck simulator built with Vanilla HTML5, CSS3, and JavaScript. Featuring procedural sound synthesis via Web Audio API, authentic Cyberpunk 2077 Breach Protocol minigame mechanics, cryptographic ciphers, and live telemetry HUD.
+An intense, retro-futuristic Cyberpunk Chinese typing arcade game. Chinese words fall from the cyber sky towards your city's defense perimeter. Type the exact Pinyin to lock-on and vaporize each target with laser cannons before they breach your 100 HP Core Shield!
 
-![Cyberpunk Terminal Preview](preview.png)
+![Cyberpunk China Pinyin Defender](preview.png)
 
 ---
 
 ## ⚡ Features
 
-- **Cyberpunk 2077 Breach Protocol**: Real-time 5x5 hex matrix buffer injection minigame with alternating row/col mechanics, daemon sequences (`DATAMINE`, `CAMERA_OVERRIDE`, `ICE_MELTER`), and bonus credits.
-- **Cryptographic Cipher Bypass**: Wordle/Bulls & Cows style numeric passcode decryptor with visual peg status and security lockout.
-- **Pure Web Audio API Synthesizer**: Procedural mechanical key clicks, error buzzers, achievement chimes, and toggleable ambient synthwave arpeggio drone (Zero external audio file dependencies).
-- **Subnet Target Scanner**: Interactive radar scanning local nodes (`Arasaka Proxy`, `Militech Blacksite`, `Kiroshi Optics Vault`, `Trauma Team`).
-- **Telemetry Oscilloscope**: Real-time oscillating signal frequency and corporate intrusion threat monitor.
-- **Multi-Theme Engine**:
-  - `Cyberpunk Neon` (Default)
-  - `Matrix Deep Green` (with animated digital data rain)
-  - `80s Retro Amber` (Phosphor monochrome aesthetic)
-  - `Syndicate Violet`
-- **CRT Screen Effects**: Toggleable scanlines, phosphor glow, screen curvature vignette, and CRT flicker.
-- **Black Market Cyberdeck Upgrades**: Expand buffer capacity, upgrade ICE-breaker software, and buy proxy tunnels to scrub trace levels.
+- **5,000 Common Chinese Words Library (HSK 1-6)**:
+  - Standard vocabulary dataset embedded in `words.js`.
+  - Filter by level: All HSK (5,000 words), HSK 1 (150 words), HSK 2 (150 words), HSK 3 (300 words), HSK 4 (600 words), HSK 5 (1,300 words), HSK 6 (2,500 words).
+  - Displays Chinese Hanzi, accented Pinyin, and English/Vietnamese meaning.
+- **100 HP Core Shield Mechanic**:
+  - The player starts with 100 HP.
+  - Each falling word touching the ground damages your shield by **-1 HP**.
+  - Dynamic screen shake, neon red damage strobe, and warning alarms when HP < 25.
+  - Game Over screen with detailed stats when HP reaches 0.
+- **Fluid Pinyin Typing & Laser Targeting**:
+  - Accepts toneless pinyin (e.g. `ni`, `hao`, `nihao`, `zhongguo`) or numbered pinyin (`ni3hao3`).
+  - Auto-highlights matched pinyin prefix in real-time.
+  - Rotating cyber cannon turret tracks and locks onto the lowest active target.
+  - Instant laser fire + glowing particle explosion upon exact match.
+- **Native Mandarin Voice Pronunciation (TTS)**:
+  - Pronounces each destroyed Chinese word aloud in native Mandarin (`zh-CN` via Web Speech API) to reinforce auditory learning.
+- **Procedural Web Audio API Synthesizer**:
+  - Laser blast sweeps, explosion booms, mechanical keystrokes, shield damage clangs, and ambient Chinese pentatonic synthwave arpeggio drone.
+- **Difficulty & Speed Customization**:
+  - Relaxed (0.75x), Normal (1.0x), Netrunner (1.4x), Overdrive (2.0x).
+- **Combos & Scoring**:
+  - Successive hits build combos (x1, x2, x3, x4, x5 OVERDRIVE) multiplying your score.
 
 ---
 
@@ -31,50 +41,39 @@ No build tools or external dependencies needed! Simply open `index.html` in any 
 # Using Python
 python -m http.server 8080
 
-# Or using Node.js / npx
+# Or using Node.js
 npx serve .
 ```
 
-Then visit [http://localhost:8080](http://localhost:8080).
+Visit [http://localhost:8080](http://localhost:8080).
 
 ---
 
-## 💻 Terminal Command Reference
+## 🎮 How to Play
 
-| Command | Description |
-| :--- | :--- |
-| `help` | Display interactive command reference table |
-| `scan` | Scan local subnet for vulnerable corporate nodes |
-| `breach [target]` | Launch Breach Protocol hex matrix minigame |
-| `decrypt` | Start cryptographic passcode bypass minigame |
-| `guess <code>` | Submit code guess during Cipher minigame |
-| `shop` / `buy <id>` | Access Black Market cyberdeck upgrades |
-| `stats` / `profile` | Display Netrunner dossier, rank, EXP, and credits |
-| `trace` / `clear-trace` | Check or pay credits to scrub corporate trace levels |
-| `theme <name>` | Switch palette (`cyberpunk`, `matrix`, `amber`, `syndicate`) |
-| `matrix` | Toggle digital data rain background |
-| `sound [on\|off]` | Toggle procedural Web Audio sound FX |
-| `bgm [on\|off]` | Toggle generative synthwave ambient drone |
-| `crt` | Toggle CRT scanline flicker |
-| `ping <host>` | Send ICMP ping to remote cyber server |
-| `cat <file>` | Read lore data files (e.g. `corpo_secrets.txt`) |
-| `clear` | Clear terminal output buffer |
+1. Click **"INITIALIZE CANNON & START DEFENSE"**.
+2. Words with Hanzi, Pinyin, and meanings will drop from the sky.
+3. Type the Pinyin of any falling word into the bottom console.
+4. When the pinyin is complete, your laser cannon shoots and destroys the word!
+5. Protect your **100 HP** shield from being breached!
 
 ---
 
 ## 📁 Project Structure
 
 ```
-├── index.html     # Main HUD layout, Radar, Oscilloscope & Terminal Viewport
-├── style.css      # Cyberpunk design system, themes, and CRT scanlines
-├── audio.js       # Web Audio API procedural sound synthesizer & BGM engine
-├── games.js       # Breach Protocol and Cipher minigames logic
-├── app.js         # Core CLI controller, animations & telemetry graphs
-└── README.md      # Project documentation
+├── index.html                  # Cyberpunk HUD, sky arena, cannon turret & modals
+├── style.css                   # Cyberpunk Chinese neon aesthetics, animations & CRT FX
+├── words.js                    # 5,000 Common Chinese words library (HSK 1-6)
+├── audio.js                    # Web Audio synthesizer & Mandarin speech engine (TTS)
+├── game.js                     # Core physics, laser targeting, 100 HP shield & game loop
+├── generate_words_dataset.py   # Python generator used to compile the 5,000 words
+├── preview.png                 # Game screenshot
+└── README.md                   # Documentation
 ```
 
 ---
 
 ## 📜 License
 
-MIT License. Designed and coded with ❤️ for Netrunners and Cyberpunk enthusiasts.
+MIT License. Crafted with ❤️ for Chinese language learners and cyberpunk enthusiasts.

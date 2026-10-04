@@ -1,248 +1,264 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="CyberNet OS - An immersive Cyberpunk Terminal & Netrunner Hacking Simulator featuring procedural Web Audio, Breach Protocol minigames, and live HUD telemetry.">
-  <title>CYBERNET // v3.84 Netrunner Terminal</title>
-  
-  <!-- Google Fonts for High-Tech Aesthetic -->
+  <meta name="description" content="Cyberpunk China: Pinyin Defender - An intense cyber typing arcade game. Destroy falling Chinese words with exact Pinyin before they breach your 100 HP shield! 5,000 common words included.">
+  <title>CYBERPUNK CHINA // 赛博拼音 - Pinyin Defender</title>
+
+  <!-- Google Fonts: Orbitron, ZCOOL QingKe HuangYou, Rajdhani, Fira Code -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600;700&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Orbitron:wght@600;800;900&family=Rajdhani:wght@600;700&family=ZCOOL+QingKe+HuangYou&family=Noto+Sans+SC:wght@500;700;900&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="theme-cyberpunk crt-enabled">
-  <!-- Scanline & Vignette CRT Overlays -->
-  <div class="crt-overlay" id="crtOverlay"></div>
-  <div class="scanlines"></div>
-  <div class="vignette"></div>
+<body class="theme-neon-china">
 
-  <!-- Interactive Background Canvas (Matrix Rain / Neural Particles) -->
+  <!-- Background and Laser Particle Canvases -->
   <canvas id="bgCanvas"></canvas>
+  <canvas id="laserCanvas"></canvas>
 
-  <!-- Main Cyber Container -->
-  <div class="deck-container">
-    
-    <!-- Top System Header Bar -->
-    <header class="cyber-header">
-      <div class="header-left">
-        <div class="sys-badge status-pulse">
-          <span class="blinking-dot"></span>
-          <span class="sys-label">NETLINK: <strong id="netlinkStatus">ONLINE (ARASAKA-PROXY-09)</strong></span>
-        </div>
-        <div class="os-title">
-          <span class="glitch-text" data-text="CYBERNET // OS v3.84">CYBERNET // OS v3.84</span>
-          <span class="sub-version">[DECK: MILITECH PARALINE MK.IV]</span>
+  <!-- Screen Flash & Shake Overlays -->
+  <div id="damageFlash" class="damage-flash"></div>
+  <div class="crt-scanlines"></div>
+  <div class="crt-vignette"></div>
+
+  <!-- Main Game Wrapper -->
+  <div class="game-wrapper" id="gameWrapper">
+
+    <!-- Top High-Tech Cyber HUD -->
+    <header class="cyber-hud">
+      
+      <!-- Brand & Game Mode -->
+      <div class="hud-brand">
+        <div class="brand-kanji">赛博拼音</div>
+        <div class="brand-text">
+          <span class="glitch-title" data-text="CYBERPUNK CHINA">CYBERPUNK CHINA</span>
+          <span class="sub-title">PINYIN DEFENDER // v2.0</span>
         </div>
       </div>
 
-      <div class="header-center">
-        <div class="hud-stat-pill">
-          <span class="pill-label">RAM</span>
-          <div class="mini-bar"><div class="mini-bar-fill" id="topRamFill" style="width: 48%;"></div></div>
-          <span class="pill-val" id="topRamVal">7.8 / 16 GB</span>
+      <!-- Health Meter (100 HP Shield) -->
+      <div class="hud-health-card">
+        <div class="health-meta">
+          <span class="shield-label"><span class="shield-icon">🛡️</span> CORE DEFENSE SHIELD</span>
+          <span class="health-numeric" id="healthDisplay">100 / 100 HP</span>
         </div>
-        <div class="hud-stat-pill">
-          <span class="pill-label">CREDITS</span>
-          <span class="pill-val cred-glow" id="headerCreds">₮ 1,250</span>
-        </div>
-        <div class="hud-stat-pill">
-          <span class="pill-label">TRACE</span>
-          <div class="mini-bar trace-bar"><div class="mini-bar-fill trace-fill" id="topTraceFill" style="width: 0%;"></div></div>
-          <span class="pill-val alert-val" id="topTraceVal">0%</span>
+        <div class="health-bar-track">
+          <div class="health-bar-fill" id="healthBarFill" style="width: 100%;"></div>
         </div>
       </div>
 
-      <div class="header-right">
-        <!-- Quick Control Buttons -->
-        <button class="cyber-btn-icon" id="soundToggleBtn" title="Toggle Sound FX (Web Audio)">
-          <span class="icon">🔊</span> <span class="btn-text">SFX: ON</span>
-        </button>
-        <button class="cyber-btn-icon" id="musicToggleBtn" title="Toggle Synthwave Drone Ambiance">
-          <span class="icon">🎵</span> <span class="btn-text">BGM: OFF</span>
-        </button>
-        <div class="theme-select-wrapper">
-          <label for="themeSelect">UI PALETTE:</label>
-          <select id="themeSelect" class="cyber-select">
-            <option value="theme-cyberpunk">CYBERPUNK NEON</option>
-            <option value="theme-matrix">MATRIX DEEP GREEN</option>
-            <option value="theme-amber">80s RETRO AMBER</option>
-            <option value="theme-syndicate">SYNDICATE VIOLET</option>
+      <!-- Score & Combo Streak -->
+      <div class="hud-score-card">
+        <div class="score-row">
+          <span class="score-label">SCORE:</span>
+          <span class="score-val" id="scoreDisplay">0</span>
+        </div>
+        <div class="combo-row">
+          <span class="combo-label">COMBO:</span>
+          <span class="combo-badge" id="comboDisplay">x1</span>
+          <span class="streak-count" id="streakDisplay">0 STREAK</span>
+        </div>
+      </div>
+
+      <!-- Level & Options Menu -->
+      <div class="hud-controls">
+        <div class="control-group">
+          <label for="hskSelect">HSK LEVEL:</label>
+          <select id="hskSelect" class="cyber-select">
+            <option value="all">ALL HSK (5,000 Words)</option>
+            <option value="1">HSK 1 (150 Words)</option>
+            <option value="2">HSK 2 (150 Words)</option>
+            <option value="3">HSK 3 (300 Words)</option>
+            <option value="4">HSK 4 (600 Words)</option>
+            <option value="5">HSK 5 (1,300 Words)</option>
+            <option value="6">HSK 6 (2,500 Words)</option>
           </select>
         </div>
-        <button class="cyber-btn-icon" id="crtToggleBtn" title="Toggle CRT Flicker Effect">
-          <span class="btn-text">CRT: ON</span>
-        </button>
+
+        <div class="control-group">
+          <label for="speedSelect">SPEED:</label>
+          <select id="speedSelect" class="cyber-select">
+            <option value="0.75">RELAXED (0.75x)</option>
+            <option value="1.0" selected>NORMAL (1.0x)</option>
+            <option value="1.4">NETRUNNER (1.4x)</option>
+            <option value="2.0">OVERDRIVE (2.0x)</option>
+          </select>
+        </div>
+
+        <div class="btn-group">
+          <button class="icon-toggle active" id="voiceToggleBtn" title="Toggle Mandarin Pronunciation (zh-CN)">
+            🗣️ <span class="btn-txt">VOICE: ON</span>
+          </button>
+          <button class="icon-toggle active" id="sfxToggleBtn" title="Toggle SFX">
+            🔊 <span class="btn-txt">SFX: ON</span>
+          </button>
+          <button class="icon-toggle" id="bgmToggleBtn" title="Toggle Synthwave Music">
+            🎵 <span class="btn-txt">BGM: OFF</span>
+          </button>
+          <button class="icon-toggle" id="pauseBtn" title="Pause Game">
+            ⏸️ <span class="btn-txt">PAUSE</span>
+          </button>
+        </div>
       </div>
+
     </header>
 
-    <!-- Main Workspace Layout -->
-    <main class="cyber-workspace">
+    <!-- Falling Arena (Sky) -->
+    <main class="game-arena" id="gameArena">
+      <!-- Words dynamically spawn and fall inside here -->
       
-      <!-- Left Panel: Terminal CLI & Active Minigame Display -->
-      <section class="terminal-panel" id="terminalPanel">
-        <div class="panel-header">
-          <div class="window-decorations">
-            <span class="window-btn red"></span>
-            <span class="window-btn yellow"></span>
-            <span class="window-btn green"></span>
-          </div>
-          <div class="terminal-tab-title">
-            <span class="tab-icon">❯_</span>
-            <span id="activeTerminalTitle">bash://netrunner@cyberspace:~/black-ops</span>
-          </div>
-          <div class="quick-commands">
-            <button class="quick-cmd-chip" data-cmd="help">HELP</button>
-            <button class="quick-cmd-chip" data-cmd="scan">SCAN</button>
-            <button class="quick-cmd-chip" data-cmd="breach">BREACH PROTOCOL</button>
-            <button class="quick-cmd-chip" data-cmd="decrypt">CIPHER</button>
-            <button class="quick-cmd-chip" data-cmd="shop">BLACK MARKET</button>
-            <button class="quick-cmd-chip" data-cmd="clear">CLEAR</button>
-          </div>
-        </div>
-
-        <!-- Terminal Output Container -->
-        <div class="terminal-viewport" id="terminalViewport">
-          <div id="terminalOutput">
-            <!-- Dynamic Output lines will be injected here -->
-          </div>
-
-          <!-- Dynamic Game View Overlay (Inserted when breach or decrypt minigame is active) -->
-          <div class="minigame-container" id="minigameContainer" style="display: none;">
-            <!-- Game Canvas / Matrix UI injected here -->
-          </div>
-
-          <!-- Command Line Prompt Form -->
-          <div class="terminal-prompt-line" id="promptLine">
-            <span class="prompt-user">guest@nightcity</span>
-            <span class="prompt-separator">:</span>
-            <span class="prompt-path">~/ops</span>
-            <span class="prompt-sym">#</span>
-            <div class="input-wrapper">
-              <input type="text" id="terminalInput" autocomplete="off" spellcheck="false" placeholder="Type a command or 'help'..." autofocus>
-              <div class="custom-cursor" id="customCursor"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="terminal-footer">
-          <span class="footer-tip">💡 TIP: Use <kbd>Tab</kbd> to auto-complete, <kbd>↑</kbd>/<kbd>↓</kbd> for command history.</span>
-          <span class="audio-status-indicator" id="audioStateIndicator">AUDIO SYNTH: INITIALIZED</span>
-        </div>
-      </section>
-
-      <!-- Right Panel: Telemetry, Target Scanner & Dossier HUD -->
-      <aside class="hud-sidebar">
-        
-        <!-- Dossier Card -->
-        <div class="hud-card profile-card">
-          <div class="hud-card-header">
-            <span class="hud-card-title">NETRUNNER DOSSIER</span>
-            <span class="badge" id="playerAliasBadge">VEXEL // GHOST</span>
-          </div>
-          <div class="hud-card-body profile-body">
-            <div class="avatar-box">
-              <div class="avatar-glitch" id="avatarGlitch">
-                <div class="avatar-art">⚡_⚡</div>
-              </div>
-              <div class="alias-info">
-                <div class="alias-name" id="dossierName">NETRUNNER: VEXEL</div>
-                <div class="rank-name" id="dossierRank">CLASS: SCRIPT KIDDIE</div>
-                <div class="exp-bar-container">
-                  <div class="exp-bar-fill" id="expBarFill" style="width: 25%;"></div>
-                </div>
-                <div class="exp-text">EXP: <span id="currentExp">120</span> / <span id="nextLevelExp">500</span></div>
-              </div>
-            </div>
-            <div class="stat-grid">
-              <div class="stat-item">
-                <span class="stat-label">ICE BREAKER</span>
-                <span class="stat-val" id="hudIceBreaker">v1.2 Standard</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-label">BUFFER CAPACITY</span>
-                <span class="stat-val" id="hudBufferSize">4 Slots</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-label">HACKS COMPLETED</span>
-                <span class="stat-val" id="hudHacksCount">0</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-label">CREDITS ACQUIRED</span>
-                <span class="stat-val accent-val" id="hudTotalCreds">₮ 1,250</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Real-Time Target Scanner -->
-        <div class="hud-card target-card">
-          <div class="hud-card-header">
-            <span class="hud-card-title">SUBNET TARGET SCANNER</span>
-            <span class="badge live-badge">LIVE RADAR</span>
-          </div>
-          <div class="hud-card-body">
-            <div class="radar-box">
-              <div class="radar-sweep"></div>
-              <div class="radar-ring r1"></div>
-              <div class="radar-ring r2"></div>
-              <div class="radar-ring r3"></div>
-              <div class="radar-nodes" id="radarNodesContainer">
-                <!-- Dynamically populated radar blips -->
-              </div>
-            </div>
-            
-            <div class="target-list" id="targetList">
-              <!-- Target items dynamically populated -->
-            </div>
-          </div>
-        </div>
-
-        <!-- Telemetry Graphs -->
-        <div class="hud-card telemetry-card">
-          <div class="hud-card-header">
-            <span class="hud-card-title">ICE THREAT & SIGNAL FREQUENCY</span>
-            <span class="badge" id="iceThreatLevel">SECURE</span>
-          </div>
-          <div class="hud-card-body">
-            <div class="oscilloscope-wrapper">
-              <canvas id="oscCanvas" width="280" height="70"></canvas>
-            </div>
-            <div class="network-traffic-info">
-              <div class="traffic-row">
-                <span>INBOUND PACKETS:</span>
-                <span class="glow-green" id="inboundRate">244 kb/s</span>
-              </div>
-              <div class="traffic-row">
-                <span>CORPO INTRUSION MONITOR:</span>
-                <span class="glow-cyan" id="corpoMonitor">DORMANT</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </aside>
-
+      <!-- Ground Laser Defense Grid Barrier -->
+      <div class="ground-defense-grid" id="groundGrid">
+        <div class="ground-energy-line"></div>
+        <div class="ground-warning-text">⚠️ CYBER CORE DEFENSE PERIMETER // DO NOT LET TARGETS BREACH ⚠️</div>
+      </div>
     </main>
 
-    <!-- Bottom Status Bar -->
-    <footer class="cyber-footer">
-      <div class="footer-left">
-        <span class="bracket">[</span> <span class="footer-status-text" id="footerLog">ALL SYSTEMS NOMINAL. READY FOR CYBER OPERATIONS.</span> <span class="bracket">]</span>
+    <!-- Bottom Cannon Console & Input Bar -->
+    <footer class="cyber-console">
+      
+      <!-- Animated Laser Turret -->
+      <div class="turret-wrapper">
+        <div class="turret-base">
+          <div class="turret-barrel" id="turretBarrel"></div>
+        </div>
       </div>
-      <div class="footer-right">
-        <span class="clock-display" id="cyberClock">23:59:59 NC-ST</span>
-        <span class="coords-display">LAT 35.689 // LON 139.692</span>
+
+      <!-- Main Pinyin Typing Input -->
+      <div class="input-console-bar">
+        <div class="input-reticle">⌖</div>
+        <div class="input-field-wrapper">
+          <span class="input-prefix">TARGET_PINYIN:&gt;</span>
+          <input 
+            type="text" 
+            id="pinyinInput" 
+            autocomplete="off" 
+            autocorrect="off" 
+            autocapitalize="off" 
+            spellcheck="false" 
+            placeholder="Type pinyin (e.g. ni, hao, nihao, zhongguo)..." 
+            autofocus
+          >
+          <div class="input-glow-indicator"></div>
+        </div>
+        <div class="stats-mini-summary">
+          <div class="stat-bubble">
+            <span class="bubble-num" id="killsCount">0</span>
+            <span class="bubble-txt">DESTROYED</span>
+          </div>
+          <div class="stat-bubble">
+            <span class="bubble-num" id="accuracyDisplay">100%</span>
+            <span class="bubble-txt">ACCURACY</span>
+          </div>
+        </div>
       </div>
+
     </footer>
 
   </div>
 
-  <!-- Audio and Game Logic Scripts -->
+  <!-- Start Screen Modal -->
+  <div class="modal-overlay" id="startModal">
+    <div class="cyber-modal">
+      <div class="modal-kanji-watermark">赛博</div>
+      <h1 class="modal-title">CYBERPUNK CHINA</h1>
+      <h2 class="modal-subtitle">赛博拼音 // PINYIN DEFENDER</h2>
+      
+      <div class="modal-rules">
+        <div class="rule-card">
+          <span class="rule-icon">☄️</span>
+          <div>
+            <strong>Chinese Words Fall From Sky:</strong>
+            <p>5,000 common Chinese words (HSK 1-6) will drop continuously towards your city.</p>
+          </div>
+        </div>
+        <div class="rule-card">
+          <span class="rule-icon">⌨️</span>
+          <div>
+            <strong>Type Exact Pinyin:</strong>
+            <p>Type the Pinyin (e.g. <code>ni</code>, <code>hao</code>, <code>nihao</code>, <code>zhongwen</code>). No need to type tones!</p>
+          </div>
+        </div>
+        <div class="rule-card">
+          <span class="rule-icon">⚡</span>
+          <div>
+            <strong>100 HP Shield:</strong>
+            <p>Every word touching the ground damages your shield by <strong>-1 HP</strong>. Reaching 0 HP = City Falls!</p>
+          </div>
+        </div>
+        <div class="rule-card">
+          <span class="rule-icon">🔊</span>
+          <div>
+            <strong>Listen & Learn:</strong>
+            <p>Each destroyed word is pronounced aloud in native Mandarin with English/Vietnamese meaning!</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="cyber-launch-btn" id="startGameBtn">
+          <span class="btn-laser-glow"></span>
+          INITIALIZE CANNON & START DEFENSE
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Over Modal -->
+  <div class="modal-overlay" id="gameOverModal" style="display: none;">
+    <div class="cyber-modal game-over-modal">
+      <div class="game-over-header">
+        <span class="game-over-glitch" data-text="SHIELD BREACHED">SHIELD BREACHED</span>
+        <div class="game-over-sub">CYBER CORE DESTROYED // GAME OVER</div>
+      </div>
+
+      <div class="stats-summary-grid">
+        <div class="summary-card">
+          <span class="summary-label">FINAL SCORE</span>
+          <span class="summary-val" id="finalScore">0</span>
+        </div>
+        <div class="summary-card">
+          <span class="summary-label">WORDS DESTROYED</span>
+          <span class="summary-val accent-val" id="finalKills">0</span>
+        </div>
+        <div class="summary-card">
+          <span class="summary-label">MAX COMBO STREAK</span>
+          <span class="summary-val" id="finalMaxCombo">0</span>
+        </div>
+        <div class="summary-card">
+          <span class="summary-label">WORDS MISSED</span>
+          <span class="summary-val alert-val" id="finalMissed">0</span>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="cyber-launch-btn" id="restartGameBtn">
+          <span class="btn-laser-glow"></span>
+          REBOOT SHIELD (PLAY AGAIN)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pause Modal -->
+  <div class="modal-overlay" id="pauseModal" style="display: none;">
+    <div class="cyber-modal pause-modal">
+      <h2 class="modal-title">TACTICAL PAUSE</h2>
+      <p style="color: var(--text-muted); margin: 15px 0;">All cyber defense systems on standby.</p>
+      <button class="cyber-launch-btn" id="resumeGameBtn">
+        RESUME DEFENSE
+      </button>
+    </div>
+  </div>
+
+  <!-- 5000 Words Vocabulary Library Script -->
+  <script src="words.js"></script>
+  <!-- Audio Synthesizer & Speech Engine -->
   <script src="audio.js"></script>
-  <script src="games.js"></script>
-  <script src="app.js"></script>
+  <!-- Main Game Mechanics Script -->
+  <script src="game.js"></script>
 </body>
 </html>
