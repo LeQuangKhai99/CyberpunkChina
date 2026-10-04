@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CyberNet OS - An immersive Cyberpunk Terminal & Netrunner Hacking Simulator featuring procedural Web Audio, Breach Protocol minigames, and live HUD telemetry.">
+  <title>CYBERNET // v3.84 Netrunner Terminal</title>
+  
+  <!-- Google Fonts for High-Tech Aesthetic -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600;700&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-cyberpunk crt-enabled">
+  <!-- Scanline & Vignette CRT Overlays -->
+  <div class="crt-overlay" id="crtOverlay"></div>
+  <div class="scanlines"></div>
+  <div class="vignette"></div>
+
+  <!-- Interactive Background Canvas (Matrix Rain / Neural Particles) -->
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- Main Cyber Container -->
+  <div class="deck-container">
+    
+    <!-- Top System Header Bar -->
+    <header class="cyber-header">
+      <div class="header-left">
+        <div class="sys-badge status-pulse">
+          <span class="blinking-dot"></span>
+          <span class="sys-label">NETLINK: <strong id="netlinkStatus">ONLINE (ARASAKA-PROXY-09)</strong></span>
+        </div>
+        <div class="os-title">
+          <span class="glitch-text" data-text="CYBERNET // OS v3.84">CYBERNET // OS v3.84</span>
+          <span class="sub-version">[DECK: MILITECH PARALINE MK.IV]</span>
+        </div>
+      </div>
+
+      <div class="header-center">
+        <div class="hud-stat-pill">
+          <span class="pill-label">RAM</span>
+          <div class="mini-bar"><div class="mini-bar-fill" id="topRamFill" style="width: 48%;"></div></div>
+          <span class="pill-val" id="topRamVal">7.8 / 16 GB</span>
+        </div>
+        <div class="hud-stat-pill">
+          <span class="pill-label">CREDITS</span>
+          <span class="pill-val cred-glow" id="headerCreds">₮ 1,250</span>
+        </div>
+        <div class="hud-stat-pill">
+          <span class="pill-label">TRACE</span>
+          <div class="mini-bar trace-bar"><div class="mini-bar-fill trace-fill" id="topTraceFill" style="width: 0%;"></div></div>
+          <span class="pill-val alert-val" id="topTraceVal">0%</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <!-- Quick Control Buttons -->
+        <button class="cyber-btn-icon" id="soundToggleBtn" title="Toggle Sound FX (Web Audio)">
+          <span class="icon">🔊</span> <span class="btn-text">SFX: ON</span>
+        </button>
+        <button class="cyber-btn-icon" id="musicToggleBtn" title="Toggle Synthwave Drone Ambiance">
+          <span class="icon">🎵</span> <span class="btn-text">BGM: OFF</span>
+        </button>
+        <div class="theme-select-wrapper">
+          <label for="themeSelect">UI PALETTE:</label>
+          <select id="themeSelect" class="cyber-select">
+            <option value="theme-cyberpunk">CYBERPUNK NEON</option>
+            <option value="theme-matrix">MATRIX DEEP GREEN</option>
+            <option value="theme-amber">80s RETRO AMBER</option>
+            <option value="theme-syndicate">SYNDICATE VIOLET</option>
+          </select>
+        </div>
+        <button class="cyber-btn-icon" id="crtToggleBtn" title="Toggle CRT Flicker Effect">
+          <span class="btn-text">CRT: ON</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Workspace Layout -->
+    <main class="cyber-workspace">
+      
+      <!-- Left Panel: Terminal CLI & Active Minigame Display -->
+      <section class="terminal-panel" id="terminalPanel">
+        <div class="panel-header">
+          <div class="window-decorations">
+            <span class="window-btn red"></span>
+            <span class="window-btn yellow"></span>
+            <span class="window-btn green"></span>
+          </div>
+          <div class="terminal-tab-title">
+            <span class="tab-icon">❯_</span>
+            <span id="activeTerminalTitle">bash://netrunner@cyberspace:~/black-ops</span>
+          </div>
+          <div class="quick-commands">
+            <button class="quick-cmd-chip" data-cmd="help">HELP</button>
+            <button class="quick-cmd-chip" data-cmd="scan">SCAN</button>
+            <button class="quick-cmd-chip" data-cmd="breach">BREACH PROTOCOL</button>
+            <button class="quick-cmd-chip" data-cmd="decrypt">CIPHER</button>
+            <button class="quick-cmd-chip" data-cmd="shop">BLACK MARKET</button>
+            <button class="quick-cmd-chip" data-cmd="clear">CLEAR</button>
+          </div>
+        </div>
+
+        <!-- Terminal Output Container -->
+        <div class="terminal-viewport" id="terminalViewport">
+          <div id="terminalOutput">
+            <!-- Dynamic Output lines will be injected here -->
+          </div>
+
+          <!-- Dynamic Game View Overlay (Inserted when breach or decrypt minigame is active) -->
+          <div class="minigame-container" id="minigameContainer" style="display: none;">
+            <!-- Game Canvas / Matrix UI injected here -->
+          </div>
+
+          <!-- Command Line Prompt Form -->
+          <div class="terminal-prompt-line" id="promptLine">
+            <span class="prompt-user">guest@nightcity</span>
+            <span class="prompt-separator">:</span>
+            <span class="prompt-path">~/ops</span>
+            <span class="prompt-sym">#</span>
+            <div class="input-wrapper">
+              <input type="text" id="terminalInput" autocomplete="off" spellcheck="false" placeholder="Type a command or 'help'..." autofocus>
+              <div class="custom-cursor" id="customCursor"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="terminal-footer">
+          <span class="footer-tip">💡 TIP: Use <kbd>Tab</kbd> to auto-complete, <kbd>↑</kbd>/<kbd>↓</kbd> for command history.</span>
+          <span class="audio-status-indicator" id="audioStateIndicator">AUDIO SYNTH: INITIALIZED</span>
+        </div>
+      </section>
+
+      <!-- Right Panel: Telemetry, Target Scanner & Dossier HUD -->
+      <aside class="hud-sidebar">
+        
+        <!-- Dossier Card -->
+        <div class="hud-card profile-card">
+          <div class="hud-card-header">
+            <span class="hud-card-title">NETRUNNER DOSSIER</span>
+            <span class="badge" id="playerAliasBadge">VEXEL // GHOST</span>
+          </div>
+          <div class="hud-card-body profile-body">
+            <div class="avatar-box">
+              <div class="avatar-glitch" id="avatarGlitch">
+                <div class="avatar-art">⚡_⚡</div>
+              </div>
+              <div class="alias-info">
+                <div class="alias-name" id="dossierName">NETRUNNER: VEXEL</div>
+                <div class="rank-name" id="dossierRank">CLASS: SCRIPT KIDDIE</div>
+                <div class="exp-bar-container">
+                  <div class="exp-bar-fill" id="expBarFill" style="width: 25%;"></div>
+                </div>
+                <div class="exp-text">EXP: <span id="currentExp">120</span> / <span id="nextLevelExp">500</span></div>
+              </div>
+            </div>
+            <div class="stat-grid">
+              <div class="stat-item">
+                <span class="stat-label">ICE BREAKER</span>
+                <span class="stat-val" id="hudIceBreaker">v1.2 Standard</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">BUFFER CAPACITY</span>
+                <span class="stat-val" id="hudBufferSize">4 Slots</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">HACKS COMPLETED</span>
+                <span class="stat-val" id="hudHacksCount">0</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">CREDITS ACQUIRED</span>
+                <span class="stat-val accent-val" id="hudTotalCreds">₮ 1,250</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real-Time Target Scanner -->
+        <div class="hud-card target-card">
+          <div class="hud-card-header">
+            <span class="hud-card-title">SUBNET TARGET SCANNER</span>
+            <span class="badge live-badge">LIVE RADAR</span>
+          </div>
+          <div class="hud-card-body">
+            <div class="radar-box">
+              <div class="radar-sweep"></div>
+              <div class="radar-ring r1"></div>
+              <div class="radar-ring r2"></div>
+              <div class="radar-ring r3"></div>
+              <div class="radar-nodes" id="radarNodesContainer">
+                <!-- Dynamically populated radar blips -->
+              </div>
+            </div>
+            
+            <div class="target-list" id="targetList">
+              <!-- Target items dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Telemetry Graphs -->
+        <div class="hud-card telemetry-card">
+          <div class="hud-card-header">
+            <span class="hud-card-title">ICE THREAT & SIGNAL FREQUENCY</span>
+            <span class="badge" id="iceThreatLevel">SECURE</span>
+          </div>
+          <div class="hud-card-body">
+            <div class="oscilloscope-wrapper">
+              <canvas id="oscCanvas" width="280" height="70"></canvas>
+            </div>
+            <div class="network-traffic-info">
+              <div class="traffic-row">
+                <span>INBOUND PACKETS:</span>
+                <span class="glow-green" id="inboundRate">244 kb/s</span>
+              </div>
+              <div class="traffic-row">
+                <span>CORPO INTRUSION MONITOR:</span>
+                <span class="glow-cyan" id="corpoMonitor">DORMANT</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+
+    </main>
+
+    <!-- Bottom Status Bar -->
+    <footer class="cyber-footer">
+      <div class="footer-left">
+        <span class="bracket">[</span> <span class="footer-status-text" id="footerLog">ALL SYSTEMS NOMINAL. READY FOR CYBER OPERATIONS.</span> <span class="bracket">]</span>
+      </div>
+      <div class="footer-right">
+        <span class="clock-display" id="cyberClock">23:59:59 NC-ST</span>
+        <span class="coords-display">LAT 35.689 // LON 139.692</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Audio and Game Logic Scripts -->
+  <script src="audio.js"></script>
+  <script src="games.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
