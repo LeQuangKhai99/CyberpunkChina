@@ -237,9 +237,43 @@ class PinyinDefenderGame {
       this.togglePause();
     });
 
+    // Settings Gear Button — toggle collapsible settings panel
+    const settingsGearBtn = document.getElementById('settingsGearBtn');
+    const settingsPanel = document.getElementById('settingsPanel');
+    if (settingsGearBtn && settingsPanel) {
+      settingsGearBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = settingsPanel.classList.toggle('open');
+        settingsGearBtn.classList.toggle('open', isOpen);
+        // When closing, return focus to input
+        if (!isOpen) this.focusInput();
+      });
+
+      // Close settings panel when clicking anywhere outside it
+      document.addEventListener('click', (e) => {
+        if (
+          settingsPanel.classList.contains('open') &&
+          !settingsPanel.contains(e.target) &&
+          e.target !== settingsGearBtn &&
+          !settingsGearBtn.contains(e.target)
+        ) {
+          settingsPanel.classList.remove('open');
+          settingsGearBtn.classList.remove('open');
+          this.focusInput();
+        }
+      });
+    }
+
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && this.isStarted && !this.isGameOver) {
-        this.togglePause();
+        // Close settings panel first if open, then pause
+        if (settingsPanel && settingsPanel.classList.contains('open')) {
+          settingsPanel.classList.remove('open');
+          if (settingsGearBtn) settingsGearBtn.classList.remove('open');
+          this.focusInput();
+        } else {
+          this.togglePause();
+        }
       }
     });
 

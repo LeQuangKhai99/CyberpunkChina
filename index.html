@@ -64,60 +64,75 @@
         </div>
       </div>
 
-      <!-- Level & Options Menu -->
-      <div class="hud-controls">
-        <div class="control-group">
-          <label for="hskSelect">CẤP HSK:</label>
-          <select id="hskSelect" class="cyber-select">
-            <option value="all">TẤT CẢ HSK (5.000 Từ)</option>
-            <option value="1">HSK 1 (150 Từ)</option>
-            <option value="2">HSK 2 (150 Từ)</option>
-            <option value="3">HSK 3 (300 Từ)</option>
-            <option value="4">HSK 4 (600 Từ)</option>
-            <option value="5">HSK 5 (1.300 Từ)</option>
-            <option value="6">HSK 6 (2.500 Từ)</option>
-          </select>
-        </div>
+      <!-- HUD Right: Pinyin Toggle + Pause + Settings Gear -->
+      <div class="hud-right-actions">
 
-        <div class="control-group">
-          <label for="speedSelect">TỐC ĐỘ:</label>
-          <select id="speedSelect" class="cyber-select">
-            <option value="0.75">THƯ THÁI (0.75x)</option>
-            <option value="1.0" selected>CHUẨN (1.0x)</option>
-            <option value="1.4">NHANH (1.4x)</option>
-            <option value="2.0">CỰC NHANH (2.0x)</option>
-          </select>
-        </div>
-
-        <div class="control-group">
-          <label for="langSelect">CHÚ THÍCH:</label>
-          <select id="langSelect" class="cyber-select">
-            <option value="vi" selected>🇻🇳 TIẾNG VIỆT</option>
-            <option value="bi">🇻🇳🇬🇧 SONG NGỮ</option>
-            <option value="en">🇬🇧 TIẾNG ANH</option>
-          </select>
-        </div>
-
-        <!-- Prominent Pinyin Toggle Button (Memorization Challenge Mode) -->
-        <button class="pinyin-toggle-btn" id="togglePinyinBtn" title="Chế độ ghi nhớ: Bấm để Ẩn hoặc Hiện Pinyin để tự nhớ mặt chữ Hán">
+        <!-- Prominent Pinyin Toggle Button (always visible) -->
+        <button class="pinyin-toggle-btn" id="togglePinyinBtn" title="Ẩn/Hiện Pinyin — phím tắt F2">
           <span class="pinyin-btn-icon">👁️</span>
           <span class="pinyin-btn-title">PINYIN:</span>
           <span class="pinyin-status-pill" id="pinyinStatusPill">HIỆN</span>
         </button>
 
-        <div class="btn-group">
-          <button class="icon-toggle active" id="voiceToggleBtn" title="Bật/Tắt phát âm tiếng Trung chuẩn (zh-CN)">
-            🗣️ <span class="btn-txt">GIỌNG ĐỌC: BẬT</span>
-          </button>
-          <button class="icon-toggle active" id="sfxToggleBtn" title="Bật/Tắt hiệu ứng âm thanh 8-bit">
-            🔊 <span class="btn-txt">HIỆU ỨNG: BẬT</span>
-          </button>
-          <button class="icon-toggle active" id="bgmToggleBtn" title="Bật/Tắt nhạc nền 8-bit chiptune">
-            🎵 <span class="btn-txt">NHẠC: BẬT</span>
-          </button>
-          <button class="icon-toggle" id="pauseBtn" title="Tạm dừng">
-            ⏸️ <span class="btn-txt">TẠM DỪNG</span>
-          </button>
+        <!-- Pause Button -->
+        <button class="icon-toggle" id="pauseBtn" title="Tạm dừng (Esc)">
+          ⏸️ <span class="btn-txt">TẠM DỪNG</span>
+        </button>
+
+        <!-- Settings Gear Button -->
+        <button class="settings-gear-btn" id="settingsGearBtn" title="Cài đặt trò chơi">
+          ⚙️ <span class="settings-gear-label">CÀI ĐẶT</span>
+        </button>
+      </div>
+
+      <!-- Collapsible Settings Panel (hidden by default) -->
+      <div class="settings-panel" id="settingsPanel">
+        <div class="settings-panel-inner">
+          <div class="settings-row">
+            <div class="control-group">
+              <label for="hskSelect">📚 CẤP HSK:</label>
+              <select id="hskSelect" class="cyber-select">
+                <option value="all">TẤT CẢ HSK (5.000 Từ)</option>
+                <option value="1">HSK 1 (150 Từ)</option>
+                <option value="2">HSK 2 (150 Từ)</option>
+                <option value="3">HSK 3 (300 Từ)</option>
+                <option value="4">HSK 4 (600 Từ)</option>
+                <option value="5">HSK 5 (1.300 Từ)</option>
+                <option value="6">HSK 6 (2.500 Từ)</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="speedSelect">⚡ TỐC ĐỘ:</label>
+              <select id="speedSelect" class="cyber-select">
+                <option value="0.75">THƯ THÁI (0.75x)</option>
+                <option value="1.0" selected>CHUẨN (1.0x)</option>
+                <option value="1.4">NHANH (1.4x)</option>
+                <option value="2.0">CỰC NHANH (2.0x)</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="langSelect">🌐 CHÚ THÍCH:</label>
+              <select id="langSelect" class="cyber-select">
+                <option value="vi" selected>🇻🇳 TIẾNG VIỆT</option>
+                <option value="bi">🇻🇳🇬🇧 SONG NGỮ</option>
+                <option value="en">🇬🇧 TIẾNG ANH</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <button class="icon-toggle active" id="voiceToggleBtn" title="Bật/Tắt phát âm tiếng Trung">
+              🗣️ <span class="btn-txt">GIỌNG ĐỌC: BẬT</span>
+            </button>
+            <button class="icon-toggle active" id="sfxToggleBtn" title="Bật/Tắt hiệu ứng âm thanh 8-bit">
+              🔊 <span class="btn-txt">HIỆU ỨNG: BẬT</span>
+            </button>
+            <button class="icon-toggle active" id="bgmToggleBtn" title="Bật/Tắt nhạc nền 8-bit chiptune">
+              🎵 <span class="btn-txt">NHẠC: BẬT</span>
+            </button>
+          </div>
         </div>
       </div>
 

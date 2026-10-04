@@ -325,11 +325,93 @@ body {
   color: var(--neon-cyan);
 }
 
-/* Controls */
-.hud-controls {
+/* HUD Right Section: Pinyin + Pause + Settings Gear */
+.hud-right-actions {
   display: flex;
   align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* Settings Gear Button */
+.settings-gear-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  background: rgba(0, 243, 255, 0.08);
+  border: 1px solid rgba(0, 243, 255, 0.35);
+  color: var(--text-muted);
+  font-family: var(--font-tech);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+  border-radius: 2px;
+}
+
+.settings-gear-btn:hover,
+.settings-gear-btn.open {
+  background: rgba(0, 243, 255, 0.2);
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+  box-shadow: var(--glow-cyan);
+}
+
+.settings-gear-btn.open .settings-gear-label::before {
+  content: "✕ ";
+}
+
+/* Collapsible Settings Panel */
+.settings-panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  z-index: 200;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.22s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.settings-panel.open {
+  max-height: 160px;
+  opacity: 1;
+  pointer-events: all;
+}
+
+.settings-panel-inner {
+  background: rgba(4, 10, 22, 0.97);
+  border: 1px solid rgba(0, 243, 255, 0.3);
+  border-top: 2px solid var(--neon-cyan);
+  backdrop-filter: blur(18px);
+  padding: 12px 20px;
+  display: flex;
+  flex-direction: column;
   gap: 10px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 243, 255, 0.15);
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.settings-row::before {
+  content: "";
+  display: block;
+  width: 3px;
+  height: 20px;
+  background: var(--neon-cyan);
+  border-radius: 2px;
+  opacity: 0.6;
+  flex-shrink: 0;
 }
 
 .control-group {
@@ -357,12 +439,6 @@ body {
   color: #fff;
 }
 
-.btn-group {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
 .icon-toggle {
   background: rgba(0, 243, 255, 0.08);
   border: 1px solid rgba(0, 243, 255, 0.3);
@@ -376,6 +452,7 @@ body {
   display: flex;
   align-items: center;
   gap: 4px;
+  border-radius: 2px;
 }
 
 .icon-toggle:hover {
