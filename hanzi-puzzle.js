@@ -52,6 +52,132 @@ const RADICAL_DECOMPOSITIONS = [
   { hanzi: '笑', components: ['⺮', '夭'], pinyin: 'xiào', level: 2, meaning: 'cười', etymology: '💡 Chiết tự: Ngọn trúc (⺮) đung đưa uốn lượn (夭) trong gió thoảng như điệu cười giòn giã.' }
 ];
 
+// Comprehensive Standard Radical & Component Name Dictionary (Gốc rễ Bộ thủ Hán tự)
+const RADICAL_NAMES_MAP = {
+  '亻': { short: 'Bộ Nhân đứng', full: 'Bộ Nhân đứng (người)' },
+  '人': { short: 'Bộ Nhân', full: 'Bộ Nhân (người)' },
+  '木': { short: 'Bộ Mộc', full: 'Bộ Mộc (cây cối)' },
+  '日': { short: 'Bộ Nhật', full: 'Bộ Nhật (mặt trời)' },
+  '月': { short: 'Bộ Nguyệt', full: 'Bộ Nguyệt (mặt trăng)' },
+  '女': { short: 'Bộ Nữ', full: 'Bộ Nữ (người nữ)' },
+  '子': { short: 'Bộ Tử', full: 'Bộ Tử (con cái)' },
+  '手': { short: 'Bộ Thủ', full: 'Bộ Thủ (bàn tay)' },
+  '扌': { short: 'Bộ Đề thủ', full: 'Bộ Đề thủ (bàn tay)' },
+  '目': { short: 'Bộ Mục', full: 'Bộ Mục (con mắt)' },
+  '小': { short: 'Bộ Tiểu', full: 'Bộ Tiểu (nhỏ bé)' },
+  '大': { short: 'Bộ Đại', full: 'Bộ Đại (to lớn)' },
+  '田': { short: 'Bộ Điền', full: 'Bộ Điền (ruộng đất)' },
+  '力': { short: 'Bộ Lực', full: 'Bộ Lực (sức mạnh)' },
+  '宀': { short: 'Bộ Miên', full: 'Bộ Miên (mái nhà)' },
+  '豕': { short: 'Bộ Thỉ', full: 'Bộ Thỉ (con heo/lợn)' },
+  '门': { short: 'Bộ Môn', full: 'Bộ Môn (cánh cổng)' },
+  '口': { short: 'Bộ Khẩu', full: 'Bộ Khẩu (cái miệng)' },
+  '耳': { short: 'Bộ Nhĩ', full: 'Bộ Nhĩ (tai nghe)' },
+  '火': { short: 'Bộ Hỏa', full: 'Bộ Hỏa (ngọn lửa)' },
+  '灬': { short: 'Bộ Hỏa dưới', full: 'Bộ Hỏa 4 chấm (lửa)' },
+  '一': { short: 'Bộ Nhất', full: 'Bộ Nhất (số một)' },
+  '上': { short: 'Chữ Thượng', full: 'Chữ Thượng (phía trên)' },
+  '下': { short: 'Chữ Hạ', full: 'Chữ Hạ (phía dưới)' },
+  '不': { short: 'Chữ Bất', full: 'Chữ Bất (không phải)' },
+  '正': { short: 'Chữ Chính', full: 'Chữ Chính (ngay ngắn)' },
+  '氵': { short: 'Bộ Thủy', full: 'Bộ Ba chấm thủy (nước)' },
+  '水': { short: 'Bộ Thủy', full: 'Bộ Thủy (nước)' },
+  '言': { short: 'Bộ Ngôn', full: 'Bộ Ngôn (lời nói)' },
+  '讠': { short: 'Bộ Ngôn', full: 'Bộ Ngôn (lời nói)' },
+  '舌': { short: 'Bộ Thiệt', full: 'Bộ Thiệt (chiếc lưỡi)' },
+  '身': { short: 'Bộ Thân', full: 'Bộ Thân (thân thể)' },
+  '寸': { short: 'Bộ Thốn', full: 'Bộ Thốn (tấc tay)' },
+  '马': { short: 'Bộ Mã', full: 'Bộ Mã (con ngựa)' },
+  '父': { short: 'Bộ Phụ', full: 'Bộ Phụ (người cha)' },
+  '巴': { short: 'Chữ Ba', full: 'Chữ Ba (mượn âm bà)' },
+  '且': { short: 'Chữ Thả', full: 'Chữ Thả (tấm bia tổ)' },
+  '未': { short: 'Chữ Vị', full: 'Chữ Vị (chưa tới)' },
+  '乞': { short: 'Chữ Khất', full: 'Chữ Khất (cầu xin)' },
+  '青': { short: 'Bộ Thanh', full: 'Bộ Thanh (màu xanh)' },
+  '忄': { short: 'Bộ Tâm đứng', full: 'Bộ Tâm đứng (trái tim)' },
+  '心': { short: 'Bộ Tâm', full: 'Bộ Tâm (trái tim)' },
+  '丁': { short: 'Bộ Đinh', full: 'Bộ Đinh (cái đinh)' },
+  '立': { short: 'Bộ Lập', full: 'Bộ Lập (đứng thẳng)' },
+  '又': { short: 'Bộ Hựu', full: 'Bộ Hựu (bàn tay phải)' },
+  '交': { short: 'Chữ Giao', full: 'Chữ Giao (giao lưu)' },
+  '可': { short: 'Chữ Khả', full: 'Chữ Khả (có thể)' },
+  '每': { short: 'Chữ Mỗi', full: 'Chữ Mỗi (mỗi một)' },
+  '王': { short: 'Bộ Vương', full: 'Bộ Vương / Ngọc (ngọc quý)' },
+  '玉': { short: 'Bộ Ngọc', full: 'Bộ Ngọc (viên ngọc)' },
+  '元': { short: 'Chữ Nguyên', full: 'Chữ Nguyên (bắt đầu)' },
+  '见': { short: 'Bộ Kiến', full: 'Bộ Kiến (trông thấy)' },
+  '饣': { short: 'Bộ Thực', full: 'Bộ Thực (thức ăn)' },
+  '食': { short: 'Bộ Thực', full: 'Bộ Thực (ăn uống)' },
+  '反': { short: 'Chữ Phản', full: 'Chữ Phản (lật lại)' },
+  '包': { short: 'Bộ Bao', full: 'Bộ Bao (bao bọc, túi)' },
+  '我': { short: 'Chữ Ngã', full: 'Chữ Ngã (bản thân tôi)' },
+  '雨': { short: 'Bộ Vũ', full: 'Bộ Vũ (cơn mưa)' },
+  '彐': { short: 'Bộ Ký', full: 'Bộ Ký (bàn tay gom)' },
+  '⺮': { short: 'Bộ Trúc', full: 'Bộ Trúc (cây tre)' },
+  '竹': { short: 'Bộ Trúc', full: 'Bộ Trúc (cây tre)' },
+  '毛': { short: 'Bộ Mao', full: 'Bộ Mao (lông thú)' },
+  '夭': { short: 'Chữ Yêu', full: 'Chữ Yêu (uốn lượn)' },
+  '辶': { short: 'Bộ Quai xước', full: 'Bộ Quai xước (bước đi)' },
+  '艹': { short: 'Bộ Thảo', full: 'Bộ Thảo đầu (cỏ cây)' },
+  '犭': { short: 'Bộ Khuyển', full: 'Bộ Khuyển (chó, thú vật)' },
+  '犬': { short: 'Bộ Khuyển', full: 'Bộ Khuyển (chó săn)' },
+  '阝': { short: 'Bộ Phụ/Ấp', full: 'Bộ Phụ / Ấp (gò đất)' },
+  '纟': { short: 'Bộ Mịch', full: 'Bộ Mịch (sợi tơ chỉ)' },
+  '糸': { short: 'Bộ Mịch', full: 'Bộ Mịch (dây tơ)' },
+  '钅': { short: 'Bộ Kim', full: 'Bộ Kim (kim loại, vàng)' },
+  '金': { short: 'Bộ Kim', full: 'Bộ Kim (kim khí, vàng)' },
+  '土': { short: 'Bộ Thổ', full: 'Bộ Thổ (đất đai)' },
+  '石': { short: 'Bộ Thạch', full: 'Bộ Thạch (hòn đá)' },
+  '禾': { short: 'Bộ Hòa', full: 'Bộ Hòa (cây lúa)' },
+  '虫': { short: 'Bộ Trùng', full: 'Bộ Trùng (sâu bọ)' },
+  '鸟': { short: 'Bộ Điểu', full: 'Bộ Điểu (loài chim)' },
+  '鱼': { short: 'Bộ Ngư', full: 'Bộ Ngư (con cá)' },
+  '足': { short: 'Bộ Túc', full: 'Bộ Túc (bàn chân)' },
+  '⻊': { short: 'Bộ Túc', full: 'Bộ Túc (bàn chân)' },
+  '页': { short: 'Bộ Hiệt', full: 'Bộ Hiệt (cái đầu, trang)' },
+  '贝': { short: 'Bộ Bối', full: 'Bộ Bối (vỏ sò, tiền)' },
+  '车': { short: 'Bộ Xa', full: 'Bộ Xa (xe cộ)' },
+  '舟': { short: 'Bộ Chu', full: 'Bộ Chu (thuyền bè)' },
+  '斤': { short: 'Bộ Cân', full: 'Bộ Cân (cái rìu đốn gỗ)' },
+  '弓': { short: 'Bộ Cung', full: 'Bộ Cung (cây cung)' },
+  '刀': { short: 'Bộ Đao', full: 'Bộ Đao (con dao)' },
+  '刂': { short: 'Bộ Đao đứng', full: 'Bộ Đao đứng (con dao)' },
+  '十': { short: 'Bộ Thập', full: 'Bộ Thập (số 10)' },
+  '广': { short: 'Bộ Quảng', full: 'Bộ Quảng (mái nhà rộng)' },
+  '厂': { short: 'Bộ Hán', full: 'Bộ Hán (vách núi đá)' },
+  '尸': { short: 'Bộ Thi', full: 'Bộ Thi (thân xác)' },
+  '夕': { short: 'Bộ Tịch', full: 'Bộ Tịch (hoàng hôn)' },
+  '文': { short: 'Bộ Văn', full: 'Bộ Văn (văn chương, chữ)' },
+  '方': { short: 'Bộ Phương', full: 'Bộ Phương (phương hướng)' },
+  '欠': { short: 'Bộ Khiếm', full: 'Bộ Khiếm (khuyết thiếu)' },
+  '止': { short: 'Bộ Chỉ', full: 'Bộ Chỉ (dừng lại)' },
+  '白': { short: 'Bộ Bạch', full: 'Bộ Bạch (màu trắng)' },
+  '穴': { short: 'Bộ Huyệt', full: 'Bộ Huyệt (hang động)' },
+  '米': { short: 'Bộ Mễ', full: 'Bộ Mễ (hạt gạo)' },
+  '羊': { short: 'Bộ Dương', full: 'Bộ Dương (con dê/cừu)' },
+  '⺶': { short: 'Bộ Dương', full: 'Bộ Dương (con dê)' },
+  '衣': { short: 'Bộ Y', full: 'Bộ Y (áo quần)' },
+  '衤': { short: 'Bộ Y', full: 'Bộ Y (áo quần)' },
+  '示': { short: 'Bộ Thị', full: 'Bộ Thị (thần linh cúng tế)' },
+  '礻': { short: 'Bộ Thị', full: 'Bộ Thị (thần linh)' },
+  '走': { short: 'Bộ Tẩu', full: 'Bộ Tẩu (chạy)' },
+  '里': { short: 'Bộ Lý', full: 'Bộ Lý (dặm làng xóm)' },
+  '风': { short: 'Bộ Phong', full: 'Bộ Phong (ngọn gió)' },
+  '飞': { short: 'Bộ Phi', full: 'Bộ Phi (bay lượn)' },
+  '高': { short: 'Bộ Cao', full: 'Bộ Cao (chiều cao)' },
+  '黑': { short: 'Bộ Hắc', full: 'Bộ Hắc (màu đen)' }
+};
+
+function getRadicalInfo(char) {
+  if (RADICAL_NAMES_MAP[char]) {
+    return RADICAL_NAMES_MAP[char];
+  }
+  return {
+    short: `Bộ ${char}`,
+    full: `Bộ thủ ${char}`
+  };
+}
+
 class HanziPuzzleGame {
   constructor() {
     this.mode = 'radicals'; // 'radicals' or 'compounds'
@@ -80,7 +206,7 @@ class HanziPuzzleGame {
     this.scoreDisplay = document.getElementById('pzScoreDisplay');
     this.streakDisplay = document.getElementById('pzStreakDisplay');
     this.solvedDisplay = document.getElementById('pzSolvedDisplay');
-    this.successBox = document.getElementById('pzSuccessBox');
+    this.successModal = document.getElementById('pzSuccessModal');
     this.hskSelect = document.getElementById('pzHskSelect');
 
     // Synthesizer Audio
@@ -173,7 +299,7 @@ class HanziPuzzleGame {
      QUESTION GENERATION
      ======================================================================== */
   loadNewQuestion() {
-    this.successBox.style.display = 'none';
+    if (this.successModal) this.successModal.style.display = 'none';
 
     if (this.mode === 'radicals') {
       this.generateRadicalQuestion();
@@ -210,7 +336,15 @@ class HanziPuzzleGame {
     const distractors = allComponents.sort(() => 0.5 - Math.random()).slice(0, 3);
     const combined = [...q.components, ...distractors].sort(() => 0.5 - Math.random());
 
-    this.trayPieces = combined.map((char, idx) => ({ id: `p_${idx}_${char}`, char, tag: 'Bộ thủ' }));
+    this.trayPieces = combined.map((char, idx) => {
+      const rad = getRadicalInfo(char);
+      return {
+        id: `p_${idx}_${char}`,
+        char,
+        tag: rad.short,
+        fullName: rad.full
+      };
+    });
     this.slottedPieces = new Array(this.expectedPieces.length).fill(null);
   }
 
@@ -242,10 +376,15 @@ class HanziPuzzleGame {
       pinyin: w.pinyin || w.clean,
       level: w.level,
       meaning: w.meaning_vn || w.meaning || '',
-      etymology: `💡 Từ ghép HSK ${w.level}: "${w.hanzi}" được ghép từ các chữ: ${chars.join(' + ')} mang nghĩa: "${w.meaning_vn || w.meaning}".`
+      etymology: `💡 Từ ghép HSK ${w.level}: "${w.hanzi}" được tạo thành từ các chữ: ${chars.join(' + ')} mang nghĩa: "${w.meaning_vn || w.meaning}".`
     };
 
-    this.trayPieces = combined.map((char, idx) => ({ id: `p_${idx}_${char}`, char, tag: `Chữ Hán` }));
+    this.trayPieces = combined.map((char, idx) => ({
+      id: `p_${idx}_${char}`,
+      char,
+      tag: `Chữ ${char}`,
+      fullName: `Chữ Hán: ${char}`
+    }));
     this.slottedPieces = new Array(this.expectedPieces.length).fill(null);
   }
 
@@ -322,7 +461,7 @@ class HanziPuzzleGame {
 
     el.innerHTML = `
       <span class="piece-char">${piece.char}</span>
-      <span class="piece-tag">${piece.tag}</span>
+      <span class="piece-tag" title="${piece.fullName || piece.tag}">${piece.tag}</span>
     `;
 
     if (!isPlaced) {
@@ -408,14 +547,38 @@ class HanziPuzzleGame {
     this.playSuccessSound();
     this.speakChinese(this.currentQuestion.hanzi);
 
-    // Populate Success Showcase Box
+    // Populate Success Modal Popup (Center of Screen)
     document.getElementById('pzSuccessPts').textContent = pts;
     document.getElementById('pzSuccessHanzi').textContent = this.currentQuestion.hanzi;
     document.getElementById('pzSuccessPinyin').textContent = this.currentQuestion.pinyin;
     document.getElementById('pzSuccessMeaning').textContent = this.currentQuestion.meaning;
     document.getElementById('pzSuccessExplanation').textContent = this.currentQuestion.etymology;
 
-    this.successBox.style.display = 'flex';
+    // Populate Formula Breakdown Box
+    const formulaItems = document.getElementById('pzSuccessFormulaItems');
+    if (formulaItems) {
+      formulaItems.innerHTML = '';
+      if (this.mode === 'radicals') {
+        const chipsHtml = this.currentQuestion.components.map(c => {
+          const info = getRadicalInfo(c);
+          return `<div class="formula-chip"><span class="f-char">${c}</span><span class="f-name">${info.full}</span></div>`;
+        }).join('<span class="formula-plus">+</span>');
+
+        formulaItems.innerHTML = `${chipsHtml} <span class="formula-equal">➔</span> <div class="formula-chip formula-result"><span class="f-char">${this.currentQuestion.hanzi}</span><span class="f-name">${this.currentQuestion.meaning}</span></div>`;
+      } else {
+        const chars = Array.from(this.currentQuestion.hanzi);
+        const chipsHtml = chars.map(c => {
+          const info = getRadicalInfo(c);
+          return `<div class="formula-chip"><span class="f-char">${c}</span><span class="f-name">${info.short || `Chữ ${c}`}</span></div>`;
+        }).join('<span class="formula-plus">+</span>');
+
+        formulaItems.innerHTML = `${chipsHtml} <span class="formula-equal">➔</span> <div class="formula-chip formula-result"><span class="f-char">${this.currentQuestion.hanzi}</span><span class="f-name">${this.currentQuestion.meaning}</span></div>`;
+      }
+    }
+
+    if (this.successModal) {
+      this.successModal.style.display = 'flex';
+    }
   }
 
   giveHint() {
@@ -478,8 +641,44 @@ class HanziPuzzleGame {
     // Reset Slots Button
     document.getElementById('pzResetSlotsBtn').addEventListener('click', () => this.resetSlots());
 
-    // Next Question Button on Success Box
-    document.getElementById('pzNextQuestionBtn').addEventListener('click', () => this.loadNewQuestion());
+    // Next Question Button on Success Modal
+    const nextBtn = document.getElementById('pzNextQuestionBtn');
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => this.loadNewQuestion());
+    }
+
+    // Close button on Success Modal
+    const closeSuccessBtn = document.getElementById('pzCloseSuccessBtn');
+    if (closeSuccessBtn) {
+      closeSuccessBtn.addEventListener('click', () => this.loadNewQuestion());
+    }
+
+    // Modal background click to advance
+    if (this.successModal) {
+      this.successModal.addEventListener('click', (e) => {
+        if (e.target === this.successModal) {
+          this.loadNewQuestion();
+        }
+      });
+    }
+
+    // Replay Voice button inside Success Modal
+    const successVoiceBtn = document.getElementById('pzSuccessVoiceBtn');
+    if (successVoiceBtn) {
+      successVoiceBtn.addEventListener('click', () => {
+        if (this.currentQuestion) this.speakChinese(this.currentQuestion.hanzi);
+      });
+    }
+
+    // Global Keydown Handler: Enter / Space to advance when Success Modal is open
+    window.addEventListener('keydown', (e) => {
+      if (this.successModal && this.successModal.style.display === 'flex') {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') {
+          e.preventDefault();
+          this.loadNewQuestion();
+        }
+      }
+    });
 
     // Tool Actions
     document.getElementById('pzHintBtn').addEventListener('click', () => this.giveHint());

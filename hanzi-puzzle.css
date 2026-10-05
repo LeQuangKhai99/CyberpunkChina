@@ -482,19 +482,28 @@
 
 .piece-char {
   font-family: var(--font-chinese);
-  font-size: 40px;
+  font-size: 38px;
   font-weight: 400;
   color: #0f172a;
-  line-height: 1;
+  line-height: 1.1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 .piece-tag {
-  font-size: 9px;
+  font-size: 9.5px;
   font-weight: 800;
-  color: #64748b;
-  margin-top: 2px;
+  color: #334155;
+  margin-top: 3px;
+  background: #f1f5f9;
+  padding: 1px 6px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  white-space: nowrap;
+  max-width: 76px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
 }
 
 /* Tray of Pieces */
@@ -540,21 +549,51 @@
   min-height: 94px;
 }
 
-/* Success Etymology Showcase Box */
-.pz-success-box {
-  width: 100%;
-  max-width: 620px;
+/* ==========================================================================
+   SUCCESS MODAL POPUP (CENTER SCREEN)
+   ========================================================================== */
+.pz-success-modal-inner {
+  position: relative;
+  width: 600px;
+  max-width: 95vw;
   background: rgba(255, 255, 255, 0.98);
-  border-radius: 30px;
+  border-radius: 32px;
   border: 4px solid #10b981;
-  box-shadow: 0 20px 45px rgba(16, 185, 129, 0.25);
-  padding: 24px;
+  box-shadow: 0 25px 65px rgba(16, 185, 129, 0.32), 0 0 0 1px rgba(255, 255, 255, 0.8);
+  padding: 24px 28px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   gap: 14px;
   animation: modalPopIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-close-icon {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid #e2e8f0;
+  background: #ffffff;
+  color: #64748b;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 10;
+}
+
+.modal-close-icon:hover {
+  background: #fee2e2;
+  color: #ef4444;
+  border-color: #fca5a5;
+  transform: rotate(90deg);
 }
 
 .success-header {
@@ -565,7 +604,7 @@
 }
 
 .success-icon {
-  font-size: 36px;
+  font-size: 38px;
   animation: bouncePop 1s infinite ease-in-out;
 }
 
@@ -576,65 +615,194 @@
 
 .success-title {
   font-family: var(--font-brand);
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 800;
   color: #10b981;
+  letter-spacing: 0.5px;
 }
 
 .success-pts {
   font-family: var(--font-brand);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 800;
   color: #d97706;
 }
 
 .success-char-showcase {
-  background: #f0fdf4;
-  border: 2px solid #bbf7d0;
-  border-radius: 20px;
-  padding: 12px 28px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border: 2px solid #86efac;
+  border-radius: 24px;
+  padding: 12px 24px;
   display: flex;
-  align-items: baseline;
-  gap: 14px;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 16px;
+}
+
+.showcase-main-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-align: left;
 }
 
 .showcase-hanzi {
   font-family: var(--font-chinese);
-  font-size: 64px;
+  font-size: 60px;
   font-weight: 400;
   color: #0f172a;
+  line-height: 1;
   -webkit-font-smoothing: antialiased;
+}
+
+.showcase-text-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .showcase-pinyin {
   font-family: var(--font-brand);
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
   color: #ff4b82;
 }
 
 .showcase-meaning {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 800;
+  color: #15803d;
+}
+
+.showcase-speak-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 2px solid #10b981;
+  background: #ffffff;
+  color: #059669;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.showcase-speak-btn:hover {
+  background: #10b981;
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+/* Formula Breakdown Box */
+.success-formula-box {
+  width: 100%;
+  background: #f8fafc;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 18px;
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formula-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: #64748b;
+  text-align: left;
+  letter-spacing: 0.5px;
+}
+
+.formula-items {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.formula-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 4px 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.formula-chip .f-char {
+  font-family: var(--font-chinese);
+  font-size: 18px;
+  font-weight: 400;
+  color: #0f172a;
+}
+
+.formula-chip .f-name {
+  font-size: 11px;
+  font-weight: 800;
+  color: #2563eb;
+}
+
+.formula-plus {
+  font-size: 16px;
+  font-weight: 900;
+  color: #94a3b8;
+}
+
+.formula-equal {
+  font-size: 16px;
+  font-weight: 900;
+  color: #10b981;
+}
+
+.formula-result {
+  border-color: #86efac;
+  background: #f0fdf4;
+}
+
+.formula-result .f-name {
   color: #15803d;
 }
 
 .success-explanation {
   background: #fffbeb;
-  border: 1px solid #fef3c7;
-  border-radius: 16px;
+  border: 1.5px solid #fde68a;
+  border-radius: 18px;
   padding: 12px 18px;
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 600;
   color: #92400e;
-  line-height: 1.5;
+  line-height: 1.55;
   text-align: left;
   width: 100%;
 }
 
+.success-actions {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+}
+
 .pz-next-btn {
   padding: 12px 36px;
-  font-size: 16px;
+  font-size: 15px;
+  width: 100%;
+  max-width: 380px;
+}
+
+.kbd-tip {
+  font-size: 12px;
+  opacity: 0.85;
+  margin-left: 4px;
+  font-weight: 600;
 }
 
 /* Footer */

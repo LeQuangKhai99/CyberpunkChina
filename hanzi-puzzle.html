@@ -164,29 +164,7 @@
         </div>
       </div>
 
-      <!-- Etymology & Explanation Modal Popup (Triggered upon successful assembly!) -->
-      <div class="pz-success-box" id="pzSuccessBox" style="display: none;">
-        <div class="success-header">
-          <div class="success-icon">🎉</div>
-          <div class="success-title">GHÉP THÀNH CÔNG!</div>
-          <div class="success-pts">+<span id="pzSuccessPts">150</span> ĐIỂM</div>
-        </div>
-
-        <div class="success-char-showcase">
-          <span class="showcase-hanzi" id="pzSuccessHanzi">休</span>
-          <span class="showcase-pinyin" id="pzSuccessPinyin">xiū</span>
-          <span class="showcase-meaning" id="pzSuccessMeaning">nghỉ ngơi</span>
-        </div>
-
-        <div class="success-explanation" id="pzSuccessExplanation">
-          <!-- Detailed etymological story / compound word decomposition -->
-        </div>
-
-        <button class="cyber-launch-btn pz-next-btn" id="pzNextQuestionBtn">
-          TIẾP TỤC CÂU MỚI ➡️
-        </button>
-      </div>
-
+      <!-- Note: Success Etymology Showcase is now rendered as a prominent popup modal #pzSuccessModal -->
     </main>
 
     <!-- Footer Copyright -->
@@ -194,6 +172,53 @@
       PINYIN POP! GHÉP BỘ THỦ & TỪ GHÉP // BẢN QUYỀN © 2026 <strong>KHAI LE</strong> // HỆ THỐNG 5.000 TỪ HSK
     </footer>
 
+  </div>
+
+  <!-- Celebration & Etymology Success Popup Modal (Center Screen) -->
+  <div class="modal-overlay" id="pzSuccessModal" style="display: none;">
+    <div class="cyber-modal pz-success-modal-inner">
+      <button class="modal-close-icon" id="pzCloseSuccessBtn" title="Đóng cửa sổ">✕</button>
+
+      <div class="success-header">
+        <div class="success-icon">🎉</div>
+        <div class="success-title">GHÉP THÀNH CÔNG!</div>
+        <div class="success-pts">+<span id="pzSuccessPts">150</span> ĐIỂM ⭐</div>
+      </div>
+
+      <!-- Main Showcase: Character / Word + Voice -->
+      <div class="success-char-showcase">
+        <div class="showcase-main-content">
+          <span class="showcase-hanzi" id="pzSuccessHanzi">休</span>
+          <div class="showcase-text-wrap">
+            <span class="showcase-pinyin" id="pzSuccessPinyin">xiū</span>
+            <span class="showcase-meaning" id="pzSuccessMeaning">nghỉ ngơi</span>
+          </div>
+        </div>
+        <button class="card-icon-btn speak-btn showcase-speak-btn" id="pzSuccessVoiceBtn" title="Nghe lại phát âm chuẩn Bắc Kinh">
+          🔊 <span class="voice-lbl">PHÁT ÂM</span>
+        </button>
+      </div>
+
+      <!-- Formula Breakdown (e.g. 亻 [Bộ Nhân đứng] + 木 [Bộ Mộc] = 休) -->
+      <div class="success-formula-box" id="pzSuccessFormulaBox">
+        <span class="formula-label">CẤU TẠO CHI TIẾT:</span>
+        <div class="formula-items" id="pzSuccessFormulaItems">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Cultural Etymology / Word Meaning Story -->
+      <div class="success-explanation" id="pzSuccessExplanation">
+        <!-- Detailed etymological story populated by JS -->
+      </div>
+
+      <!-- Action Button -->
+      <div class="success-actions">
+        <button class="cyber-launch-btn pz-next-btn" id="pzNextQuestionBtn">
+          TIẾP TỤC CÂU MỚI ➡️ <span class="kbd-tip">(Enter)</span>
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- How to Play Instructions Modal -->
