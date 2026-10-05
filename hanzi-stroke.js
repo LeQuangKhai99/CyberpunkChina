@@ -182,7 +182,9 @@
       this.currentWord = null;
       this.currentCharIndex = 0;
       this.currentSpeed = 1.0;
-      this.outlineVisible = true;
+      this.outlineVisible = false; // Initially hide stroke outlines so user writes from memory!
+      this.breakdownRevealedAll = false; // Initially hide breakdown cards until user draws them correctly
+      this.currentCorrectStrokeIndex = 0;
       this.isQuizMode = false;
 
       // Telemetry stats
@@ -270,6 +272,7 @@
         // Breakdown track
         breakdownTrack: document.getElementById('strokeBreakdownTrack'),
         lblTotalStrokes: document.getElementById('lblTotalStrokes'),
+        btnToggleBreakdownReveal: document.getElementById('btnToggleBreakdownReveal'),
 
         // Stats
         statCompleted: document.getElementById('statCompletedChars'),
@@ -349,6 +352,11 @@
       this.dom.btnHint.addEventListener('click', () => this.hintNextStroke());
       this.dom.btnOutline.addEventListener('click', () => this.toggleOutline());
       this.dom.btnReset.addEventListener('click', () => this.resetCanvas());
+
+      // Breakdown reveal toggle
+      if (this.dom.btnToggleBreakdownReveal) {
+        this.dom.btnToggleBreakdownReveal.addEventListener('click', () => this.toggleBreakdownReveal());
+      }
 
       // Speed Buttons
       this.dom.speedBtns.forEach(btn => {
@@ -633,6 +641,7 @@
       // Clear existing canvas
       this.dom.writerTarget.innerHTML = '';
       this.isQuizMode = false;
+      this.currentCorrectStrokeIndex = 0;
       this.dom.btnQuiz.classList.remove('active');
 
       // Compute responsive canvas dimension
@@ -709,8 +718,11 @@
           pathsHtml += `<path d="${data.strokes[j]}" fill="${strokeFill}" />`;
         }
 
+        const isLocked = !this.breakdownRevealedAll && ((i + 1) > this.currentCorrectStrokeIndex);
+        const stateClass = isLocked ? 'locked' : 'revealed';
+
         html += `
-          <div class="hs-step-card" data-step="${i + 1}" title="Nét thứ ${i + 1}">
+          <div class="hs-step-card ${stateClass}" data-step="${i + 1}" title="Nét thứ ${i + 1}">
             <span class="hs-step-num">Nét ${i + 1}</span>
             <div class="hs-step-canvas-wrap">
               <svg viewBox="0 0 1024 1024" width="44" height="44" style="display: block; overflow: visible;">
@@ -770,6 +782,12 @@
         this.writer.cancelQuiz();
       }
 
+      // Temporarily reveal all cards while watching animation
+      this.dom.breakdownTrack.querySelectorAll('.hs-step-card').forEach(c => {
+        c.classList.remove('locked');
+        c.classList.add('revealed');
+      });
+
       this.writer.animateCharacter({
         onComplete: () => {
           this.dom.btnAnimate.classList.remove('active');
@@ -796,8 +814,17 @@
       this.writer.quiz({
         onCorrectStroke: (data) => {
           strokeIndex = data.strokeNum + 1;
+          this.currentCorrectStrokeIndex = strokeIndex;
           this.audio.playCorrectStroke();
+
+          // Unlock and reveal this stroke in the breakdown track
+          const card = this.dom.breakdownTrack.querySelector(`.hs-step-card[data-step="${strokeIndex}"]`);
+          if (card) {
+            card.classList.remove('locked');
+            card.classList.add('revealed');
+          }
           this.highlightStepCard(strokeIndex);
+
           this.stats.correctStrokes++;
           this.stats.totalAttempts++;
           this.stats.streak++;
@@ -827,6 +854,12 @@
           this.updateStatsUI();
           this.saveStatsToStorage();
 
+          // Reveal all cards on complete
+          this.dom.breakdownTrack.querySelectorAll('.hs-step-card').forEach(c => {
+            c.classList.remove('locked');
+            c.classList.add('revealed');
+          });
+
           this.showCompletionModal(summary, mistakeCount);
         }
       });
@@ -854,8 +887,27 @@
       }
     }
 
+    toggleBreakdownReveal() {
+      this.breakdownRevealedAll = !this.breakdownRevealedAll;
+      if (this.dom.btnToggleBreakdownReveal) {
+        this.dom.btnToggleBreakdownReveal.textContent = this.breakdownRevealedAll ? '🔒 Ẩn Nét (Thử Thách)' : '👁️ Mở Khóa Nét';
+        this.dom.btnToggleBreakdownReveal.classList.toggle('active', this.breakdownRevealedAll);
+      }
+      this.dom.breakdownTrack.querySelectorAll('.hs-step-card').forEach(c => {
+        const step = parseInt(c.dataset.step, 10);
+        if (this.breakdownRevealedAll || step <= this.currentCorrectStrokeIndex) {
+          c.classList.remove('locked');
+          c.classList.add('revealed');
+        } else {
+          c.classList.add('locked');
+          c.classList.remove('revealed');
+        }
+      });
+    }
+
     resetCanvas() {
       if (!this.writer) return;
+      this.currentCorrectStrokeIndex = 0;
       this.writer.cancelQuiz();
       this.setupHanziWriter(this.getCurrentChar());
     }

@@ -13,7 +13,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=Lexend:wght@500;600;700;800;900&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css?v=20261005_v7">
-  <link rel="stylesheet" href="hanzi-stroke.css?v=20261005_v4">
+  <link rel="stylesheet" href="hanzi-stroke.css?v=20261005_v5">
 </head>
 <body class="theme-pinyin-pop hs-body">
 
@@ -180,7 +180,7 @@
               💡 Gợi Ý Nét
             </button>
             <button class="hs-ctrl-btn hs-ctrl-outline" id="btnToggleOutline" title="Ẩn hoặc hiện nét mờ định hình">
-              👁️ Nét Mờ: BẬT
+              👁️ Nét Mờ: TẮT
             </button>
             <button class="hs-ctrl-btn hs-ctrl-reset" id="btnResetCanvas" title="Xóa và vẽ lại từ đầu">
               🔄 Viết Lại
@@ -202,7 +202,12 @@
               <span class="hs-breakdown-title">
                 🔍 Phân Rã Thứ Tự Từng Nét
               </span>
-              <span class="hs-stroke-counter-pill" id="lblTotalStrokes">Tổng: 8 nét</span>
+              <div class="hs-breakdown-meta-group">
+                <button class="hs-reveal-all-btn" id="btnToggleBreakdownReveal" title="Mở trước tất cả các nét hoặc giấu để tự viết thử thách">
+                  👁️ Mở Khóa Nét
+                </button>
+                <span class="hs-stroke-counter-pill" id="lblTotalStrokes">Tổng: 8 nét</span>
+              </div>
             </div>
             <div class="hs-breakdown-track" id="strokeBreakdownTrack">
               <!-- Rendered step cards dynamically -->
@@ -330,7 +335,7 @@
   <!-- Scripts -->
   <script src="assets/hanzi-writer.min.js"></script>
   <script src="words.js?v=pop"></script>
-  <script src="hanzi-stroke.js?v=20261005_v7"></script>
+  <script src="hanzi-stroke.js?v=20261005_v8"></script>
 
 </body>
 </html>
