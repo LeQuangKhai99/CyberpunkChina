@@ -13,7 +13,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=Lexend:wght@500;600;700;800;900&family=Noto+Sans+SC:wght@300;400;500;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css?v=20261005_v6">
-  <link rel="stylesheet" href="tone-master.css?v=20261005_v2">
+  <link rel="stylesheet" href="tone-master.css?v=20261005_v5">
 </head>
 <body class="theme-pinyin-pop tm-body">
 
@@ -70,16 +70,16 @@
     <!-- Main Navigation Mode Switcher -->
     <section class="tm-mode-switch-bar">
       <div class="tm-mode-buttons">
-        <button class="mode-pill-btn active" id="tabGameMode" title="Chơi game phản xạ luyện tai 4 thanh điệu">
+        <button class="mode-pill-btn active" id="tabGameMode" onclick="if(window.toneGame) window.toneGame.switchMode('game');" title="Chơi game phản xạ luyện tai 4 thanh điệu">
           🎮 THỬ THÁCH THÍNH GIÁC (GAME)
         </button>
-        <button class="mode-pill-btn" id="tabChartMode" title="Học bảng 21 Thanh Mẫu & 36 Vận Mẫu kèm phát âm">
+        <button class="mode-pill-btn" id="tabChartMode" onclick="if(window.toneGame) window.toneGame.switchMode('chart');" title="Học bảng 21 Thanh Mẫu & 36 Vận Mẫu kèm phát âm">
           🎙️ BẢNG THANH MẪU & VẬN MẪU
         </button>
-        <button class="mode-pill-btn" id="tabRulesMode" title="Quy tắc biến điệu thanh 3, chữ 不 và chữ 一">
+        <button class="mode-pill-btn" id="tabRulesMode" onclick="if(window.toneGame) window.toneGame.switchMode('rules');" title="Quy tắc biến điệu thanh 3, chữ 不 và chữ 一">
           📈 BÍ KÍP BIẾN ĐIỆU & QUY TẮC
         </button>
-        <button class="mode-pill-btn" id="tabSpeakingMode" title="Luyện nói qua Micro và AI chấm điểm phát âm tiếng Trung">
+        <button class="mode-pill-btn" id="tabSpeakingMode" onclick="if(window.toneGame) window.toneGame.switchMode('speaking');" title="Luyện nói qua Micro và AI chấm điểm phát âm tiếng Trung">
           🗣️ LUYỆN NÓI AI (MICRO)
         </button>
       </div>
@@ -639,6 +639,6 @@
 
   <!-- Audio Synthesis & Vocabulary Dataset -->
   <script src="words.js?v=pop"></script>
-  <script src="tone-master.js?v=20261005_v1"></script>
+  <script src="tone-master.js?v=20261005_v5"></script>
 </body>
 </html>

@@ -748,11 +748,7 @@ class ToneMasterGame {
     });
   }
 
-  /* ========================================================================
-     EVENT LISTENERS & CONTROLS
-     ======================================================================== */
-  setupEventListeners() {
-    // Mode Switcher Buttons (Game vs Chart vs Rules vs Speaking Lab)
+  switchMode(modeName) {
     const tabGame = document.getElementById('tabGameMode');
     const tabChart = document.getElementById('tabChartMode');
     const tabRules = document.getElementById('tabRulesMode');
@@ -764,36 +760,79 @@ class ToneMasterGame {
     const viewSpeaking = document.getElementById('viewSpeakingSection');
     const speedControl = document.getElementById('tmSpeedControl');
 
-    const switchView = (activeTab, activeView) => {
-      [tabGame, tabChart, tabRules, tabSpeaking].forEach(b => { if (b) b.classList.remove('active'); });
-      [viewGame, viewChart, viewRules, viewSpeaking].forEach(v => {
-        if (v) {
-          v.style.display = 'none';
-          v.classList.remove('active');
+    [tabGame, tabChart, tabRules, tabSpeaking].forEach(b => { if (b) b.classList.remove('active'); });
+    [viewGame, viewChart, viewRules, viewSpeaking].forEach(v => {
+      if (v) {
+        v.style.display = 'none';
+        v.classList.remove('active');
+      }
+    });
+
+    let activeTab = tabGame;
+    let activeView = viewGame;
+
+    if (modeName === 'chart') {
+      activeTab = tabChart;
+      activeView = viewChart;
+    } else if (modeName === 'rules') {
+      activeTab = tabRules;
+      activeView = viewRules;
+    } else if (modeName === 'speaking') {
+      activeTab = tabSpeaking;
+      activeView = viewSpeaking;
+    }
+
+    if (activeTab) activeTab.classList.add('active');
+    if (activeView) {
+      activeView.style.display = 'flex';
+      activeView.classList.add('active');
+    }
+
+    if (speedControl) {
+      speedControl.style.display = (modeName === 'game') ? 'flex' : 'none';
+    }
+
+    if (modeName === 'speaking') {
+      if (!this.speakingEngine) {
+        try {
+          this.speakingEngine = new SpeakingPracticeEngine(this);
+        } catch (e) {
+          console.error('Speaking engine init error:', e);
         }
-      });
-
-      if (activeTab) activeTab.classList.add('active');
-      if (activeView) {
-        activeView.style.display = 'flex';
-        activeView.classList.add('active');
       }
-
-      if (activeTab === tabGame) {
-        speedControl.style.display = 'flex';
-      } else {
-        speedControl.style.display = 'none';
-      }
-
-      if (activeTab === tabSpeaking && this.speakingEngine) {
+      if (this.speakingEngine) {
         this.speakingEngine.start();
       }
-    };
+    }
+  }
 
-    if (tabGame) tabGame.addEventListener('click', () => switchView(tabGame, viewGame));
-    if (tabChart) tabChart.addEventListener('click', () => switchView(tabChart, viewChart));
-    if (tabRules) tabRules.addEventListener('click', () => switchView(tabRules, viewRules));
-    if (tabSpeaking) tabSpeaking.addEventListener('click', () => switchView(tabSpeaking, viewSpeaking));
+  /* ========================================================================
+     EVENT LISTENERS & CONTROLS
+     ======================================================================== */
+  setupEventListeners() {
+    // Mode Switcher Buttons (Game vs Chart vs Rules vs Speaking Lab)
+    const tabGame = document.getElementById('tabGameMode');
+    const tabChart = document.getElementById('tabChartMode');
+    const tabRules = document.getElementById('tabRulesMode');
+    const tabSpeaking = document.getElementById('tabSpeakingMode');
+
+    if (tabGame) tabGame.addEventListener('click', () => this.switchMode('game'));
+    if (tabChart) tabChart.addEventListener('click', () => this.switchMode('chart'));
+    if (tabRules) tabRules.addEventListener('click', () => this.switchMode('rules'));
+    if (tabSpeaking) tabSpeaking.addEventListener('click', () => this.switchMode('speaking'));
+
+    // Check initial tab from URL params or hash (e.g. #speaking, ?tab=speaking, ?mode=speaking)
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tabParam = urlParams.get('tab') || urlParams.get('mode') || window.location.hash.replace('#', '');
+      if (tabParam === 'speaking') {
+        setTimeout(() => this.switchMode('speaking'), 50);
+      } else if (tabParam === 'chart' || tabParam === 'phonetics') {
+        setTimeout(() => this.switchMode('chart'), 50);
+      } else if (tabParam === 'rules' || tabParam === 'sandhi') {
+        setTimeout(() => this.switchMode('rules'), 50);
+      }
+    } catch (e) {}
 
     // Sub Tabs inside Chart Section (Initials vs Finals)
     const btnSubInitials = document.getElementById('btnSubInitials');
