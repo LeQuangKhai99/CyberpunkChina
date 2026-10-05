@@ -3,137 +3,137 @@
  * Real-time Tone Ear Challenge, Audio Reflexes & 21 Initials / 36 Finals Lab
  */
 
-// 21 Standard Initials (Thanh Mẫu) Database with Articulation details
+// 21 Standard Initials (Thanh Mẫu) Database with Articulation details & pure call-names
 const INITIALS_DATA = [
   {
     group: 'Âm Hai Môi (Labial)',
     desc: 'Hai môi khép lại rồi bật mở tạo luồng hơi',
     items: [
-      { letter: 'b', vi: 'b (như "p" nhẹ, không bật hơi)', ipa: '[p]', aspirated: false, sample: '八 (bā)', tip: 'Hai môi khép chặt, không bật luồng khí mạnh.' },
-      { letter: 'p', vi: 'p (Bật hơi rất mạnh)', ipa: '[pʰ]', aspirated: true, sample: '跑 (pǎo)', tip: 'Khép môi, nén khí rồi bật hơi thật mạnh ra ngoài.' },
-      { letter: 'm', vi: 'm (âm mũi, giống "m" tiếng Việt)', ipa: '[m]', aspirated: false, sample: '妈 (mā)', tip: 'Hai môi khép lại, luồng hơi thoát ra từ khoang mũi.' }
+      { letter: 'b', vi: 'b (như "p" nhẹ, không bật hơi)', ipa: '[p]', aspirated: false, speak: '玻', tip: 'Hai môi khép chặt, không bật luồng khí mạnh.' },
+      { letter: 'p', vi: 'p (Bật hơi rất mạnh)', ipa: '[pʰ]', aspirated: true, speak: '坡', tip: 'Khép môi, nén khí rồi bật hơi thật mạnh ra ngoài.' },
+      { letter: 'm', vi: 'm (âm mũi, giống "m" tiếng Việt)', ipa: '[m]', aspirated: false, speak: '摸', tip: 'Hai môi khép lại, luồng hơi thoát ra từ khoang mũi.' }
     ]
   },
   {
     group: 'Âm Môi Răng (Labiodental)',
     desc: 'Răng trên chạm nhẹ môi dưới',
     items: [
-      { letter: 'f', vi: 'ph (giống "ph" tiếng Việt)', ipa: '[f]', aspirated: false, sample: '发 (fā)', tip: 'Răng cửa hàm trên chạm nhẹ vào môi dưới, đẩy luồng hơi ma sát.' }
+      { letter: 'f', vi: 'ph (giống "ph" tiếng Việt)', ipa: '[f]', aspirated: false, speak: '佛', tip: 'Răng cửa hàm trên chạm nhẹ vào môi dưới, đẩy luồng hơi ma sát.' }
     ]
   },
   {
     group: 'Âm Đầu Lưỡi Giữa (Alveolar)',
     desc: 'Đầu lưỡi chạm vào lợi trên',
     items: [
-      { letter: 'd', vi: 'đ (như "t" không bật hơi)', ipa: '[t]', aspirated: false, sample: '大 (dà)', tip: 'Đầu lưỡi áp sát vào chân răng trên rồi hạ xuống, không bật hơi.' },
-      { letter: 't', vi: 'th (Bật hơi mạnh, như "th")', ipa: '[tʰ]', aspirated: true, sample: '他 (tā)', tip: 'Đầu lưỡi áp sát chân răng trên rồi bật luồng hơi mạnh ra.' },
-      { letter: 'n', vi: 'n (giống "n" tiếng Việt)', ipa: '[n]', aspirated: false, sample: '你 (nǐ)', tip: 'Đầu lưỡi chạm lợi trên, hơi thoát qua khoang mũi.' },
-      { letter: 'l', vi: 'l (giống "l" tiếng Việt)', ipa: '[l]', aspirated: false, sample: '来 (lái)', tip: 'Đầu lưỡi chạm lợi trên, luồng hơi thoát ra hai bên mép lưỡi.' }
+      { letter: 'd', vi: 'đ (như "t" không bật hơi)', ipa: '[t]', aspirated: false, speak: '得', tip: 'Đầu lưỡi áp sát vào chân răng trên rồi hạ xuống, không bật hơi.' },
+      { letter: 't', vi: 'th (Bật hơi mạnh, như "th")', ipa: '[tʰ]', aspirated: true, speak: '特', tip: 'Đầu lưỡi áp sát chân răng trên rồi bật luồng hơi mạnh ra.' },
+      { letter: 'n', vi: 'n (giống "n" tiếng Việt)', ipa: '[n]', aspirated: false, speak: '讷', tip: 'Đầu lưỡi chạm lợi trên, hơi thoát qua khoang mũi.' },
+      { letter: 'l', vi: 'l (giống "l" tiếng Việt)', ipa: '[l]', aspirated: false, speak: '勒', tip: 'Đầu lưỡi chạm lợi trên, luồng hơi thoát ra hai bên mép lưỡi.' }
     ]
   },
   {
     group: 'Âm Gốc Lưỡi (Velar)',
     desc: 'Gốc lưỡi nâng lên chạm ngạc mềm',
     items: [
-      { letter: 'g', vi: 'c/k (như "c" không bật hơi)', ipa: '[k]', aspirated: false, sample: '哥 (gē)', tip: 'Cuống lưỡi nâng lên chạm vòm họng mềm, mở ra dứt khoát không hơi.' },
-      { letter: 'k', vi: 'kh (Bật hơi mạnh từ cổ họng)', ipa: '[kʰ]', aspirated: true, sample: '看 (kàn)', tip: 'Cuống lưỡi nén hơi rồi bật luồng khí mạnh mẽ ra ngoài.' },
-      { letter: 'h', vi: 'h (hơi pha giữa "h" và "kh")', ipa: '[x]', aspirated: false, sample: '好 (hǎo)', tip: 'Khoảng cách giữa gốc lưỡi và vòm mềm hẹp lại, hơi ma sát nhẹ nhàng.' }
+      { letter: 'g', vi: 'c/k (như "c" không bật hơi)', ipa: '[k]', aspirated: false, speak: '哥', tip: 'Cuống lưỡi nâng lên chạm vòm họng mềm, mở ra dứt khoát không hơi.' },
+      { letter: 'k', vi: 'kh (Bật hơi mạnh từ cổ họng)', ipa: '[kʰ]', aspirated: true, speak: '科', tip: 'Cuống lưỡi nén hơi rồi bật luồng khí mạnh mẽ ra ngoài.' },
+      { letter: 'h', vi: 'h (hơi pha giữa "h" và "kh")', ipa: '[x]', aspirated: false, speak: '喝', tip: 'Khoảng cách giữa gốc lưỡi và vòm mềm hẹp lại, hơi ma sát nhẹ nhàng.' }
     ]
   },
   {
     group: 'Âm Mặt Lưỡi (Palatal)',
     desc: 'Mặt trước của lưỡi áp sát ngạc cứng',
     items: [
-      { letter: 'j', vi: 'ch (nhẹ, môi mỉm cười)', ipa: '[tɕ]', aspirated: false, sample: '家 (jiā)', tip: 'Mặt lưỡi áp sát vòm miệng cứng, khóe miệng kéo sang hai bên.' },
-      { letter: 'q', vi: 'ch (Bật hơi sắc bén)', ipa: '[tɕʰ]', aspirated: true, sample: '去 (qù)', tip: 'Vị trí giống chữ j nhưng bật luồng hơi cực kỳ sắc và mạnh.' },
-      { letter: 'x', vi: 'x (xát nhẹ, mỉm cười)', ipa: '[ɕ]', aspirated: false, sample: '想 (xiǎng)', tip: 'Mặt lưỡi gần vòm miệng, luồng hơi thoát ra êm mượt.' }
+      { letter: 'j', vi: 'ch (nhẹ, môi mỉm cười)', ipa: '[tɕ]', aspirated: false, speak: '基', tip: 'Mặt lưỡi áp sát vòm miệng cứng, khóe miệng kéo sang hai bên.' },
+      { letter: 'q', vi: 'ch (Bật hơi sắc bén)', ipa: '[tɕʰ]', aspirated: true, speak: '欺', tip: 'Vị trí giống chữ j nhưng bật luồng hơi cực kỳ sắc và mạnh.' },
+      { letter: 'x', vi: 'x (xát nhẹ, mỉm cười)', ipa: '[ɕ]', aspirated: false, speak: '希', tip: 'Mặt lưỡi gần vòm miệng, luồng hơi thoát ra êm mượt.' }
     ]
   },
   {
     group: 'Âm Đầu Lưỡi Quặt / Cuốn Lưỡi (Retroflex)',
     desc: 'Đầu lưỡi cong lên chạm ngạc cứng',
     items: [
-      { letter: 'zh', vi: 'tr (uốn lưỡi, không bật hơi)', ipa: '[ʈʂ]', aspirated: false, sample: '中 (zhōng)', tip: 'Đầu lưỡi cong lên chạm vòm miệng cứng, phát âm dứt khoát.' },
-      { letter: 'ch', vi: 'tr (Uốn lưỡi + Bật hơi mạnh)', ipa: '[ʈʂʰ]', aspirated: true, sample: '吃 (chī)', tip: 'Vừa uốn cong lưỡi vừa khạc luồng hơi mạnh ra ngoài.' },
-      { letter: 'sh', vi: 's (uốn lưỡi ma sát mạnh)', ipa: '[ʂ]', aspirated: false, sample: '水 (shuǐ)', tip: 'Đầu lưỡi cong lên gần ngạc cứng, luồng hơi cọ xát thoát ra.' },
-      { letter: 'r', vi: 'r (uốn lưỡi rung nhẹ giọng)', ipa: '[ʐ]', aspirated: false, sample: '日 (rì)', tip: 'Đầu lưỡi cong lên, dây thanh âm rung nhẹ khi phát âm.' }
+      { letter: 'zh', vi: 'tr (uốn lưỡi, không bật hơi)', ipa: '[ʈʂ]', aspirated: false, speak: '知', tip: 'Đầu lưỡi cong lên chạm vòm miệng cứng, phát âm chuẩn âm đầu zh.' },
+      { letter: 'ch', vi: 'tr (Uốn lưỡi + Bật hơi mạnh)', ipa: '[ʈʂʰ]', aspirated: true, speak: '吃', tip: 'Vừa uốn cong lưỡi vừa khạc luồng hơi mạnh ra ngoài.' },
+      { letter: 'sh', vi: 's (uốn lưỡi ma sát mạnh)', ipa: '[ʂ]', aspirated: false, speak: '诗', tip: 'Đầu lưỡi cong lên gần ngạc cứng, luồng hơi cọ xát thoát ra.' },
+      { letter: 'r', vi: 'r (uốn lưỡi rung nhẹ giọng)', ipa: '[ʐ]', aspirated: false, speak: '日', tip: 'Đầu lưỡi cong lên, dây thanh âm rung nhẹ khi phát âm.' }
     ]
   },
   {
     group: 'Âm Đầu Lưỡi Trước (Dental Sibilant)',
     desc: 'Đầu lưỡi đặt sau răng cửa dưới hoặc chạm răng trên',
     items: [
-      { letter: 'z', vi: 'd/z (thẳng lưỡi, không bật hơi)', ipa: '[ts]', aspirated: false, sample: '早 (zǎo)', tip: 'Đầu lưỡi chạm mặt sau răng cửa trên rồi hạ xuống nhẹ nhàng.' },
-      { letter: 'c', vi: 'x (Thẳng lưỡi + Bật hơi mạnh)', ipa: '[tsʰ]', aspirated: true, sample: '菜 (cài)', tip: 'Đầu lưỡi nén chặt sau răng rồi bật luồng hơi xì mạnh ra.' },
-      { letter: 's', vi: 's (xát thẳng lưỡi)', ipa: '[s]', aspirated: false, sample: '三 (sān)', tip: 'Đầu lưỡi để gần răng cửa trên, luồng hơi xì êm ái.' }
+      { letter: 'z', vi: 'd/z (thẳng lưỡi, không bật hơi)', ipa: '[ts]', aspirated: false, speak: '资', tip: 'Đầu lưỡi chạm mặt sau răng cửa trên rồi hạ xuống nhẹ nhàng.' },
+      { letter: 'c', vi: 'x (Thẳng lưỡi + Bật hơi mạnh)', ipa: '[tsʰ]', aspirated: true, speak: '雌', tip: 'Đầu lưỡi nén chặt sau răng rồi bật luồng hơi xì mạnh ra.' },
+      { letter: 's', vi: 's (xát thẳng lưỡi)', ipa: '[s]', aspirated: false, speak: '思', tip: 'Đầu lưỡi để gần răng cửa trên, luồng hơi xì êm ái.' }
     ]
   },
   {
     group: 'Phụ Âm Đặc Biệt (Semi-vowels)',
     desc: 'Đóng vai trò mở đầu âm tiết',
     items: [
-      { letter: 'y', vi: 'd/i (nguyên âm mở)', ipa: '[j]', aspirated: false, sample: '一 (yī)', tip: 'Phát âm tương tự âm "i" kéo dài.' },
-      { letter: 'w', vi: 'qu/u (môi tròn)', ipa: '[w]', aspirated: false, sample: '我 (wǒ)', tip: 'Môi tròn chúm lại, tương tự âm "u/o".' }
+      { letter: 'y', vi: 'd/i (nguyên âm mở)', ipa: '[j]', aspirated: false, speak: '衣', tip: 'Phát âm tương tự âm "i" kéo dài.' },
+      { letter: 'w', vi: 'qu/u (môi tròn)', ipa: '[w]', aspirated: false, speak: '乌', tip: 'Môi tròn chúm lại, tương tự âm "u/o".' }
     ]
   }
 ];
 
-// 36 Standard Finals (Vận Mẫu) Database
+// 36 Standard Finals (Vận Mẫu) Database with pure zero-initial Hanzi phonetic mapping (NO extraneous consonants)
 const FINALS_DATA = [
   {
     group: 'Vận Mẫu Đơn (Simple Finals)',
     items: [
-      { base: 'a', vi: 'a', tones: ['ā', 'á', 'ǎ', 'à'] },
-      { base: 'o', vi: 'ô / o', tones: ['ō', 'ó', 'ǒ', 'ò'] },
-      { base: 'e', vi: 'ưa / ơ', tones: ['ē', 'é', 'ě', 'è'] },
-      { base: 'i', vi: 'i (hoặc ư)', tones: ['ī', 'í', 'ǐ', 'ì'] },
-      { base: 'u', vi: 'u', tones: ['ū', 'ú', 'ǔ', 'ù'] },
-      { base: 'ü', vi: 'uy (tròn môi)', tones: ['ǖ', 'ǘ', 'ǚ', 'ǜ'] }
+      { base: 'a', vi: 'a', tones: [{ text: 'ā', hanzi: '阿' }, { text: 'á', hanzi: '啊' }, { text: 'ǎ', hanzi: '啊' }, { text: 'à', hanzi: '啊' }] },
+      { base: 'o', vi: 'ô / o', tones: [{ text: 'ō', hanzi: '噢' }, { text: 'ó', hanzi: '哦' }, { text: 'ǒ', hanzi: '哦' }, { text: 'ò', hanzi: '噢' }] },
+      { base: 'e', vi: 'ưa / ơ', tones: [{ text: 'ē', hanzi: '婀' }, { text: 'é', hanzi: '鹅' }, { text: 'ě', hanzi: '恶' }, { text: 'è', hanzi: '饿' }] },
+      { base: 'i', vi: 'i (hoặc ư)', tones: [{ text: 'ī', hanzi: '衣' }, { text: 'í', hanzi: '移' }, { text: 'ǐ', hanzi: '椅' }, { text: 'ì', hanzi: '意' }] },
+      { base: 'u', vi: 'u', tones: [{ text: 'ū', hanzi: '乌' }, { text: 'ú', hanzi: '无' }, { text: 'ǔ', hanzi: '五' }, { text: 'ù', hanzi: '物' }] },
+      { base: 'ü', vi: 'uy (tròn môi)', tones: [{ text: 'ǖ', hanzi: '迂' }, { text: 'ǘ', hanzi: '鱼' }, { text: 'ǚ', hanzi: '雨' }, { text: 'ǜ', hanzi: '玉' }] }
     ]
   },
   {
     group: 'Vận Mẫu Kép (Compound Finals)',
     items: [
-      { base: 'ai', vi: 'ai', tones: ['āi', 'ái', 'ǎi', 'ài'] },
-      { base: 'ei', vi: 'ây', tones: ['ēi', 'éi', 'ěi', 'èi'] },
-      { base: 'ao', vi: 'ao', tones: ['āo', 'áo', 'ǎo', 'ào'] },
-      { base: 'ou', vi: 'âu', tones: ['ōu', 'óu', 'ǒu', 'òu'] },
-      { base: 'ia', vi: 'ia', tones: ['iā', 'iá', 'iǎ', 'ià'] },
-      { base: 'ie', vi: 'iê', tones: ['iē', 'ié', 'iě', 'iè'] },
-      { base: 'ua', vi: 'oa', tones: ['uā', 'uá', 'uǎ', 'uà'] },
-      { base: 'uo', vi: 'uô', tones: ['uō', 'uó', 'uǒ', 'uò'] },
-      { base: 'üe', vi: 'uyê', tones: ['üē', 'üé', 'üě', 'üè'] },
-      { base: 'iao', vi: 'ieo', tones: ['iāo', 'iáo', 'iǎo', 'iào'] },
-      { base: 'iou (iu)', vi: 'yêu', tones: ['iū', 'iú', 'iǔ', 'iù'] },
-      { base: 'uai', vi: 'oai', tones: ['uāi', 'uái', 'uǎi', 'uài'] },
-      { base: 'uei (ui)', vi: 'uây', tones: ['uī', 'uí', 'uǐ', 'uì'] }
+      { base: 'ai', vi: 'ai', tones: [{ text: 'āi', hanzi: '哀' }, { text: 'ái', hanzi: '癌' }, { text: 'ǎi', hanzi: '矮' }, { text: 'ài', hanzi: '爱' }] },
+      { base: 'ei', vi: 'ây', tones: [{ text: 'ēi', hanzi: '诶' }, { text: 'éi', hanzi: '诶' }, { text: 'ěi', hanzi: '诶' }, { text: 'èi', hanzi: '诶' }] },
+      { base: 'ao', vi: 'ao', tones: [{ text: 'āo', hanzi: '凹' }, { text: 'áo', hanzi: '熬' }, { text: 'ǎo', hanzi: '袄' }, { text: 'ào', hanzi: '傲' }] },
+      { base: 'ou', vi: 'âu', tones: [{ text: 'ōu', hanzi: '欧' }, { text: 'óu', hanzi: '欧' }, { text: 'ǒu', hanzi: '偶' }, { text: 'òu', hanzi: '沤' }] },
+      { base: 'ia', vi: 'ia', tones: [{ text: 'iā', hanzi: '鸭' }, { text: 'iá', hanzi: '牙' }, { text: 'iǎ', hanzi: '哑' }, { text: 'ià', hanzi: '亚' }] },
+      { base: 'ie', vi: 'iê', tones: [{ text: 'iē', hanzi: '椰' }, { text: 'ié', hanzi: '爷' }, { text: 'iě', hanzi: '也' }, { text: 'iè', hanzi: '夜' }] },
+      { base: 'ua', vi: 'oa', tones: [{ text: 'uā', hanzi: '蛙' }, { text: 'uá', hanzi: '娃' }, { text: 'uǎ', hanzi: '瓦' }, { text: 'uà', hanzi: '袜' }] },
+      { base: 'uo', vi: 'uô', tones: [{ text: 'uō', hanzi: '窝' }, { text: 'uó', hanzi: '窝' }, { text: 'uǒ', hanzi: '我' }, { text: 'uò', hanzi: '握' }] },
+      { base: 'üe', vi: 'uyê', tones: [{ text: 'üē', hanzi: '约' }, { text: 'üé', hanzi: '约' }, { text: 'üě', hanzi: '约' }, { text: 'üè', hanzi: '月' }] },
+      { base: 'iao', vi: 'ieo', tones: [{ text: 'iāo', hanzi: '腰' }, { text: 'iáo', hanzi: '摇' }, { text: 'iǎo', hanzi: '咬' }, { text: 'iào', hanzi: '要' }] },
+      { base: 'iou (iu)', vi: 'yêu', tones: [{ text: 'iū', hanzi: '优' }, { text: 'iú', hanzi: '油' }, { text: 'iǔ', hanzi: '有' }, { text: 'iù', hanzi: '又' }] },
+      { base: 'uai', vi: 'oai', tones: [{ text: 'uāi', hanzi: '歪' }, { text: 'uái', hanzi: '歪' }, { text: 'uǎi', hanzi: '歪' }, { text: 'uài', hanzi: '外' }] },
+      { base: 'uei (ui)', vi: 'uây', tones: [{ text: 'uī', hanzi: '微' }, { text: 'uí', hanzi: '为' }, { text: 'uǐ', hanzi: '伟' }, { text: 'uì', hanzi: '位' }] }
     ]
   },
   {
     group: 'Vận Mẫu Mũi (Nasal Finals)',
     items: [
-      { base: 'an', vi: 'an', tones: ['ān', 'án', 'ǎn', 'àn'] },
-      { base: 'en', vi: 'ơn/ân', tones: ['ēn', 'én', 'ěn', 'èn'] },
-      { base: 'in', vi: 'in', tones: ['īn', 'ín', 'ǐn', 'ìn'] },
-      { base: 'ün', vi: 'uyn', tones: ['ǖn', 'ǘn', 'ǚn', 'ǜn'] },
-      { base: 'ian', vi: 'ien', tones: ['iān', 'ián', 'iǎn', 'iàn'] },
-      { base: 'uan', vi: 'oan', tones: ['uān', 'uán', 'uǎn', 'uàn'] },
-      { base: 'üan', vi: 'uyên', tones: ['üān', 'üán', 'üǎn', 'üàn'] },
-      { base: 'uen (un)', vi: 'uân', tones: ['ūn', 'ún', 'ǔn', 'ùn'] },
-      { base: 'ang', vi: 'ang', tones: ['āng', 'áng', 'ǎng', 'àng'] },
-      { base: 'eng', vi: 'âng', tones: ['ēng', 'éng', 'ěng', 'èng'] },
-      { base: 'ing', vi: 'inh', tones: ['īng', 'íng', 'ǐng', 'ìng'] },
-      { base: 'ong', vi: 'ung', tones: ['ōng', 'óng', 'ǒng', 'òng'] },
-      { base: 'iang', vi: 'iang', tones: ['iāng', 'iáng', 'iǎng', 'iàng'] },
-      { base: 'uang', vi: 'oang', tones: ['uāng', 'uáng', 'uǎng', 'uàng'] },
-      { base: 'ueng', vi: 'uâng', tones: ['uēng', 'uéng', 'uěng', 'uèng'] },
-      { base: 'iong', vi: 'i-ung', tones: ['iōng', 'ióng', 'iǒng', 'iòng'] }
+      { base: 'an', vi: 'an', tones: [{ text: 'ān', hanzi: '安' }, { text: 'án', hanzi: '安' }, { text: 'ǎn', hanzi: '俺' }, { text: 'àn', hanzi: '暗' }] },
+      { base: 'en', vi: 'ơn/ân', tones: [{ text: 'ēn', hanzi: '恩' }, { text: 'én', hanzi: '恩' }, { text: 'ěn', hanzi: '恩' }, { text: 'èn', hanzi: '摁' }] },
+      { base: 'in', vi: 'in', tones: [{ text: 'īn', hanzi: '音' }, { text: 'ín', hanzi: '银' }, { text: 'ǐn', hanzi: '引' }, { text: 'ìn', hanzi: '印' }] },
+      { base: 'ün', vi: 'uyn', tones: [{ text: 'ǖn', hanzi: '晕' }, { text: 'ǘn', hanzi: '云' }, { text: 'ǚn', hanzi: '允' }, { text: 'ǜn', hanzi: '运' }] },
+      { base: 'ian', vi: 'ien', tones: [{ text: 'iān', hanzi: '烟' }, { text: 'ián', hanzi: '言' }, { text: 'iǎn', hanzi: '眼' }, { text: 'iàn', hanzi: '燕' }] },
+      { base: 'uan', vi: 'oan', tones: [{ text: 'uān', hanzi: '湾' }, { text: 'uán', hanzi: '完' }, { text: 'uǎn', hanzi: '晚' }, { text: 'uàn', hanzi: '万' }] },
+      { base: 'üan', vi: 'uyên', tones: [{ text: 'üān', hanzi: '冤' }, { text: 'üán', hanzi: '元' }, { text: 'üǎn', hanzi: '远' }, { text: 'üàn', hanzi: '院' }] },
+      { base: 'uen (un)', vi: 'uân', tones: [{ text: 'ūn', hanzi: '温' }, { text: 'ún', hanzi: '文' }, { text: 'ǔn', hanzi: '稳' }, { text: 'ùn', hanzi: '问' }] },
+      { base: 'ang', vi: 'ang', tones: [{ text: 'āng', hanzi: '肮' }, { text: 'áng', hanzi: '昂' }, { text: 'ǎng', hanzi: '昂' }, { text: 'àng', hanzi: '盎' }] },
+      { base: 'eng', vi: 'âng', tones: [{ text: 'ēng', hanzi: '鞥' }, { text: 'éng', hanzi: '鞥' }, { text: 'ěng', hanzi: '鞥' }, { text: 'èng', hanzi: '鞥' }] },
+      { base: 'ing', vi: 'inh', tones: [{ text: 'īng', hanzi: '英' }, { text: 'íng', hanzi: '迎' }, { text: 'ǐng', hanzi: '影' }, { text: 'ìng', hanzi: '硬' }] },
+      { base: 'ong', vi: 'ung', tones: [{ text: 'ōng', hanzi: '翁' }, { text: 'óng', hanzi: '翁' }, { text: 'ǒng', hanzi: '蓊' }, { text: 'òng', hanzi: '瓮' }] },
+      { base: 'iang', vi: 'iang', tones: [{ text: 'iāng', hanzi: '央' }, { text: 'iáng', hanzi: '羊' }, { text: 'iǎng', hanzi: '养' }, { text: 'iàng', hanzi: '样' }] },
+      { base: 'uang', vi: 'oang', tones: [{ text: 'uāng', hanzi: '汪' }, { text: 'uáng', hanzi: '王' }, { text: 'uǎng', hanzi: '网' }, { text: 'uàng', hanzi: '望' }] },
+      { base: 'ueng', vi: 'uâng', tones: [{ text: 'uēng', hanzi: '翁' }, { text: 'uéng', hanzi: '翁' }, { text: 'uěng', hanzi: '蓊' }, { text: 'uèng', hanzi: '瓮' }] },
+      { base: 'iong', vi: 'i-ung', tones: [{ text: 'iōng', hanzi: '雍' }, { text: 'ióng', hanzi: '雍' }, { text: 'iǒng', hanzi: '勇' }, { text: 'iòng', hanzi: '用' }] }
     ]
   },
   {
     group: 'Vận Mẫu Cuốn Lưỡi (Retroflex Final)',
     items: [
-      { base: 'er', vi: 'ơ-r (uốn lưỡi)', tones: ['ēr', 'ér', 'ěr', 'èr'] }
+      { base: 'er', vi: 'ơ-r (uốn lưỡi)', tones: [{ text: 'ēr', hanzi: '儿' }, { text: 'ér', hanzi: '儿' }, { text: 'ěr', hanzi: '耳' }, { text: 'èr', hanzi: '二' }] }
     ]
   }
 ];
@@ -653,13 +653,13 @@ class ToneMasterGame {
       card.className = 'phonetic-group-card';
 
       let tilesHtml = group.items.map(item => `
-        <div class="phonetic-tile" data-letter="${item.letter}" data-sample="${item.sample}">
+        <div class="phonetic-tile" data-letter="${item.letter}" data-speak="${item.speak}">
           <span class="tile-letter">${item.letter}</span>
           <span class="tile-badge ${item.aspirated ? 'badge-aspirated' : 'badge-unaspirated'}">
             ${item.aspirated ? 'BẬT HƠI' : 'KHÔNG BẬT HƠI'}
           </span>
           <span class="tile-vi">${item.vi}</span>
-          <span class="tile-speaker">🔊 ${item.sample}</span>
+          <span class="tile-speaker">🔊 Phát âm [${item.letter}]</span>
         </div>
       `).join('');
 
@@ -673,11 +673,11 @@ class ToneMasterGame {
         </div>
       `;
 
-      // Event listener for tiles
+      // Event listener for tiles: speak the authentic initial call-name!
       card.querySelectorAll('.phonetic-tile').forEach(tile => {
         tile.addEventListener('click', () => {
-          const sample = tile.dataset.sample;
-          this.speakChinese(sample);
+          const speakChar = tile.dataset.speak;
+          this.speakChinese(speakChar);
           tile.style.transform = 'scale(1.15)';
           tile.style.borderColor = '#10b981';
           setTimeout(() => {
@@ -702,7 +702,7 @@ class ToneMasterGame {
 
       let tilesHtml = group.items.map(item => {
         const toneBtns = item.tones.map((t, idx) => `
-          <button class="tone-sub-btn" data-tone-text="${t}" title="Nghe Thanh ${idx + 1}">${t}</button>
+          <button class="tone-sub-btn" data-speak="${t.hanzi}" title="Nghe Thanh ${idx + 1} (${t.text})">${t.text}</button>
         `).join('');
 
         return `
@@ -719,19 +719,19 @@ class ToneMasterGame {
       card.innerHTML = `
         <div class="group-header">
           <span class="group-title">🎵 ${group.group}</span>
-          <span class="group-tip">Nhấp vào từng thanh điệu để luyện ngữ âm</span>
+          <span class="group-tip">Nhấp vào từng thanh điệu để luyện ngữ âm chuẩn</span>
         </div>
         <div class="phonetic-tiles-row">
           ${tilesHtml}
         </div>
       `;
 
-      // Click sub-buttons to speak tone
+      // Click sub-buttons to speak the authentic Hanzi vowel with exact tone!
       card.querySelectorAll('.tone-sub-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
-          const toneText = btn.dataset.toneText;
-          this.speakChinese(toneText);
+          const speakHanzi = btn.dataset.speak;
+          this.speakChinese(speakHanzi);
           btn.style.transform = 'scale(1.2)';
           btn.style.background = '#10b981';
           btn.style.color = '#ffffff';
