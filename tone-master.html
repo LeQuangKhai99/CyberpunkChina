@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vua Thanh Điệu (Tone Master) & Luyện Phát Âm Tiếng Trung HSK</title>
+  <meta name="description" content="Trò chơi thử thách thính giác phân biệt 4 thanh điệu tiếng Trung Bắc Kinh, luyện tai phản xạ nhanh và bảng thanh mẫu vận mẫu đầy đủ kèm giọng đọc bản ngữ.">
+  <link rel="icon" type="image/png" href="assets/logo.png">
+
+  <!-- Google Fonts: Inter & Outfit & Noto Sans SC (slender & crisp Chinese typography) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css?v=pop">
+  <link rel="stylesheet" href="tone-master.css?v=20261005_v1">
+</head>
+<body class="theme-pinyin-pop tm-body">
+
+  <!-- Ambient Dynamic Canvas -->
+  <canvas id="toneBgCanvas"></canvas>
+
+  <div class="tm-container">
+
+    <!-- Top Navigation Bar -->
+    <header class="tm-navbar">
+      <div class="tm-brand">
+        <a href="index.html" class="tm-brand-link" title="Quay về Trang Menu Trung Tâm">
+          <img src="assets/logo.png" alt="Pinyin Pop Mascot" class="tm-brand-logo" width="44" height="44">
+          <div class="tm-brand-text">
+            <span class="tm-brand-title">PINYIN POP! <span class="brand-sparkle">✨</span></span>
+            <span class="tm-brand-sub">🎵 VUA THANH ĐIỆU // PHÁT ÂM CHUẨN BẮC KINH</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Portal Navigation Links -->
+      <nav class="tm-nav-tabs">
+        <a href="index.html" class="tm-tab-btn" title="Menu Trung Tâm">
+          🏠 <span class="tab-label">MENU</span>
+        </a>
+        <a href="pinyin-pop.html" class="tm-tab-btn" title="Bắn Chữ Pinyin Pop">
+          🎮 <span class="tab-label">ARCADE</span>
+        </a>
+        <a href="flashcard.html" class="tm-tab-btn" title="Thẻ Flashcard 3D">
+          🗂️ <span class="tab-label">FLASHCARD</span>
+        </a>
+        <a href="hanzi-puzzle.html" class="tm-tab-btn" title="Ghép Bộ Thủ & Từ Ghép">
+          🧩 <span class="tab-label">GHÉP BỘ THỦ</span>
+        </a>
+        <button class="tm-tab-btn active" title="Đang ở Vua Thanh Điệu">
+          🎵 <span class="tab-label">VUA THANH ĐIỆU</span>
+        </button>
+      </nav>
+
+      <!-- Audio & Help Controls -->
+      <div class="tm-header-actions">
+        <button class="icon-toggle active" id="tmVoiceToggle" title="Bật/Tắt tự động phát âm">
+          🗣️ <span class="btn-txt">GIỌNG ĐỌC: BẬT</span>
+        </button>
+        <button class="icon-toggle" id="tmHelpBtn" title="Xem hướng dẫn chơi & phím tắt">
+          ❓ <span class="btn-txt">HƯỚNG DẪN</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Navigation Mode Switcher -->
+    <section class="tm-mode-switch-bar">
+      <div class="tm-mode-buttons">
+        <button class="mode-pill-btn active" id="tabGameMode" title="Chơi game phản xạ luyện tai 4 thanh điệu">
+          🎮 THỬ THÁCH THÍNH GIÁC (GAME)
+        </button>
+        <button class="mode-pill-btn" id="tabChartMode" title="Học bảng 21 Thanh Mẫu & 36 Vận Mẫu kèm phát âm">
+          🎙️ BẢNG THANH MẪU & VẬN MẪU
+        </button>
+        <button class="mode-pill-btn" id="tabRulesMode" title="Quy tắc biến điệu thanh 3, chữ 不 và chữ 一">
+          📈 BÍ KÍP BIẾN ĐIỆU & QUY TẮC
+        </button>
+      </div>
+
+      <!-- Quick Speed Control -->
+      <div class="tm-speed-control" id="tmSpeedControl">
+        <span class="speed-label">TỐC ĐỘ ĐỌC:</span>
+        <button class="speed-btn active" data-speed="1.0" id="speedNormal">1.0x (Chuẩn)</button>
+        <button class="speed-btn" data-speed="0.75" id="speedSlow">0.75x (Chậm)</button>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SECTION 1: GAME VUA THANH ĐIỆU (EAR TRAINING CHALLENGE)
+         ==================================================================== -->
+    <main class="tm-section-view active" id="viewGameSection">
+      
+      <!-- Toolbar: Mode Filter, HSK Level, Stats -->
+      <section class="tm-toolbar">
+        <div class="tm-tool-item">
+          <label for="tmSubModeSelect">🎮 CHẾ ĐỘ CHƠI:</label>
+          <select id="tmSubModeSelect" class="cyber-select">
+            <option value="single_tone">🎵 Phân biệt 4 Thanh Điệu (Thanh 1 - 4)</option>
+            <option value="minimal_pairs">⚖️ Cặp Từ Đối Lập Thanh Điệu (Minimal Pairs)</option>
+            <option value="sandhi_quiz">⚡ Thử Thách Biến Điệu (Tone Sandhi)</option>
+          </select>
+        </div>
+
+        <div class="tm-tool-item">
+          <label for="tmHskSelect">📚 CẤP ĐỘ TỪ:</label>
+          <select id="tmHskSelect" class="cyber-select">
+            <option value="all">Tất cả HSK (1 - 6)</option>
+            <option value="1">HSK 1 (Căn bản)</option>
+            <option value="2">HSK 2 (Sơ cấp)</option>
+            <option value="3">HSK 3 (Trung cấp 1)</option>
+            <option value="4">HSK 4 (Trung cấp 2)</option>
+            <option value="5">HSK 5 (Cao cấp)</option>
+            <option value="6">HSK 6 (Thành thạo)</option>
+          </select>
+        </div>
+
+        <!-- Telemetry Stats -->
+        <div class="tm-stats-group">
+          <div class="stat-pill score-pill">
+            <span>⭐ ĐIỂM:</span> <strong id="tmScoreDisplay">0</strong>
+          </div>
+          <div class="stat-pill streak-pill">
+            <span>🔥 CHUỖI:</span> <strong id="tmStreakDisplay">0</strong>
+          </div>
+          <div class="stat-pill accuracy-pill">
+            <span>🎯 CHÍNH XÁC:</span> <strong id="tmAccuracyDisplay">100%</strong>
+          </div>
+        </div>
+
+        <!-- Action tools -->
+        <div class="tm-tool-actions">
+          <button class="tm-btn-tool skip-btn" id="tmSkipBtn" title="Bỏ qua câu này để sang câu khác">
+            ⏭️ CÂU KHÁC
+          </button>
+        </div>
+      </section>
+
+      <!-- Stage Center Arena -->
+      <div class="tm-stage-arena">
+        
+        <!-- Target Audio Speaker Card -->
+        <div class="tm-speaker-card">
+          <div class="speaker-meta">
+            <span class="speaker-badge" id="tmQuestionBadge">CÂU ĐỐ THÍNH GIÁC</span>
+            <span class="speaker-hsk-badge" id="tmHskBadge">HSK 1</span>
+          </div>
+
+          <!-- Pulsing Soundwave Emblem -->
+          <div class="soundwave-container" id="tmSoundwaveWrap">
+            <button class="big-sound-btn" id="tmReplayBtn" title="Nhấp để nghe lại phát âm (Phím R hoặc Phím Cách)">
+              <div class="sound-ripple-1"></div>
+              <div class="sound-ripple-2"></div>
+              <span class="speaker-icon">🔊</span>
+            </button>
+            <span class="sound-cta">NHẤP ĐỂ NGHE LẠI <span class="kbd-hint">(Phím R)</span></span>
+          </div>
+
+          <!-- Prompt Question & Meaning -->
+          <div class="tm-question-prompt">
+            <span class="prompt-guide" id="tmPromptGuide">HÃY LẮNG NGHE VÀ CHỌN THANH ĐIỆU CHÍNH XÁC:</span>
+            <div class="prompt-display-word" id="tmPromptDisplayWord">
+              <span class="prompt-hanzi" id="tmPromptHanzi">妈</span>
+              <span class="prompt-meaning" id="tmPromptMeaning">mẹ, má</span>
+            </div>
+            <div class="prompt-masked-pinyin" id="tmMaskedPinyin">mā / má / mǎ / mà?</div>
+          </div>
+        </div>
+
+        <!-- 4 Giant Tone Selector Pads -->
+        <div class="tm-tone-pads-grid" id="tmTonePadsGrid">
+          
+          <!-- PAD 1: Tone 1 (High Level - 55) -->
+          <button class="tm-tone-pad pad-tone-1" data-tone="1" id="tonePad1">
+            <div class="pad-header">
+              <span class="pad-kbd">1</span>
+              <span class="pad-title">THANH 1</span>
+            </div>
+            <div class="pad-contour-visual">
+              <svg viewBox="0 0 100 50" class="contour-svg">
+                <line x1="10" y1="12" x2="90" y2="12" class="contour-line t1-line" />
+              </svg>
+            </div>
+            <div class="pad-name-vi">Âm Bình (Ngang Cao 55)</div>
+            <div class="pad-example" id="pad1Ex">Ví dụ: mā (bằng phẳng, ngân vang)</div>
+          </button>
+
+          <!-- PAD 2: Tone 2 (Rising - 35) -->
+          <button class="tm-tone-pad pad-tone-2" data-tone="2" id="tonePad2">
+            <div class="pad-header">
+              <span class="pad-kbd">2</span>
+              <span class="pad-title">THANH 2</span>
+            </div>
+            <div class="pad-contour-visual">
+              <svg viewBox="0 0 100 50" class="contour-svg">
+                <line x1="15" y1="38" x2="85" y2="12" class="contour-line t2-line" />
+              </svg>
+            </div>
+            <div class="pad-name-vi">Dương Bình (Đi Lên 35)</div>
+            <div class="pad-example" id="pad2Ex">Ví dụ: má (tương tự dấu sắc)</div>
+          </button>
+
+          <!-- PAD 3: Tone 3 (Dipping/Low Falling-Rising - 214) -->
+          <button class="tm-tone-pad pad-tone-3" data-tone="3" id="tonePad3">
+            <div class="pad-header">
+              <span class="pad-kbd">3</span>
+              <span class="pad-title">THANH 3</span>
+            </div>
+            <div class="pad-contour-visual">
+              <svg viewBox="0 0 100 50" class="contour-svg">
+                <path d="M 12 18 L 48 42 L 88 12" class="contour-path t3-path" fill="none" />
+              </svg>
+            </div>
+            <div class="pad-name-vi">Thượng Thanh (Trầm Vút 214)</div>
+            <div class="pad-example" id="pad3Ex">Ví dụ: mǎ (hạ trầm rồi vút lên)</div>
+          </button>
+
+          <!-- PAD 4: Tone 4 (High Falling - 51) -->
+          <button class="tm-tone-pad pad-tone-4" data-tone="4" id="tonePad4">
+            <div class="pad-header">
+              <span class="pad-kbd">4</span>
+              <span class="pad-title">THANH 4</span>
+            </div>
+            <div class="pad-contour-visual">
+              <svg viewBox="0 0 100 50" class="contour-svg">
+                <line x1="15" y1="12" x2="85" y2="40" class="contour-line t4-line" />
+              </svg>
+            </div>
+            <div class="pad-name-vi">Khứ Thanh (Rơi Nhanh 51)</div>
+            <div class="pad-example" id="pad4Ex">Ví dụ: mà (dứt khoát, mạnh mẽ)</div>
+          </button>
+
+        </div>
+
+        <!-- Minimal Pairs Choice Container (Used dynamically in Mode 2) -->
+        <div class="tm-pairs-grid" id="tmPairsGrid" style="display: none;">
+          <!-- Dynamically populated in Minimal Pairs mode -->
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- ====================================================================
+         SECTION 2: BẢNG PHÁT ÂM THANH MẪU & VẬN MẪU (PHONETICS LAB)
+         ==================================================================== -->
+    <section class="tm-section-view" id="viewChartSection" style="display: none;">
+      
+      <!-- Sub Tab Nav: Thanh Mẫu vs Vận Mẫu -->
+      <div class="chart-tab-bar">
+        <button class="chart-nav-btn active" id="btnSubInitials">
+          🔡 21 THANH MẪU (PHỤ ÂM ĐẦU)
+        </button>
+        <button class="chart-nav-btn" id="btnSubFinals">
+          🔤 36 VẬN MẪU (NGUYÊN ÂM & VẦN)
+        </button>
+      </div>
+
+      <!-- Part 2A: 21 Thanh Mẫu Grid -->
+      <div class="chart-content-box" id="boxInitials">
+        <div class="chart-intro-card">
+          <span class="intro-icon">💡</span>
+          <div>
+            <strong>Mẹo Học Thanh Mẫu (Phụ âm đầu):</strong>
+            <p>Nhấp vào bất kỳ thanh mẫu nào để nghe phát âm chuẩn giọng Bắc Kinh, xem vị trí đặt lưỡi/môi và nhận biết chữ <strong>Bật hơi (khạc luồng khí mạnh)</strong> vs <strong>Không bật hơi</strong>.</p>
+          </div>
+        </div>
+
+        <div class="initials-groups" id="initialsGroupsContainer">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Part 2B: 36 Vận Mẫu Grid -->
+      <div class="chart-content-box" id="boxFinals" style="display: none;">
+        <div class="chart-intro-card">
+          <span class="intro-icon">🎵</span>
+          <div>
+            <strong>Luyện Âm Điệu Vận Mẫu (Nguyên âm & Vần):</strong>
+            <p>Chọn bất kỳ vận mẫu nào để luyện trọn vẹn cả 4 thanh điệu (<strong>1 Ngang, 2 Sắc, 3 Hỏi, 4 Rơi</strong>). Rèn luyện khẩu hình tròn trịa, vang chuẩn ngữ điệu Trung Hoa!</p>
+          </div>
+        </div>
+
+        <div class="finals-groups" id="finalsGroupsContainer">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ====================================================================
+         SECTION 3: BÍ KÍP BIẾN ĐIỆU & QUY TẮC THANH ĐIỆU (TONE RULES)
+         ==================================================================== -->
+    <section class="tm-section-view" id="viewRulesSection" style="display: none;">
+      <div class="rules-container">
+        
+        <!-- Rule 1: Two 3rd Tones -->
+        <article class="rule-detail-card">
+          <div class="rule-badge">QUY TẮC 1</div>
+          <h3 class="rule-title">Biến Điệu Hai Thanh 3 (3 + 3 ➔ 2 + 3)</h3>
+          <p class="rule-desc">
+            Khi hai âm tiết mang <strong>Thanh 3</strong> đứng liền nhau, âm tiết thứ nhất sẽ tự động biến điệu đọc thành <strong>Thanh 2</strong>, âm tiết thứ hai giữ nguyên thanh 3 để tạo ngữ điệu mượt mà, không bị vấp.
+          </p>
+          <div class="rule-examples-grid">
+            <div class="rule-ex-item" data-speak="你好">
+              <span class="ex-hanzi">你好</span>
+              <span class="ex-change">nǐ + hǎo ➔ <strong>ní hǎo</strong></span>
+              <span class="ex-mean">xin chào</span>
+              <button class="rule-listen-btn">🔊 Nghe phát âm</button>
+            </div>
+            <div class="rule-ex-item" data-speak="可以">
+              <span class="ex-hanzi">可以</span>
+              <span class="ex-change">kě + yǐ ➔ <strong>ké yǐ</strong></span>
+              <span class="ex-mean">có thể</span>
+              <button class="rule-listen-btn">🔊 Nghe phát âm</button>
+            </div>
+            <div class="rule-ex-item" data-speak="手表">
+              <span class="ex-hanzi">手表</span>
+              <span class="ex-change">shǒu + biǎo ➔ <strong>shóu biǎo</strong></span>
+              <span class="ex-mean">đồng hồ đeo tay</span>
+              <button class="rule-listen-btn">🔊 Nghe phát âm</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Rule 2: Tone change of "不" (bù) -->
+        <article class="rule-detail-card">
+          <div class="rule-badge">QUY TẮC 2</div>
+          <h3 class="rule-title">Biến Điệu Chữ "不" (bù ➔ bú)</h3>
+          <p class="rule-desc">
+            Chữ <strong>"不"</strong> nguyên bản đọc là <strong>bù (thanh 4)</strong>. Nhưng khi đứng trước một âm tiết cũng mang <strong>Thanh 4</strong>, chữ "不" phải biến điệu đọc thành <strong>bú (thanh 2)</strong>!
+          </p>
+          <div class="rule-examples-grid">
+            <div class="rule-ex-item" data-speak="不是">
+              <span class="ex-hanzi">不是</span>
+              <span class="ex-change">bù + shì ➔ <strong>bú shì</strong></span>
+              <span class="ex-mean">không phải</span>
+              <button class="rule-listen-btn">🔊 Nghe phát âm</button>
+            </div>
+            <div class="rule-ex-item" data-speak="不对">
+              <span class="ex-hanzi">不对</span>
+              <span class="ex-change">bù + duì ➔ <strong>bú duì</strong></span>
+              <span class="ex-mean">không đúng</span>
+              <button class="rule-listen-btn">🔊 Nghe phát âm</button>
+            </div>
+            <div class="rule-ex-item" data-speak="不要">
+              <span class="ex-hanzi">不要</span>
+              <span class="ex-change">bù + yào ➔ <strong>bú yào</strong></span>
+              <span class="ex-mean">đừng, không muốn</span>
+              <button class="rule-listen-btn">🔊 Nghe phát âm</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Rule 3: Tone change of "一" (yī) -->
+        <article class="rule-detail-card">
+          <div class="rule-badge">QUY TẮC 3</div>
+          <h3 class="rule-title">Biến Điệu Chữ "一" (yī ➔ yí / yì)</h3>
+          <p class="rule-desc">
+            Số 1 đứng một mình đọc là <strong>yī (thanh 1)</strong>. Nhưng khi đi kèm trong từ:
+            <br>• Đứng trước <strong>Thanh 4</strong>: đọc thành <strong>yí (thanh 2)</strong>.
+            <br>• Đứng trước <strong>Thanh 1, 2, 3</strong>: đọc thành <strong>yì (thanh 4)</strong>.
+          </p>
+          <div class="rule-examples-grid">
+            <div class="rule-ex-item" data-speak="一定">
+              <span class="ex-hanzi">一定</span>
+              <span class="ex-change">yī + dìng ➔ <strong>yí dìng</strong></span>
+              <span class="ex-mean">nhất định</span>
+              <button class="rule-listen-btn">🔊 Nghe phát âm</button>
+            </div>
+            <div class="rule-ex-item" data-speak="一起">
+              <span class="ex-hanzi">一起</span>
+              <span class="ex-change">yī + qǐ ➔ <strong>yì qǐ</strong></span>
+              <span class="ex-mean">cùng nhau</span>
+              <button class="rule-listen-btn">🔊 Nghe phát âm</button>
+            </div>
+            <div class="rule-ex-item" data-speak="一天">
+              <span class="ex-hanzi">一天</span>
+              <span class="ex-change">yī + tiān ➔ <strong>yì tiān</strong></span>
+              <span class="ex-mean">một ngày</span>
+              <button class="rule-listen-btn">🔊 Nghe phát âm</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Rule 4: Neutral Tone (Khinh thanh) -->
+        <article class="rule-detail-card">
+          <div class="rule-badge">QUY TẮC 4</div>
+          <h3 class="rule-title">Khinh Thanh (Thanh Nhẹ - Neutral Tone)</h3>
+          <p class="rule-desc">
+            Trong tiếng Trung có một số âm tiết đọc cực kỳ nhẹ, ngắn và dứt khoát (không đánh dấu thanh điệu trên Pinyin). Thường gặp ở trợ từ, hư từ và từ láy thân mật.
+          </p>
+          <div class="rule-examples-grid">
+            <div class="rule-ex-item" data-speak="妈妈">
+              <span class="ex-hanzi">妈妈</span>
+              <span class="ex-change">māma (từ thứ 2 đọc nhẹ)</span>
+              <span class="ex-mean">mẹ</span>
+              <button class="rule-listen-btn">🔊 Nghe phát âm</button>
+            </div>
+            <div class="rule-ex-item" data-speak="好的">
+              <span class="ex-hanzi">好的</span>
+              <span class="ex-change">hǎo de (trợ từ 的 đọc nhẹ)</span>
+              <span class="ex-mean">được rồi, ok</span>
+              <button class="rule-listen-btn">🔊 Nghe phát âm</button>
+            </div>
+            <div class="rule-ex-item" data-speak="我们">
+              <span class="ex-hanzi">我们</span>
+              <span class="ex-change">wǒmen (hậu tố 们 đọc nhẹ)</span>
+              <span class="ex-mean">chúng tôi</span>
+              <button class="rule-listen-btn">🔊 Nghe phát âm</button>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- Footer Copyright -->
+    <footer class="tm-footer">
+      PINYIN POP! VUA THANH ĐIỆU // BẢN QUYỀN © 2026 <strong>KHAI LE</strong> // HỆ THỐNG PHÁT ÂM CHUẨN 5.000 TỪ HSK
+    </footer>
+
+  </div>
+
+  <!-- Result Modal Popup (Centered on Screen) -->
+  <div class="modal-overlay" id="tmFeedbackModal" style="display: none;">
+    <div class="cyber-modal tm-feedback-modal-inner">
+      <button class="modal-close-icon" id="tmCloseFeedbackBtn" title="Đóng">✕</button>
+
+      <div class="feedback-status-header">
+        <div class="feedback-status-icon" id="tmFeedbackIcon">🎉</div>
+        <div class="feedback-status-title" id="tmFeedbackTitle">XUẤT SẮC! CHÍNH XÁC</div>
+        <div class="feedback-pts" id="tmFeedbackPts">+100 ĐIỂM ⭐</div>
+      </div>
+
+      <!-- Character & Word Showcase -->
+      <div class="feedback-char-showcase">
+        <div class="fb-showcase-text">
+          <span class="fb-hanzi" id="tmFeedbackHanzi">妈</span>
+          <div class="fb-meta">
+            <span class="fb-pinyin" id="tmFeedbackPinyin">mā</span>
+            <span class="fb-meaning" id="tmFeedbackMeaning">mẹ, má</span>
+          </div>
+        </div>
+        <button class="card-icon-btn speak-btn fb-voice-btn" id="tmFeedbackVoiceBtn" title="Nghe lại phát âm">
+          🔊 <span class="voice-lbl">PHÁT ÂM</span>
+        </button>
+      </div>
+
+      <!-- Tone Analysis Card -->
+      <div class="feedback-analysis-card" id="tmFeedbackAnalysis">
+        <!-- Detailed tone explanation populated by JS -->
+      </div>
+
+      <!-- Next Button -->
+      <div class="feedback-actions">
+        <button class="cyber-launch-btn tm-next-btn" id="tmNextQuestionBtn">
+          TIẾP TỤC CÂU TIẾP THEO ➡️ <span class="kbd-tip">(Enter / Phím Cách)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Instructions Help Modal -->
+  <div class="modal-overlay" id="tmHelpModal" style="display: none;">
+    <div class="cyber-modal tm-help-modal-inner">
+      <h2 class="modal-title">🎵 HƯỚNG DẪN CHƠI VUA THANH ĐIỆU</h2>
+      <p style="color: var(--text-muted); margin-bottom: 16px;">Rèn luyện thính giác phân biệt thanh điệu chuẩn bản ngữ:</p>
+
+      <div class="modal-rules" style="display: flex; flex-direction: column; gap: 10px; text-align: left;">
+        <div class="rule-card">
+          <span class="rule-icon">👂</span>
+          <div>
+            <strong>Lắng nghe âm thanh:</strong>
+            <p>Hệ thống sẽ phát âm ngẫu nhiên một từ trong kho 5.000 từ vựng. Bạn có thể nhấn <strong>Phím R</strong> hoặc nhấp vào loa để nghe lại bao nhiêu lần tùy thích.</p>
+          </div>
+        </div>
+        <div class="rule-card">
+          <span class="rule-icon">🔢</span>
+          <div>
+            <strong>Chọn thanh điệu bằng chuột hoặc phím tắt:</strong>
+            <p>Nhấn số <strong>1, 2, 3, 4</strong> trên bàn phím hoặc nhấp thẳng vào ô Thanh Điệu tương ứng để đưa ra câu trả lời.</p>
+          </div>
+        </div>
+        <div class="rule-card">
+          <span class="rule-icon">📈</span>
+          <div>
+            <strong>Bảng thanh mẫu & vận mẫu:</strong>
+            <p>Chuyển qua tab <strong>🎙️ Bảng Thanh Mẫu & Vận Mẫu</strong> để tra cứu cách đặt lưỡi, khẩu hình bật hơi và bấm nghe trọn bộ 4 thanh điệu của từng vần.</p>
+          </div>
+        </div>
+      </div>
+
+      <button class="cyber-launch-btn" id="tmCloseHelpBtn" style="margin-top: 18px; width: 100%;">
+        ĐÃ HIỂU, VÀO LUYỆN TAI NGAY! 🚀
+      </button>
+    </div>
+  </div>
+
+  <!-- Audio Synthesis & Vocabulary Dataset -->
+  <script src="words.js?v=pop"></script>
+  <script src="tone-master.js?v=20261005_v1"></script>
+</body>
+</html>

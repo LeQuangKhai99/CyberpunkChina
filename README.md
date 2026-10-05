@@ -52,6 +52,18 @@ Trò chơi luyện gõ Pinyin tiếng Trung phong cách kẹo ngọt vui nhộn,
     - Thử thách ghép các chữ đơn lẻ thành từ ghép chuẩn HSK kèm nghĩa tiếng Việt & phiên âm Pinyin.
   - **Tương tác linh hoạt & mượt mà**: Hỗ trợ đồng thời kéo thả (Drag & Drop) và nhấp chọn (Click-to-slot) cực kỳ thuận tiện trên cả máy tính lẫn điện thoại/tablet.
   - **Âm thanh hiệu ứng & Phát âm TTS**: Tự động phát âm chuẩn giọng Bắc Kinh khi ghép đúng.
+- **Trò Chơi Vua Thanh Điệu & Phòng Luyện Âm Tiếng Trung (`tone-master.html`)**:
+  - **🎮 Thử Thách Thính Giác (Tone Ear Challenge)**:
+    - Phân biệt chuẩn xác **4 Thanh điệu tiếng Trung Bắc Kinh** (1 Âm Bình 55, 2 Dương Bình 35, 3 Thượng Thanh 214, 4 Khứ Thanh 51).
+    - 4 Pad bấm thanh điệu cỡ lớn hiển thị trực quan sơ đồ cao độ SVG, hỗ trợ phím tắt nhanh `1, 2, 3, 4` và phím `R` để nghe lại âm thanh.
+    - Chế độ **Cặp từ đối lập (Minimal Pairs)** phân biệt các từ phát âm gần giống nhau (như `买` mǎi vs `卖` mài, `十` shí vs `是` shì).
+    - Chế độ **Thử thách biến điệu (Sandhi Quiz)** luyện phản xạ quy tắc biến điệu thực tế.
+  - **🎙️ Bảng Phát Âm 21 Thanh Mẫu & 36 Vận Mẫu (Mandarin Phonetics Lab)**:
+    - Phân loại khoa học 21 Thanh Mẫu theo vị trí cấu âm (hai môi, môi răng, đầu lưỡi, gốc lưỡi, mặt lưỡi, uốn lưỡi).
+    - Nhận biết rõ ràng thuộc tính **BẬT HƠI** (luồng khí mạnh) vs **KHÔNG BẬT HƠI**.
+    - Bảng 36 Vận Mẫu (Đơn, Kép, Mũi, Cuốn lưỡi) tích hợp sẵn nút phát âm đầy đủ 4 thanh điệu cho từng vần (`ā, á, ǎ, à`...).
+  - **📈 Bí Kíp Biến Điệu & Quy Tắc Thanh Điệu (Tone Sandhi & Rules Guide)**:
+    - Hướng dẫn trực quan quy tắc 2 thanh 3 (`3 + 3 ➔ 2 + 3`), biến điệu chữ `不` (bù ➔ bú), biến điệu chữ `一` (yī ➔ yí / yì) và Khinh thanh (Neutral tone) kèm audio minh họa riêng.
 - **Cơ Chế 100 Tim Năng Lượng Trong Game**:
   - Người chơi khởi đầu với 100 Tim năng lượng. Giữ tim càng lâu, combo càng bùng nổ!
 
@@ -97,6 +109,9 @@ Truy cập: [http://localhost:8080](http://localhost:8080)
 ├── hanzi-puzzle.html           # 🧩 Game Ghép Bộ Thủ Cội Nguồn & Ghép Từ Ghép HSK 1 - 6
 ├── hanzi-puzzle.css            # Giao diện kéo thả Puzzle Candy Pop hiện đại
 ├── hanzi-puzzle.js             # Logic ghép chữ, cội nguồn bộ thủ & kết nối 5.000 từ vựng
+├── tone-master.html            # 🎵 Vua Thanh Điệu & Bảng 21 Thanh Mẫu / 36 Vận Mẫu
+├── tone-master.css             # Giao diện âm thanh, 4 pad thanh điệu & bảng ngữ âm
+├── tone-master.js              # Bộ mô phỏng cao độ thanh điệu, nhận diện âm thanh & phản xạ HSK
 ├── style.css                   # Thiết kế Candy Pop sống động, font chữ Noto Sans SC thanh mảnh
 ├── words.js                    # Thư viện 5.000 từ vựng tiếng Trung HSK 1-6 chuẩn nghĩa tiếng Việt
 ├── audio.js                    # Bộ phát âm thanh 8-bit, chiptune BGM sequencer & TTS bản ngữ
