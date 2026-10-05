@@ -198,6 +198,8 @@
       this.filteredWords = [];
       this.currentFilterLevel = 'all';
       this.searchQuery = '';
+      this.renderedCount = 0;
+      this.chunkSize = 60;
 
       this.dom = {};
     }
@@ -364,6 +366,32 @@
           }
         }
       });
+
+      // Delegated click on word item or load more button
+      this.dom.wordList.addEventListener('click', (e) => {
+        const item = e.target.closest('.hs-word-item');
+        if (item) {
+          const hz = item.dataset.hanzi;
+          const word = this.filteredWords.find(w => w.hanzi === hz) || this.allWords.find(w => w.hanzi === hz);
+          if (word) {
+            this.loadWord(word);
+          }
+          return;
+        }
+
+        const btnLoadMore = e.target.closest('#btnLoadMoreWords');
+        if (btnLoadMore) {
+          this.renderMoreWords();
+        }
+      });
+
+      // Infinite scroll on word list
+      this.dom.wordList.addEventListener('scroll', () => {
+        const { scrollTop, scrollHeight, clientHeight } = this.dom.wordList;
+        if (scrollTop + clientHeight >= scrollHeight - 120) {
+          this.renderMoreWords();
+        }
+      });
     }
 
     // =======================================================================
@@ -411,40 +439,71 @@
       }
 
       this.filteredWords = list;
+      this.renderedCount = 0;
+      this.dom.wordList.innerHTML = '';
 
-      // Render max first 60 for smooth performance
-      const displayChunk = list.slice(0, 60);
-      let html = '';
-
-      if (displayChunk.length === 0) {
-        html = '<div style="text-align: center; color: #94a3b8; padding: 24px 0; font-size: 13px;">Không tìm thấy từ nào phù hợp!</div>';
+      // Update badge count
+      if (this.currentFilterLevel === 'all' && !this.searchQuery) {
+        this.dom.vocabCount.textContent = `${this.allWords.length.toLocaleString('vi-VN')} từ`;
       } else {
-        displayChunk.forEach(w => {
-          const isActive = this.currentWord && this.currentWord.hanzi === w.hanzi;
-          html += `
-            <div class="hs-word-item ${isActive ? 'active' : ''}" data-hanzi="${w.hanzi}">
-              <div class="hs-word-hanzi-col">
-                <span class="hs-item-hanzi">${w.hanzi}</span>
-                <span class="hs-item-pinyin">${w.pinyin || ''}</span>
-              </div>
-              <div class="hs-item-meaning">${w.meaning_vn || w.meaning || ''}</div>
-            </div>
-          `;
-        });
+        this.dom.vocabCount.textContent = `${this.filteredWords.length.toLocaleString('vi-VN')} từ`;
       }
 
-      this.dom.wordList.innerHTML = html;
+      if (this.filteredWords.length === 0) {
+        this.dom.wordList.innerHTML = '<div style="text-align: center; color: #94a3b8; padding: 24px 0; font-size: 13px;">Không tìm thấy từ nào phù hợp!</div>';
+        return;
+      }
 
-      // Click on list item
-      this.dom.wordList.querySelectorAll('.hs-word-item').forEach(item => {
-        item.addEventListener('click', () => {
-          const hz = item.dataset.hanzi;
-          const word = this.filteredWords.find(w => w.hanzi === hz) || this.allWords.find(w => w.hanzi === hz);
-          if (word) {
-            this.loadWord(word);
-          }
-        });
+      // Render initial chunk
+      this.renderMoreWords();
+    }
+
+    renderMoreWords() {
+      if (this.renderedCount >= this.filteredWords.length) return;
+
+      // Remove existing list footer if present
+      const existingFooter = document.getElementById('hsListFooter');
+      if (existingFooter) existingFooter.remove();
+
+      const nextChunk = this.filteredWords.slice(this.renderedCount, this.renderedCount + this.chunkSize);
+      this.renderedCount += nextChunk.length;
+
+      const fragment = document.createDocumentFragment();
+      nextChunk.forEach(w => {
+        const isActive = this.currentWord && this.currentWord.hanzi === w.hanzi;
+        const div = document.createElement('div');
+        div.className = `hs-word-item ${isActive ? 'active' : ''}`;
+        div.dataset.hanzi = w.hanzi;
+        div.innerHTML = `
+          <div class="hs-word-hanzi-col">
+            <span class="hs-item-hanzi">${w.hanzi}</span>
+            <span class="hs-item-pinyin">${w.pinyin || ''}</span>
+          </div>
+          <div class="hs-item-meaning">${w.meaning_vn || w.meaning || ''}</div>
+        `;
+        fragment.appendChild(div);
       });
+
+      this.dom.wordList.appendChild(fragment);
+
+      // Add footer status & manual load more button
+      const footer = document.createElement('div');
+      footer.id = 'hsListFooter';
+      footer.style.cssText = 'text-align: center; padding: 12px 0 8px; font-size: 11px; font-weight: 700; color: #64748b;';
+
+      if (this.renderedCount < this.filteredWords.length) {
+        const remaining = this.filteredWords.length - this.renderedCount;
+        footer.innerHTML = `
+          <button id="btnLoadMoreWords" style="background: #fdf2f8; border: 1.5px solid #fbcfe8; color: #db2777; padding: 6px 16px; border-radius: 999px; font-size: 11px; font-weight: 800; cursor: pointer; transition: all 0.15s ease;">
+            ⬇️ Tải thêm từ (còn ${remaining.toLocaleString('vi-VN')} từ)
+          </button>
+          <div style="font-size: 10px; margin-top: 4px; color: #94a3b8;">Đang hiển thị ${this.renderedCount} / ${this.filteredWords.length.toLocaleString('vi-VN')} từ</div>
+        `;
+      } else {
+        footer.innerHTML = `✨ Đã hiển thị trọn vẹn ${this.filteredWords.length.toLocaleString('vi-VN')} từ`;
+      }
+
+      this.dom.wordList.appendChild(footer);
     }
 
     // =======================================================================
