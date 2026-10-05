@@ -1,320 +1,651 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="PINYIN POP! - Trò chơi luyện gõ Pinyin tiếng Trung cực vui nhộn với 5.000 từ vựng HSK 1-6 kèm chú thích nghĩa tiếng Việt và giọng đọc bản ngữ.">
-  <title>PINYIN POP! 🌟 快乐拼音 - Vui Học Tiếng Trung 5000 Từ HSK</title>
+  <meta name="description" content="PINYIN POP! - Cổng trò chơi và học từ vựng tiếng Trung HSK 1-6 phong cách Candy Pop vui nhộn. Chơi game gõ Pinyin Arcade hoặc học thẻ Flashcard thông minh.">
+  <title>PINYIN POP! 🌟 Cổng Trò Chơi & Học Tiếng Trung 5000 Từ HSK</title>
 
-  <!-- Google Fonts: Fredoka, Quicksand, Outfit, ZCOOL KuaiLe & Noto Sans SC -->
+  <!-- Google Fonts: Fredoka, Quicksand, Outfit, Noto Sans SC -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Outfit:wght@500;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Outfit:wght@500;600;700;800;900&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css?v=20261005_v5">
   <link rel="icon" type="image/png" href="assets/logo.png">
+
+  <style>
+    /* Dedicated Styling for Portal / Game Hub Menu */
+    body.portal-body {
+      overflow-y: auto !important;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #7dd3fc;
+    }
+
+    #portalBgCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .portal-container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 16px 20px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Portal Top Navbar */
+    .portal-navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(16px);
+      border-radius: 24px;
+      padding: 10px 24px;
+      border: 3px solid #ffffff;
+      box-shadow: 0 10px 25px rgba(79, 70, 229, 0.12);
+    }
+
+    .portal-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .portal-brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .portal-brand-title {
+      font-family: var(--font-brand);
+      font-size: 22px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ff4b82, #ffb703, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .portal-brand-sub {
+      font-size: 11px;
+      font-weight: 800;
+      color: #64748b;
+      letter-spacing: 0.5px;
+    }
+
+    .portal-stats-pill {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1d4ed8;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Hero Banner */
+    .portal-hero {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(20px);
+      border: 4px solid #ffffff;
+      border-radius: 32px;
+      padding: 32px 36px;
+      box-shadow: 0 20px 45px rgba(99, 102, 241, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+    }
+
+    .portal-hero-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .hero-badge-tag {
+      background: #fdf2f8;
+      border: 1px solid #fbcfe8;
+      color: #db2777;
+      padding: 3px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      align-self: flex-start;
+    }
+
+    .portal-hero-title {
+      font-family: var(--font-brand);
+      font-size: 34px;
+      font-weight: 800;
+      color: #1e1b4b;
+      line-height: 1.2;
+    }
+
+    .portal-hero-title span {
+      background: linear-gradient(135deg, #ff4b82, #ffb703);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .portal-hero-desc {
+      font-size: 14px;
+      color: #475569;
+      line-height: 1.5;
+      font-weight: 600;
+      max-width: 580px;
+    }
+
+    .portal-hero-features {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .feat-bubble {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .portal-hero-mascot-wrap {
+      flex-shrink: 0;
+    }
+
+    .portal-hero-mascot {
+      width: 140px;
+      height: 140px;
+      border-radius: 36px;
+      border: 4px solid #ffffff;
+      box-shadow: 0 15px 35px rgba(255, 75, 130, 0.35);
+      animation: heroBob 3s ease-in-out infinite;
+    }
+
+    @keyframes heroBob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    /* Section Title */
+    .portal-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: -6px;
+    }
+
+    .portal-section-title {
+      font-family: var(--font-brand);
+      font-size: 22px;
+      font-weight: 800;
+      color: #1e1b4b;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Game & Learning Cards Grid */
+    .portal-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .portal-cards-grid {
+        grid-template-columns: 1fr;
+      }
+      .portal-hero {
+        flex-direction: column-reverse;
+        text-align: center;
+        padding: 24px;
+      }
+      .hero-badge-tag {
+        align-self: center;
+      }
+      .portal-hero-features {
+        justify-content: center;
+      }
+    }
+
+    /* Menu Card Item */
+    .portal-card {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(16px);
+      border-radius: 28px;
+      border: 3px solid #ffffff;
+      box-shadow: 0 14px 32px rgba(99, 102, 241, 0.14);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .portal-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 42px rgba(99, 102, 241, 0.22);
+    }
+
+    .portal-card.card-pinyin-game {
+      border-color: #fbcfe8;
+    }
+
+    .portal-card.card-flashcard {
+      border-color: #bfdbfe;
+    }
+
+    .portal-card.card-coming-soon {
+      opacity: 0.85;
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    .portal-card.card-coming-soon:hover {
+      transform: none;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .card-icon-emblem {
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      flex-shrink: 0;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .emblem-game {
+      background: linear-gradient(135deg, #ff4b82, #ff758c);
+      color: #ffffff;
+    }
+
+    .emblem-flashcard {
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      color: #ffffff;
+    }
+
+    .emblem-puzzle {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #ffffff;
+    }
+
+    .emblem-tone {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ffffff;
+    }
+
+    .card-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .card-status-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 999px;
+      align-self: flex-start;
+      margin-bottom: 2px;
+    }
+
+    .status-active {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .status-popular {
+      background: #fdf2f8;
+      color: #db2777;
+      border: 1px solid #fbcfe8;
+    }
+
+    .status-soon {
+      background: #f1f5f9;
+      color: #64748b;
+      border: 1px solid #e2e8f0;
+    }
+
+    .card-title {
+      font-family: var(--font-brand);
+      font-size: 20px;
+      font-weight: 800;
+      color: #1e1b4b;
+    }
+
+    .card-desc {
+      font-size: 12px;
+      color: #475569;
+      line-height: 1.45;
+      font-weight: 600;
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .card-tag {
+      font-size: 10px;
+      font-weight: 700;
+      background: #f1f5f9;
+      color: #475569;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    /* Action Link Button */
+    .card-action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 999px;
+      font-family: var(--font-brand);
+      font-size: 15px;
+      font-weight: 800;
+      text-decoration: none;
+      color: #ffffff;
+      transition: all 0.15s ease;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-launch-game {
+      background: linear-gradient(135deg, #ff4b82, #ff758c);
+      box-shadow: 0 8px 18px rgba(255, 75, 130, 0.35), 0 3px 0 #d81b60;
+    }
+
+    .btn-launch-game:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(255, 75, 130, 0.45), 0 5px 0 #d81b60;
+    }
+
+    .btn-launch-flashcard {
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      box-shadow: 0 8px 18px rgba(59, 130, 246, 0.35), 0 3px 0 #1d4ed8;
+    }
+
+    .btn-launch-flashcard:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(59, 130, 246, 0.45), 0 5px 0 #1d4ed8;
+    }
+
+    .btn-disabled {
+      background: #e2e8f0;
+      color: #94a3b8;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    /* Portal Footer */
+    .portal-footer {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #475569;
+      padding-top: 10px;
+    }
+  </style>
 </head>
-<body class="theme-pinyin-pop">
+<body class="theme-pinyin-pop portal-body">
 
-  <!-- Cheerful Background & Star Sparkle Canvases -->
-  <canvas id="bgCanvas"></canvas>
-  <canvas id="laserCanvas"></canvas>
+  <!-- Background Animated Canvas -->
+  <canvas id="portalBgCanvas"></canvas>
 
-  <!-- Screen Flash & Shake Overlays -->
-  <div id="damageFlash" class="damage-flash"></div>
-  <div class="pop-sparkle-overlay"></div>
+  <div class="portal-container">
 
-  <!-- Main Game Wrapper -->
-  <div class="game-wrapper" id="gameWrapper">
-
-    <!-- Top Cheerful Candy HUD -->
-    <header class="cyber-hud">
-      
-      <!-- Brand & Game Logo -->
-      <div class="hud-brand">
-        <img src="assets/logo.png" alt="Pinyin Pop Mascot Logo" class="brand-logo-img" width="46" height="46" style="width: 46px !important; height: 46px !important; max-width: 46px !important; max-height: 46px !important; object-fit: contain; border-radius: 14px; flex-shrink: 0;">
-        <div class="brand-text">
-          <div class="pop-brand-title">PINYIN POP! <span class="brand-sparkle">✨</span></div>
-          <div class="pop-brand-subtitle">🌟 快乐拼音 // VUI HỌC 5000 TỪ HSK</div>
-          <div class="brand-author-badge">TÁC GIẢ: KHAI LE</div>
+    <!-- Top Navbar -->
+    <header class="portal-navbar">
+      <div class="portal-brand">
+        <img src="assets/logo.png" alt="Pinyin Pop Mascot" class="brand-logo-img" width="46" height="46" style="width: 46px; height: 46px; border-radius: 14px; object-fit: contain;">
+        <div class="portal-brand-text">
+          <span class="portal-brand-title">PINYIN POP! <span class="brand-sparkle">✨</span></span>
+          <span class="portal-brand-sub">🌟 CỔNG TRÒ CHƠI & HỌC TIẾNG TRUNG 5000 TỪ HSK</span>
         </div>
       </div>
 
-      <!-- Health Meter (100 HP Candy Hearts) -->
-      <div class="hud-health-card">
-        <div class="health-meta">
-          <span class="shield-label"><span class="shield-icon">💖</span> ĐIỂM TIM</span>
-          <span class="health-numeric" id="healthDisplay">100 / 100 HP</span>
-        </div>
-        <div class="health-bar-track">
-          <div class="health-bar-fill" id="healthBarFill" style="width: 100%;"></div>
-        </div>
+      <div class="portal-stats-pill">
+        <span>📚 KHO TỪ: <strong>5.000 TỪ HSK 1 - 6</strong></span>
       </div>
-
-      <!-- Score & Combo Streak -->
-      <div class="hud-score-card">
-        <div class="score-row">
-          <span class="score-label">⭐ ĐIỂM:</span>
-          <span class="score-val" id="scoreDisplay">0</span>
-        </div>
-        <div class="combo-row">
-          <span class="combo-label">COMBO:</span>
-          <span class="combo-badge" id="comboDisplay">x1</span>
-          <span class="streak-count" id="streakDisplay">0 CHUỖI</span>
-        </div>
-      </div>
-
-      <!-- HUD Right: Flashcard Link + Pinyin Toggle + Pause + Settings Gear -->
-      <div class="hud-right-actions">
-
-        <!-- Flashcard Learning Hub Link -->
-        <a href="flashcard.html" class="icon-toggle fc-nav-link-btn" title="Chuyển sang chế độ Thẻ Flashcard thông minh">
-          🗂️ <span class="btn-txt">HỌC FLASHCARD</span>
-        </a>
-
-        <!-- Prominent Pinyin Toggle Button (always visible) -->
-        <button class="pinyin-toggle-btn" id="togglePinyinBtn" title="Ẩn/Hiện Pinyin — phím tắt F2">
-          <span class="pinyin-btn-icon">👁️</span>
-          <span class="pinyin-btn-title">PINYIN:</span>
-          <span class="pinyin-status-pill" id="pinyinStatusPill">HIỆN</span>
-        </button>
-
-        <!-- Pause Button -->
-        <button class="icon-toggle" id="pauseBtn" title="Tạm dừng (Esc)">
-          ⏸️ <span class="btn-txt">TẠM NGHỈ</span>
-        </button>
-
-        <!-- Settings Gear Button -->
-        <button class="settings-gear-btn" id="settingsGearBtn" title="Cài đặt trò chơi">
-          ⚙️ <span class="settings-gear-label">CÀI ĐẶT</span>
-        </button>
-      </div>
-
-      <!-- Collapsible Settings Panel (hidden by default) -->
-      <div class="settings-panel" id="settingsPanel">
-        <div class="settings-panel-inner">
-          <div class="settings-row">
-            <div class="control-group">
-              <label for="hskSelect">📚 CẤP ĐỘ HSK:</label>
-              <select id="hskSelect" class="cyber-select">
-                <option value="all">🌈 TẤT CẢ HSK (5.000 Từ)</option>
-                <option value="1">🌱 HSK 1 (150 Từ)</option>
-                <option value="2">🌿 HSK 2 (150 Từ)</option>
-                <option value="3">⭐ HSK 3 (300 Từ)</option>
-                <option value="4">🚀 HSK 4 (600 Từ)</option>
-                <option value="5">🔥 HSK 5 (1.300 Từ)</option>
-                <option value="6">👑 HSK 6 (2.500 Từ)</option>
-              </select>
-            </div>
-
-            <div class="control-group">
-              <label for="speedSelect">⚡ TỐC ĐỘ BÓNG RƠI:</label>
-              <select id="speedSelect" class="cyber-select">
-                <option value="0.75">🧸 THƯ THÁI (0.75x)</option>
-                <option value="1.0" selected>⚡ CHUẨN (1.0x)</option>
-                <option value="1.4">🚀 NHANH (1.4x)</option>
-                <option value="2.0">🌪️ SIÊU TỐC (2.0x)</option>
-              </select>
-            </div>
-
-            <div class="control-group">
-              <label for="langSelect">🌐 CHÚ THÍCH NGHĨA:</label>
-              <select id="langSelect" class="cyber-select">
-                <option value="vi" selected>🇻🇳 TIẾNG VIỆT</option>
-                <option value="bi">🇻🇳🇬🇧 SONG NGỮ</option>
-                <option value="en">🇬🇧 TIẾNG ANH</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="settings-row">
-            <button class="icon-toggle active" id="voiceToggleBtn" title="Bật/Tắt phát âm tiếng Trung">
-              🗣️ <span class="btn-txt">GIỌNG ĐỌC: BẬT</span>
-            </button>
-            <button class="icon-toggle active" id="sfxToggleBtn" title="Bật/Tắt âm thanh hiệu ứng">
-              🔔 <span class="btn-txt">HIỆU ỨNG: BẬT</span>
-            </button>
-            <button class="icon-toggle active" id="bgmToggleBtn" title="Bật/Tắt nhạc nền vui nhộn">
-              🎵 <span class="btn-txt">NHẠC NỀN: BẬT</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
     </header>
 
-    <!-- Falling Arena (Sky) -->
-    <main class="game-arena" id="gameArena">
-      <!-- Words dynamically spawn and fall inside here as cute bouncy bubbles -->
-      
-      <!-- Cheerful Rainbow Ground Line -->
-      <div class="ground-defense-grid" id="groundGrid">
-        <div class="ground-energy-line"></div>
-        <div class="ground-warning-text">✨ VẠCH ĐÍCH CẦU VỒNG // ĐỪNG ĐỂ BÓNG TỪ VỰNG CHẠM ĐÁY NHÉ ✨</div>
-      </div>
-    </main>
-
-    <!-- Bottom Cannon Console & Input Bar -->
-    <footer class="cyber-console">
-      
-      <!-- Animated Star Blaster Cannon -->
-      <div class="turret-wrapper">
-        <div class="turret-base">
-          <div class="turret-barrel" id="turretBarrel"></div>
+    <!-- Hero Banner -->
+    <section class="portal-hero">
+      <div class="portal-hero-content">
+        <span class="hero-badge-tag">🎉 TRUNG TÂM HỌC TẬP VUI NHỘN</span>
+        <h1 class="portal-hero-title">Vui Học Tiếng Trung <span>Không Áp Lực!</span></h1>
+        <p class="portal-hero-desc">
+          Kết hợp hoàn hảo giữa <strong>Trò chơi gõ Pinyin Arcade phản xạ nhanh</strong> và <strong>Thẻ ghi nhớ Flashcard 3D thông minh</strong> với toàn bộ 5.000 từ vựng chuẩn HSK 1 đến HSK 6 cùng phát âm bản ngữ.
+        </p>
+        <div class="portal-hero-features">
+          <div class="feat-bubble">🎮 Trò chơi phản xạ cao</div>
+          <div class="feat-bubble">🗂️ Thẻ 3D Active Recall</div>
+          <div class="feat-bubble">🗣️ Giọng đọc Bắc Kinh (zh-CN)</div>
+          <div class="feat-bubble">🇻🇳 Chú thích tiếng Việt đầy đủ</div>
         </div>
       </div>
 
-      <!-- Main Pinyin Typing Input -->
-      <div class="input-console-bar">
-        <div class="input-reticle">⭐</div>
-        <div class="input-field-wrapper">
-          <span class="input-prefix">PINYIN:&gt;</span>
-          <input 
-            type="text" 
-            id="pinyinInput" 
-            autocomplete="off" 
-            autocorrect="off" 
-            autocapitalize="off" 
-            spellcheck="false" 
-            placeholder="Gõ Pinyin không dấu để bắn bóng từ (vd: ni, hao, nihao, zhongguo)..." 
-            autofocus
-          >
-          <div class="input-glow-indicator"></div>
-        </div>
-        <div class="stats-mini-summary">
-          <div class="stat-bubble">
-            <span class="bubble-num" id="killsCount">0</span>
-            <span class="bubble-txt">BẮN TRÚNG</span>
-          </div>
-          <div class="stat-bubble">
-            <span class="bubble-num" id="accuracyDisplay">100%</span>
-            <span class="bubble-txt">CHÍNH XÁC</span>
+      <div class="portal-hero-mascot-wrap">
+        <img src="assets/logo.png" alt="Pinyin Pop Mascot" class="portal-hero-mascot">
+      </div>
+    </section>
+
+    <!-- Main Navigation Sections -->
+    <div class="portal-section-header">
+      <h2 class="portal-section-title">✨ CHỌN HOẠT ĐỘNG BẠN MUỐN THAM GIA</h2>
+    </div>
+
+    <div class="portal-cards-grid">
+      
+      <!-- CARD 1: Pinyin Pop Arcade Game -->
+      <div class="portal-card card-pinyin-game">
+        <div class="card-top">
+          <div class="card-icon-emblem emblem-game">🚀</div>
+          <div class="card-info">
+            <span class="card-status-badge status-popular">🎮 ĐANG HOẠT ĐỘNG // PHỔ BIẾN NHẤT</span>
+            <h3 class="card-title">PINYIN POP! BẮN CHỮ ARCADE</h3>
+            <p class="card-desc">
+              Từ vựng rơi từ bầu trời cầu vồng! Gõ phiên âm Pinyin không dấu siêu nhanh để pháo sao bắn nổ từ vựng, tích lũy chuỗi Combo x5 và bảo vệ 100 Tim năng lượng.
+            </p>
           </div>
         </div>
+
+        <div class="card-tags">
+          <span class="card-tag">⚡ Phản xạ Pinyin</span>
+          <span class="card-tag">🎵 Nhạc 8-bit vui nhộn</span>
+          <span class="card-tag">💥 Pháo giấy Confetti</span>
+          <span class="card-tag">🏆 Bảng điểm HSK</span>
+        </div>
+
+        <a href="pinyin-pop.html" class="card-action-btn btn-launch-game">
+          🚀 BẮT ĐẦU CHƠI GAME NGAY
+        </a>
       </div>
 
-      <!-- Copyright Bar -->
-      <div class="console-copyright">
-        BẢN QUYỀN © 2026 <strong>KHAI LE</strong> // ALL RIGHTS RESERVED // PINYIN POP!
+      <!-- CARD 2: 3D Flashcard Learning -->
+      <div class="portal-card card-flashcard">
+        <div class="card-top">
+          <div class="card-icon-emblem emblem-flashcard">🗂️</div>
+          <div class="card-info">
+            <span class="card-status-badge status-active">🗂️ ĐANG HOẠT ĐỘNG // HỌC TẬP TỐI ƯU</span>
+            <h3 class="card-title">THẺ GHI NHỚ FLASHCARD 3D</h3>
+            <p class="card-desc">
+              Lật thẻ 3D ghi nhớ mặt chữ Hán thanh mảnh sắc nét, chia nhỏ 25 từ mỗi bài học, trắc nghiệm Quiz 4 đáp án và tự động lưu tiến độ vào bộ nhớ.
+            </p>
+          </div>
+        </div>
+
+        <div class="card-tags">
+          <span class="card-tag">🔄 Lật thẻ 3D</span>
+          <span class="card-tag">📖 Chia bài 25 từ</span>
+          <span class="card-tag">🎯 Trắc nghiệm Quiz</span>
+          <span class="card-tag">🧠 Active Recall</span>
+        </div>
+
+        <a href="flashcard.html" class="card-action-btn btn-launch-flashcard">
+          ✨ HỌC FLASHCARD NGAY
+        </a>
       </div>
 
+      <!-- CARD 3: Hanzi Puzzle Match (Coming Soon) -->
+      <div class="portal-card card-coming-soon">
+        <div class="card-top">
+          <div class="card-icon-emblem emblem-puzzle">🧩</div>
+          <div class="card-info">
+            <span class="card-status-badge status-soon">⏳ SẮP RA MẮT // GAME MỚI</span>
+            <h3 class="card-title">GHÉP BỘ THỦ & TỪ GHÉP</h3>
+            <p class="card-desc">
+              Kéo thả các bộ thủ rời rạc và các nét chữ để ghép thành chữ Hán hoàn chỉnh. Hiểu sâu cội nguồn cấu tạo của từng chữ Hán theo cách trực quan!
+            </p>
+          </div>
+        </div>
+
+        <div class="card-tags">
+          <span class="card-tag">🧩 Ghép bộ thủ</span>
+          <span class="card-tag">💡 Hiểu nghĩa gốc</span>
+          <span class="card-tag">🏰 Mini Game giải đố</span>
+        </div>
+
+        <button class="card-action-btn btn-disabled" disabled>
+          🛠️ ĐANG HOÀN THIỆN
+        </button>
+      </div>
+
+      <!-- CARD 4: Tone Master (Coming Soon) -->
+      <div class="portal-card card-coming-soon">
+        <div class="card-top">
+          <div class="card-icon-emblem emblem-tone">🎵</div>
+          <div class="card-info">
+            <span class="card-status-badge status-soon">⏳ SẮP RA MẮT // GAME MỚI</span>
+            <h3 class="card-title">VUA THANH ĐIỆU (TONE MASTER)</h3>
+            <p class="card-desc">
+              Thử thách thính giác phân biệt 4 thanh điệu tiếng Trung Bắc Kinh qua các câu đố âm thanh nhanh và nhịp điệu âm nhạc bắt tai.
+            </p>
+          </div>
+        </div>
+
+        <div class="card-tags">
+          <span class="card-tag">🔊 Luyện nghe thanh điệu</span>
+          <span class="card-tag">🎵 Nhịp điệu âm nhạc</span>
+          <span class="card-tag">🎯 4 Thanh điệu chuẩn</span>
+        </div>
+
+        <button class="card-action-btn btn-disabled" disabled>
+          🛠️ ĐANG HOÀN THIỆN
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="portal-footer">
+      PINYIN POP! PORTAL // BẢN QUYỀN © 2026 <strong>KHAI LE</strong> // ALL RIGHTS RESERVED
     </footer>
 
   </div>
 
-  <!-- Start Screen Modal -->
-  <div class="modal-overlay" id="startModal">
-    <div class="cyber-modal">
-      <div class="modal-hero-logo-wrap">
-        <img src="assets/logo.png" alt="Pinyin Pop Mascot" class="modal-hero-logo" width="80" height="80" style="width: 80px !important; height: 80px !important; max-width: 80px !important; max-height: 80px !important; object-fit: contain; border-radius: 22px; display: block; margin: 0 auto; box-shadow: 0 8px 20px rgba(255, 75, 130, 0.35);">
-      </div>
-      <h1 class="modal-title">PINYIN POP! <span class="title-star">⭐</span></h1>
-      <h2 class="modal-subtitle">🌟 快乐拼音 // VUI HỌC 5.000 TỪ TIẾNG TRUNG HSK 1 - 6</h2>
-      
-      <div class="modal-rules">
-        <div class="rule-card">
-          <span class="rule-icon">🎈</span>
-          <div>
-            <strong>Bóng chữ rơi tự do:</strong>
-            <p>5.000 từ vựng (HSK 1-6) kèm chú thích nghĩa tiếng Việt.</p>
-          </div>
-        </div>
-        <div class="rule-card">
-          <span class="rule-icon">⌨️</span>
-          <div>
-            <strong>Gõ Pinyin không dấu:</strong>
-            <p>Nhập Pinyin (vd: <code>ni</code>, <code>hao</code>, <code>zhongguo</code>) để pháo sao bắn nổ!</p>
-          </div>
-        </div>
-        <div class="rule-card">
-          <span class="rule-icon">💖</span>
-          <div>
-            <strong>Bảo vệ 100 Tim:</strong>
-            <p>Mỗi từ chạm vạch trừ <strong>-1 Tim</strong>. Đạt Combo x5 để bùng nổ điểm số!</p>
-          </div>
-        </div>
-        <div class="rule-card">
-          <span class="rule-icon">🗣️</span>
-          <div>
-            <strong>Luyện nghe giọng chuẩn:</strong>
-            <p>Phát âm bản ngữ chuẩn Bắc Kinh (zh-CN) giúp nhớ từ siêu tốc!</p>
-          </div>
-        </div>
-      </div>
+  <!-- Background Bubble Animation Script -->
+  <script>
+    (function() {
+      const canvas = document.getElementById('portalBgCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let w = canvas.width = window.innerWidth;
+      let h = canvas.height = window.innerHeight;
 
-      <div class="modal-actions">
-        <button class="cyber-launch-btn" id="startGameBtn">
-          <span class="btn-laser-glow"></span>
-          🚀 BẮT ĐẦU CHƠI NGAY THÔI!
-        </button>
-      </div>
+      window.addEventListener('resize', () => {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      });
 
-      <div class="modal-copyright-tag">
-        Bản quyền © 2026 <strong>Khai Le</strong> // Tác giả: <strong>Khai Le</strong>
-      </div>
-    </div>
-  </div>
+      const colors = ['rgba(255, 182, 193, 0.4)', 'rgba(186, 230, 253, 0.4)', 'rgba(254, 240, 138, 0.4)', 'rgba(233, 213, 255, 0.4)'];
+      const bubbles = [];
+      for (let i = 0; i < 35; i++) {
+        bubbles.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: 8 + Math.random() * 20,
+          speed: 15 + Math.random() * 30,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          swing: Math.random() * Math.PI * 2
+        });
+      }
 
-  <!-- Game Over Modal -->
-  <div class="modal-overlay" id="gameOverModal" style="display: none;">
-    <div class="cyber-modal game-over-modal">
-      <div class="game-over-header">
-        <span class="game-over-glitch" data-text="HOÀN THÀNH CHUYẾN PHIÊU LƯU!">🎉 HOÀN THÀNH CHUYẾN PHIÊU LƯU!</span>
-        <div class="game-over-sub">BẠN ĐÃ RẤT NỖ LỰC! CÙNG XEM LẠI THÀNH TÍCH NHÉ:</div>
-      </div>
+      function draw() {
+        const skyGrad = ctx.createLinearGradient(0, 0, 0, h);
+        skyGrad.addColorStop(0, '#7dd3fc');
+        skyGrad.addColorStop(0.4, '#bae6fd');
+        skyGrad.addColorStop(0.8, '#fbcfe8');
+        skyGrad.addColorStop(1, '#fef08a');
+        ctx.fillStyle = skyGrad;
+        ctx.fillRect(0, 0, w, h);
 
-      <div class="stats-summary-grid">
-        <div class="summary-card">
-          <span class="summary-label">⭐ TỔNG ĐIỂM</span>
-          <span class="summary-val" id="finalScore">0</span>
-        </div>
-        <div class="summary-card">
-          <span class="summary-label">🎯 TỪ ĐÃ BẮN NỔ</span>
-          <span class="summary-val accent-val" id="finalKills">0</span>
-        </div>
-        <div class="summary-card">
-          <span class="summary-label">🔥 COMBO CAO NHẤT</span>
-          <span class="summary-val" id="finalMaxCombo">0</span>
-        </div>
-        <div class="summary-card">
-          <span class="summary-label">💨 TỪ BỎ LỠ</span>
-          <span class="summary-val alert-val" id="finalMissed">0</span>
-        </div>
-      </div>
+        bubbles.forEach((b, idx) => {
+          b.y -= b.speed * 0.016;
+          b.swing += 0.02;
+          b.x += Math.sin(b.swing) * 0.5;
 
-      <div class="modal-actions">
-        <button class="cyber-launch-btn" id="restartGameBtn">
-          <span class="btn-laser-glow"></span>
-          🔄 CHƠI LẠI NGAY ĐỂ LẬP KỶ LỤC MỚI!
-        </button>
-      </div>
+          if (b.y < -30) {
+            b.y = h + 20;
+            b.x = Math.random() * w;
+          }
 
-      <div class="modal-copyright-tag">
-        Bản quyền © 2026 <strong>Khai Le</strong>
-      </div>
-    </div>
-  </div>
+          ctx.beginPath();
+          ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+          ctx.fillStyle = b.color;
+          ctx.fill();
 
-  <!-- Pause Modal -->
-  <div class="modal-overlay" id="pauseModal" style="display: none;">
-    <div class="cyber-modal pause-modal">
-      <h2 class="modal-title">☕ TẠM NGHỈ CHÚT NÀO!</h2>
-      <p style="color: var(--text-muted); margin: 15px 0;">Trò chơi đang dừng. Hãy uống ngụm nước rồi quay lại tiếp tục chinh phục tiếng Trung nhé!</p>
-      <button class="cyber-launch-btn" id="resumeGameBtn">
-        ✨ TIẾP TỤC CHƠI NGAY
-      </button>
+          ctx.beginPath();
+          ctx.arc(b.x - b.r * 0.3, b.y - b.r * 0.3, b.r * 0.25, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
+          ctx.fill();
+        });
 
-      <div class="modal-copyright-tag">
-        Bản quyền © 2026 <strong>Khai Le</strong>
-      </div>
-    </div>
-  </div>
-
-  <!-- 5000 Words Vocabulary Library Script -->
-  <script src="words.js?v=pop"></script>
-  <!-- Audio Synthesizer & Speech Engine -->
-  <script src="audio.js?v=pop"></script>
-  <!-- Main Game Mechanics Script -->
-  <script src="game.js?v=pop"></script>
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+  </script>
 </body>
 </html>
-

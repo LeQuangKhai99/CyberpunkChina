@@ -78,12 +78,17 @@ Truy cập: [http://localhost:8080](http://localhost:8080)
 
 ```
 ├── assets/
+│   ├── logo.png                # Mascot Logo 3D Pinyin Pop
 │   └── audio/                  # Các file âm thanh 8-bit (laser, explosion, coin, bgm...)
-├── index.html                  # Giao diện HUD Cyberpunk, sky arena, turret & modals
-├── style.css                   # Thiết kế Neon Cyberpunk, font chữ sắc nét, hiệu ứng CRT
-├── words.js                    # Thư viện 5.000 từ vựng tiếng Trung HSK 1-6 chuẩn nghĩa TV
-├── audio.js                    # Bộ phát âm thanh 8-bit, chiptune BGM sequencer & TTS
-├── game.js                     # Logic phòng thủ, tính điểm HSK, ẩn hiện pinyin, vòng lặp game
+├── index.html                  # 🌟 Cổng Menu Trung Tâm (Game & Flashcard Hub)
+├── pinyin-pop.html             # 🎮 Game Bắn Chữ Arcade Pinyin Pop (HSK 1 - 6)
+├── flashcard.html              # 🗂️ Thẻ Ghi Nhớ Flashcard 3D, Trắc Nghiệm Quiz & Từ Điển
+├── flashcard.css               # Phong cách thẻ 3D Flip Card và bộ học tập
+├── flashcard.js                # Logic Flashcard, lọc bài theo Deck, chấm điểm Quiz & lưu tiến độ
+├── style.css                   # Thiết kế Candy Pop sống động, font chữ Noto Sans SC thanh mảnh
+├── words.js                    # Thư viện 5.000 từ vựng tiếng Trung HSK 1-6 chuẩn nghĩa tiếng Việt
+├── audio.js                    # Bộ phát âm thanh 8-bit, chiptune BGM sequencer & TTS bản ngữ
+├── game.js                     # Logic game Pinyin Pop, tính điểm HSK, bắn sao & confetti
 ├── preview.png                 # Ảnh chụp màn hình trò chơi
 └── README.md                   # Tài liệu hướng dẫn
 ```

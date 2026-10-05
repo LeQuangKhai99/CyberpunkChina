@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PINYIN POP! - Trò chơi luyện gõ Pinyin tiếng Trung cực vui nhộn với 5.000 từ vựng HSK 1-6 kèm chú thích nghĩa tiếng Việt và giọng đọc bản ngữ.">
+  <title>PINYIN POP! 🌟 快乐拼音 - Vui Học Tiếng Trung 5000 Từ HSK</title>
+
+  <!-- Google Fonts: Fredoka, Quicksand, Outfit, ZCOOL KuaiLe & Noto Sans SC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Outfit:wght@500;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css?v=20261005_v5">
+  <link rel="icon" type="image/png" href="assets/logo.png">
+</head>
+<body class="theme-pinyin-pop">
+
+  <!-- Cheerful Background & Star Sparkle Canvases -->
+  <canvas id="bgCanvas"></canvas>
+  <canvas id="laserCanvas"></canvas>
+
+  <!-- Screen Flash & Shake Overlays -->
+  <div id="damageFlash" class="damage-flash"></div>
+  <div class="pop-sparkle-overlay"></div>
+
+  <!-- Main Game Wrapper -->
+  <div class="game-wrapper" id="gameWrapper">
+
+    <!-- Top Cheerful Candy HUD -->
+    <header class="cyber-hud">
+      
+      <!-- Brand & Game Logo -->
+      <div class="hud-brand">
+        <img src="assets/logo.png" alt="Pinyin Pop Mascot Logo" class="brand-logo-img" width="46" height="46" style="width: 46px !important; height: 46px !important; max-width: 46px !important; max-height: 46px !important; object-fit: contain; border-radius: 14px; flex-shrink: 0;">
+        <div class="brand-text">
+          <div class="pop-brand-title">PINYIN POP! <span class="brand-sparkle">✨</span></div>
+          <div class="pop-brand-subtitle">🌟 快乐拼音 // VUI HỌC 5000 TỪ HSK</div>
+          <div class="brand-author-badge">TÁC GIẢ: KHAI LE</div>
+        </div>
+      </div>
+
+      <!-- Health Meter (100 HP Candy Hearts) -->
+      <div class="hud-health-card">
+        <div class="health-meta">
+          <span class="shield-label"><span class="shield-icon">💖</span> ĐIỂM TIM</span>
+          <span class="health-numeric" id="healthDisplay">100 / 100 HP</span>
+        </div>
+        <div class="health-bar-track">
+          <div class="health-bar-fill" id="healthBarFill" style="width: 100%;"></div>
+        </div>
+      </div>
+
+      <!-- Score & Combo Streak -->
+      <div class="hud-score-card">
+        <div class="score-row">
+          <span class="score-label">⭐ ĐIỂM:</span>
+          <span class="score-val" id="scoreDisplay">0</span>
+        </div>
+        <div class="combo-row">
+          <span class="combo-label">COMBO:</span>
+          <span class="combo-badge" id="comboDisplay">x1</span>
+          <span class="streak-count" id="streakDisplay">0 CHUỖI</span>
+        </div>
+      </div>
+
+      <!-- HUD Right: Menu + Flashcard Link + Pinyin Toggle + Pause + Settings Gear -->
+      <div class="hud-right-actions">
+
+        <!-- Back to Hub / Menu Button -->
+        <a href="index.html" class="icon-toggle fc-nav-link-btn" title="Quay về Menu Trung Tâm">
+          🏠 <span class="btn-txt">MENU</span>
+        </a>
+
+        <!-- Flashcard Learning Hub Link -->
+        <a href="flashcard.html" class="icon-toggle fc-nav-link-btn" title="Chuyển sang chế độ Thẻ Flashcard thông minh">
+          🗂️ <span class="btn-txt">FLASHCARD</span>
+        </a>
+
+        <!-- Prominent Pinyin Toggle Button (always visible) -->
+        <button class="pinyin-toggle-btn" id="togglePinyinBtn" title="Ẩn/Hiện Pinyin — phím tắt F2">
+          <span class="pinyin-btn-icon">👁️</span>
+          <span class="pinyin-btn-title">PINYIN:</span>
+          <span class="pinyin-status-pill" id="pinyinStatusPill">HIỆN</span>
+        </button>
+
+        <!-- Pause Button -->
+        <button class="icon-toggle" id="pauseBtn" title="Tạm dừng (Esc)">
+          ⏸️ <span class="btn-txt">TẠM NGHỈ</span>
+        </button>
+
+        <!-- Settings Gear Button -->
+        <button class="settings-gear-btn" id="settingsGearBtn" title="Cài đặt trò chơi">
+          ⚙️ <span class="settings-gear-label">CÀI ĐẶT</span>
+        </button>
+      </div>
+
+      <!-- Collapsible Settings Panel (hidden by default) -->
+      <div class="settings-panel" id="settingsPanel">
+        <div class="settings-panel-inner">
+          <div class="settings-row">
+            <div class="control-group">
+              <label for="hskSelect">📚 CẤP ĐỘ HSK:</label>
+              <select id="hskSelect" class="cyber-select">
+                <option value="all">🌈 TẤT CẢ HSK (5.000 Từ)</option>
+                <option value="1">🌱 HSK 1 (150 Từ)</option>
+                <option value="2">🌿 HSK 2 (150 Từ)</option>
+                <option value="3">⭐ HSK 3 (300 Từ)</option>
+                <option value="4">🚀 HSK 4 (600 Từ)</option>
+                <option value="5">🔥 HSK 5 (1.300 Từ)</option>
+                <option value="6">👑 HSK 6 (2.500 Từ)</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="speedSelect">⚡ TỐC ĐỘ BÓNG RƠI:</label>
+              <select id="speedSelect" class="cyber-select">
+                <option value="0.75">🧸 THƯ THÁI (0.75x)</option>
+                <option value="1.0" selected>⚡ CHUẨN (1.0x)</option>
+                <option value="1.4">🚀 NHANH (1.4x)</option>
+                <option value="2.0">🌪️ SIÊU TỐC (2.0x)</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="langSelect">🌐 CHÚ THÍCH NGHĨA:</label>
+              <select id="langSelect" class="cyber-select">
+                <option value="vi" selected>🇻🇳 TIẾNG VIỆT</option>
+                <option value="bi">🇻🇳🇬🇧 SONG NGỮ</option>
+                <option value="en">🇬🇧 TIẾNG ANH</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <button class="icon-toggle active" id="voiceToggleBtn" title="Bật/Tắt phát âm tiếng Trung">
+              🗣️ <span class="btn-txt">GIỌNG ĐỌC: BẬT</span>
+            </button>
+            <button class="icon-toggle active" id="sfxToggleBtn" title="Bật/Tắt âm thanh hiệu ứng">
+              🔔 <span class="btn-txt">HIỆU ỨNG: BẬT</span>
+            </button>
+            <button class="icon-toggle active" id="bgmToggleBtn" title="Bật/Tắt nhạc nền vui nhộn">
+              🎵 <span class="btn-txt">NHẠC NỀN: BẬT</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </header>
+
+    <!-- Falling Arena (Sky) -->
+    <main class="game-arena" id="gameArena">
+      <!-- Words dynamically spawn and fall inside here as cute bouncy bubbles -->
+      
+      <!-- Cheerful Rainbow Ground Line -->
+      <div class="ground-defense-grid" id="groundGrid">
+        <div class="ground-energy-line"></div>
+        <div class="ground-warning-text">✨ VẠCH ĐÍCH CẦU VỒNG // ĐỪNG ĐỂ BÓNG TỪ VỰNG CHẠM ĐÁY NHÉ ✨</div>
+      </div>
+    </main>
+
+    <!-- Bottom Cannon Console & Input Bar -->
+    <footer class="cyber-console">
+      
+      <!-- Animated Star Blaster Cannon -->
+      <div class="turret-wrapper">
+        <div class="turret-base">
+          <div class="turret-barrel" id="turretBarrel"></div>
+        </div>
+      </div>
+
+      <!-- Main Pinyin Typing Input -->
+      <div class="input-console-bar">
+        <div class="input-reticle">⭐</div>
+        <div class="input-field-wrapper">
+          <span class="input-prefix">PINYIN:&gt;</span>
+          <input 
+            type="text" 
+            id="pinyinInput" 
+            autocomplete="off" 
+            autocorrect="off" 
+            autocapitalize="off" 
+            spellcheck="false" 
+            placeholder="Gõ Pinyin không dấu để bắn bóng từ (vd: ni, hao, nihao, zhongguo)..." 
+            autofocus
+          >
+          <div class="input-glow-indicator"></div>
+        </div>
+        <div class="stats-mini-summary">
+          <div class="stat-bubble">
+            <span class="bubble-num" id="killsCount">0</span>
+            <span class="bubble-txt">BẮN TRÚNG</span>
+          </div>
+          <div class="stat-bubble">
+            <span class="bubble-num" id="accuracyDisplay">100%</span>
+            <span class="bubble-txt">CHÍNH XÁC</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Copyright Bar -->
+      <div class="console-copyright">
+        BẢN QUYỀN © 2026 <strong>KHAI LE</strong> // ALL RIGHTS RESERVED // PINYIN POP!
+      </div>
+
+    </footer>
+
+  </div>
+
+  <!-- Start Screen Modal -->
+  <div class="modal-overlay" id="startModal">
+    <div class="cyber-modal">
+      <div class="modal-hero-logo-wrap">
+        <img src="assets/logo.png" alt="Pinyin Pop Mascot" class="modal-hero-logo" width="80" height="80" style="width: 80px !important; height: 80px !important; max-width: 80px !important; max-height: 80px !important; object-fit: contain; border-radius: 22px; display: block; margin: 0 auto; box-shadow: 0 8px 20px rgba(255, 75, 130, 0.35);">
+      </div>
+      <h1 class="modal-title">PINYIN POP! <span class="title-star">⭐</span></h1>
+      <h2 class="modal-subtitle">🌟 快乐拼音 // VUI HỌC 5.000 TỪ TIẾNG TRUNG HSK 1 - 6</h2>
+      
+      <div class="modal-rules">
+        <div class="rule-card">
+          <span class="rule-icon">🎈</span>
+          <div>
+            <strong>Bóng chữ rơi tự do:</strong>
+            <p>5.000 từ vựng (HSK 1-6) kèm chú thích nghĩa tiếng Việt.</p>
+          </div>
+        </div>
+        <div class="rule-card">
+          <span class="rule-icon">⌨️</span>
+          <div>
+            <strong>Gõ Pinyin không dấu:</strong>
+            <p>Nhập Pinyin (vd: <code>ni</code>, <code>hao</code>, <code>zhongguo</code>) để pháo sao bắn nổ!</p>
+          </div>
+        </div>
+        <div class="rule-card">
+          <span class="rule-icon">💖</span>
+          <div>
+            <strong>Bảo vệ 100 Tim:</strong>
+            <p>Mỗi từ chạm vạch trừ <strong>-1 Tim</strong>. Đạt Combo x5 để bùng nổ điểm số!</p>
+          </div>
+        </div>
+        <div class="rule-card">
+          <span class="rule-icon">🗣️</span>
+          <div>
+            <strong>Luyện nghe giọng chuẩn:</strong>
+            <p>Phát âm bản ngữ chuẩn Bắc Kinh (zh-CN) giúp nhớ từ siêu tốc!</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="cyber-launch-btn" id="startGameBtn">
+          <span class="btn-laser-glow"></span>
+          🚀 BẮT ĐẦU CHƠI NGAY THÔI!
+        </button>
+      </div>
+
+      <div class="modal-copyright-tag">
+        Bản quyền © 2026 <strong>Khai Le</strong> // Tác giả: <strong>Khai Le</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Over Modal -->
+  <div class="modal-overlay" id="gameOverModal" style="display: none;">
+    <div class="cyber-modal game-over-modal">
+      <div class="game-over-header">
+        <span class="game-over-glitch" data-text="HOÀN THÀNH CHUYẾN PHIÊU LƯU!">🎉 HOÀN THÀNH CHUYẾN PHIÊU LƯU!</span>
+        <div class="game-over-sub">BẠN ĐÃ RẤT NỖ LỰC! CÙNG XEM LẠI THÀNH TÍCH NHÉ:</div>
+      </div>
+
+      <div class="stats-summary-grid">
+        <div class="summary-card">
+          <span class="summary-label">⭐ TỔNG ĐIỂM</span>
+          <span class="summary-val" id="finalScore">0</span>
+        </div>
+        <div class="summary-card">
+          <span class="summary-label">🎯 TỪ ĐÃ BẮN NỔ</span>
+          <span class="summary-val accent-val" id="finalKills">0</span>
+        </div>
+        <div class="summary-card">
+          <span class="summary-label">🔥 COMBO CAO NHẤT</span>
+          <span class="summary-val" id="finalMaxCombo">0</span>
+        </div>
+        <div class="summary-card">
+          <span class="summary-label">💨 TỪ BỎ LỠ</span>
+          <span class="summary-val alert-val" id="finalMissed">0</span>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="cyber-launch-btn" id="restartGameBtn">
+          <span class="btn-laser-glow"></span>
+          🔄 CHƠI LẠI NGAY ĐỂ LẬP KỶ LỤC MỚI!
+        </button>
+      </div>
+
+      <div class="modal-copyright-tag">
+        Bản quyền © 2026 <strong>Khai Le</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pause Modal -->
+  <div class="modal-overlay" id="pauseModal" style="display: none;">
+    <div class="cyber-modal pause-modal">
+      <h2 class="modal-title">☕ TẠM NGHỈ CHÚT NÀO!</h2>
+      <p style="color: var(--text-muted); margin: 15px 0;">Trò chơi đang dừng. Hãy uống ngụm nước rồi quay lại tiếp tục chinh phục tiếng Trung nhé!</p>
+      <button class="cyber-launch-btn" id="resumeGameBtn">
+        ✨ TIẾP TỤC CHƠI NGAY
+      </button>
+
+      <div class="modal-copyright-tag">
+        Bản quyền © 2026 <strong>Khai Le</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5000 Words Vocabulary Library Script -->
+  <script src="words.js?v=pop"></script>
+  <!-- Audio Synthesizer & Speech Engine -->
+  <script src="audio.js?v=pop"></script>
+  <!-- Main Game Mechanics Script -->
+  <script src="game.js?v=pop"></script>
+</body>
+</html>
+
