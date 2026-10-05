@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PINYIN POP! Flashcard - Hệ thống thẻ học từ vựng tiếng Trung 5.000 từ HSK 1-6 với phát âm chuẩn giọng Bắc Kinh, chú thích tiếng Việt và chế độ ôn tập thông minh.">
+  <title>PINYIN POP! 🗂️ Flashcard Thông Minh - 5000 Từ HSK 1-6</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700;800;900&family=Outfit:wght@500;600;700;800;900&family=Quicksand:wght@500;600;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css?v=20261005_v3">
+  <link rel="stylesheet" href="flashcard.css?v=20261005_v1">
+  <link rel="icon" type="image/png" href="assets/logo.png">
+</head>
+<body class="theme-pinyin-pop flashcard-body">
+
+  <!-- Background Canvas for Floating Bubbles & Clouds -->
+  <canvas id="fcBgCanvas"></canvas>
+
+  <div class="fc-app-container">
+
+    <!-- Top Navigation Header -->
+    <header class="fc-navbar">
+      <div class="fc-brand">
+        <a href="index.html" class="fc-brand-link" title="Về trang chủ Game">
+          <img src="assets/logo.png" alt="Pinyin Pop Mascot" class="brand-logo-img" width="46" height="46" style="width: 46px; height: 46px; border-radius: 14px; object-fit: contain;">
+          <div class="fc-brand-text">
+            <span class="fc-brand-title">PINYIN POP! <span class="brand-sparkle">✨</span></span>
+            <span class="fc-brand-sub">🗂️ THẺ GHI NHỚ FLASHCARD HSK</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Mode Switcher Tabs (Game vs Flashcard vs Quiz) -->
+      <nav class="fc-nav-tabs">
+        <a href="index.html" class="fc-tab-btn" title="Chuyển sang chơi Game bắn chữ Pinyin">
+          🎮 <span class="tab-label">TRÒ CHƠI BẮN CHỮ</span>
+        </a>
+        <button class="fc-tab-btn active" id="tabFlashcardMode" title="Chế độ học Thẻ Flashcard">
+          🗂️ <span class="tab-label">HỌC FLASHCARD</span>
+        </button>
+        <button class="fc-tab-btn" id="tabQuizMode" title="Chế độ trắc nghiệm kiểm tra nhanh">
+          🎯 <span class="tab-label">TRẮC NGHIỆM</span>
+        </button>
+        <button class="fc-tab-btn" id="tabListMode" title="Xem danh sách toàn bộ từ vựng">
+          📜 <span class="tab-label">TỪ ĐIỂN TỔNG HỢP</span>
+        </button>
+      </nav>
+
+      <!-- Global Audio & Shortcuts Help -->
+      <div class="fc-header-actions">
+        <button class="icon-toggle active" id="fcVoiceToggle" title="Bật/Tắt tự động phát âm khi chuyển thẻ">
+          🗣️ <span class="btn-txt">TỰ ĐỘNG ĐỌC: BẬT</span>
+        </button>
+        <button class="icon-toggle" id="fcHelpBtn" title="Xem hướng dẫn phím tắt">
+          ⌨️ <span class="btn-txt">PHÍM TẮT</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Controls & Filters Toolbar -->
+    <section class="fc-toolbar">
+      
+      <!-- HSK Level Filter -->
+      <div class="fc-tool-item">
+        <label for="fcHskFilter">📚 CẤP ĐỘ:</label>
+        <select id="fcHskFilter" class="cyber-select fc-select">
+          <option value="all">🌈 TẤT CẢ HSK (5.000 Từ)</option>
+          <option value="1">🌱 HSK 1 (150 Từ)</option>
+          <option value="2">🌿 HSK 2 (150 Từ)</option>
+          <option value="3" selected>⭐ HSK 3 (300 Từ)</option>
+          <option value="4">🚀 HSK 4 (600 Từ)</option>
+          <option value="5">🔥 HSK 5 (1.300 Từ)</option>
+          <option value="6">👑 HSK 6 (2.500 Từ)</option>
+          <option value="fav">⭐ ĐÃ ĐÁNH DẤU YÊU THÍCH</option>
+          <option value="learning">🧠 TỪ CẦN ÔN LẠI</option>
+        </select>
+      </div>
+
+      <!-- Deck / Lesson Batch Selector (25 words each) -->
+      <div class="fc-tool-item">
+        <label for="fcDeckSelect">📖 BÀI HỌC / BỘ THẺ:</label>
+        <select id="fcDeckSelect" class="cyber-select fc-select">
+          <!-- Populated dynamically: Bài 1 (1 - 25), Bài 2 (26 - 50)... -->
+        </select>
+      </div>
+
+      <!-- Quick Search Input -->
+      <div class="fc-tool-item fc-search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="fcSearchInput" placeholder="Tìm Chữ Hán, Pinyin hoặc nghĩa tiếng Việt...">
+        <button id="fcClearSearch" class="search-clear-btn" title="Xóa tìm kiếm">✕</button>
+      </div>
+
+      <!-- Shuffle & Slideshow Controls -->
+      <div class="fc-tool-actions">
+        <button class="fc-action-btn" id="fcShuffleBtn" title="Xáo trộn ngẫu nhiên thứ tự các thẻ">
+          🔀 <span class="btn-label">XÁO TRỘN</span>
+        </button>
+        <button class="fc-action-btn" id="fcSlideshowBtn" title="Tự động lật và chuyển thẻ sau 4 giây">
+          ▶️ <span class="btn-label" id="slideshowBtnTxt">TỰ ĐỘNG LẬT</span>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- Progress Telemetry Bar -->
+    <div class="fc-progress-wrap">
+      <div class="fc-progress-info">
+        <span class="fc-progress-title">
+          TIẾN ĐỘ BỘ THẺ: <strong id="fcCurrentCardIdx">1</strong> / <span id="fcTotalCards">25</span>
+        </span>
+        <span class="fc-stat-pill mastered-pill" title="Số từ đã thuộc">
+          ✅ Đã thuộc: <strong id="fcMasteredCount">0</strong>
+        </span>
+        <span class="fc-stat-pill review-pill" title="Số từ cần học lại">
+          🧠 Cần ôn: <strong id="fcReviewCount">0</strong>
+        </span>
+      </div>
+      <div class="fc-progress-bar">
+        <div class="fc-progress-fill" id="fcProgressFill" style="width: 4%;"></div>
+      </div>
+    </div>
+
+    <!-- MAIN VIEW 1: Interactive 3D Flashcard Deck -->
+    <main class="fc-main-view" id="flashcardView">
+
+      <div class="fc-stage">
+        
+        <!-- 3D Flip Flashcard Container -->
+        <div class="fc-card-scene" id="cardScene">
+          <div class="fc-card" id="activeCard" title="Nhấp chuột hoặc phím Cách (Space) để lật thẻ">
+            
+            <!-- Card Front: Hanzi, HSK Badge, Audio Button, Favorite Star -->
+            <div class="fc-card-face fc-card-front">
+              <div class="card-top-bar">
+                <span class="card-hsk-badge" id="cardFrontHsk">HSK 3</span>
+                <div class="card-top-actions">
+                  <button class="card-icon-btn fav-btn" id="cardFavBtn" title="Đánh dấu từ yêu thích (Phím F)">
+                    ⭐
+                  </button>
+                  <button class="card-icon-btn speak-btn" id="cardSpeakBtn" title="Nghe phát âm chuẩn Bắc Kinh (Phím S)">
+                    🔊
+                  </button>
+                </div>
+              </div>
+
+              <!-- Huge Crisp Chinese Character -->
+              <div class="card-hanzi-wrap">
+                <span class="card-hanzi" id="cardFrontHanzi">爱</span>
+              </div>
+
+              <div class="card-prompt-hint">
+                <span class="hint-text">👆 Nhấp chuột hoặc bấm <kbd>Space</kbd> để xem Pinyin & Nghĩa</span>
+              </div>
+            </div>
+
+            <!-- Card Back: Pinyin, Vietnamese & English Meaning, Memory Tips -->
+            <div class="fc-card-face fc-card-back">
+              <div class="card-top-bar">
+                <span class="card-hsk-badge" id="cardBackHsk">HSK 3</span>
+                <button class="card-icon-btn speak-btn" id="cardBackSpeakBtn" title="Nghe phát âm (Phím S)">
+                  🔊
+                </button>
+              </div>
+
+              <div class="card-back-content">
+                <div class="card-back-hanzi-mini" id="cardBackHanziMini">爱</div>
+                <div class="card-pinyin" id="cardBackPinyin">ài</div>
+                
+                <div class="card-meaning-divider"></div>
+
+                <div class="card-meaning-vn-wrap">
+                  <span class="meaning-label">🇻🇳 NGHĨA TIẾNG VIỆT:</span>
+                  <p class="card-meaning-vn" id="cardBackMeaningVn">yêu; thích</p>
+                </div>
+
+                <div class="card-meaning-en-wrap">
+                  <span class="meaning-label">🇬🇧 ENGLISH:</span>
+                  <p class="card-meaning-en" id="cardBackMeaningEn">to love; to be fond of; affection</p>
+                </div>
+              </div>
+
+              <div class="card-prompt-hint">
+                <span class="hint-text">🔄 Nhấp để lật lại mặt chữ Hán</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Navigation & Mastery Action Buttons -->
+        <div class="fc-deck-controls">
+          
+          <!-- Prev Card Button -->
+          <button class="fc-nav-btn prev-btn" id="fcPrevBtn" title="Thẻ trước (Phím ⬅️)">
+            <span>⬅️</span>
+            <span class="btn-txt">TRƯỚC</span>
+          </button>
+
+          <!-- Flip Button -->
+          <button class="fc-nav-btn flip-btn" id="fcFlipBtn" title="Lật thẻ (Phím Space)">
+            <span>🔄</span>
+            <span class="btn-txt">LẬT THẺ</span>
+          </button>
+
+          <!-- Active Recall: Hard / Repeat -->
+          <button class="fc-recall-btn recall-hard" id="fcRecallHardBtn" title="Chưa thuộc, cần học lại (Phím 1)">
+            <span>❌</span>
+            <span class="btn-txt">CHƯA THUỘC</span>
+          </button>
+
+          <!-- Active Recall: Mastered -->
+          <button class="fc-recall-btn recall-easy" id="fcRecallEasyBtn" title="Đã thuộc từ này (Phím 2)">
+            <span>✅</span>
+            <span class="btn-txt">ĐÃ THUỘC</span>
+          </button>
+
+          <!-- Next Card Button -->
+          <button class="fc-nav-btn next-btn" id="fcNextBtn" title="Thẻ tiếp theo (Phím ➡️)">
+            <span class="btn-txt">TIẾP</span>
+            <span>➡️</span>
+          </button>
+
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- MAIN VIEW 2: Quiz / Memory Test Mode -->
+    <main class="fc-main-view" id="quizView" style="display: none;">
+      <div class="fc-quiz-card">
+        <div class="quiz-header">
+          <span class="quiz-badge" id="quizHskBadge">HSK 1</span>
+          <span class="quiz-score-indicator">CÂU <strong id="quizCurrentQ">1</strong> / 10</span>
+        </div>
+        
+        <div class="quiz-question-box">
+          <div class="quiz-prompt">Hãy chọn Pinyin & Nghĩa đúng cho chữ Hán:</div>
+          <div class="quiz-target-hanzi" id="quizTargetHanzi">中</div>
+          <button class="card-icon-btn speak-btn" id="quizSpeakBtn" title="Nghe phát âm">🔊</button>
+        </div>
+
+        <div class="quiz-options-grid" id="quizOptionsGrid">
+          <!-- 4 Multiple Choice Options dynamically generated -->
+        </div>
+
+        <div class="quiz-feedback-box" id="quizFeedbackBox" style="display: none;">
+          <div class="feedback-msg" id="quizFeedbackMsg">Chính xác! 🎉</div>
+          <button class="cyber-launch-btn quiz-next-btn" id="quizNextBtn">CÂU TIẾP THEO ➡️</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- MAIN VIEW 3: Vocabulary Dictionary List Grid -->
+    <main class="fc-main-view" id="listView" style="display: none;">
+      <div class="fc-list-container">
+        <div class="fc-list-header">
+          <h3>DANH SÁCH TỪ VỰNG TRONG BỘ THẺ (<span id="listTotalCount">0</span> TỪ)</h3>
+          <span class="list-sub">Nhấp vào loa 🔊 để nghe phát âm giọng Bắc Kinh chuẩn xác</span>
+        </div>
+
+        <div class="fc-vocab-grid" id="vocabGrid">
+          <!-- Vocabulary cards generated dynamically -->
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer Copyright -->
+    <footer class="fc-footer">
+      PINYIN POP! FLASHCARD // BẢN QUYỀN © 2026 <strong>KHAI LE</strong> // TỔNG HỢP 5.000 TỪ VỰNG HSK 1 - 6
+    </footer>
+
+  </div>
+
+  <!-- Keyboard Shortcuts Modal -->
+  <div class="modal-overlay" id="fcShortcutsModal" style="display: none;">
+    <div class="cyber-modal fc-help-modal">
+      <h2 class="modal-title">⌨️ PHÍM TẮT TIỆN LỢI</h2>
+      <p style="color: var(--text-muted); margin-bottom: 16px;">Sử dụng bàn phím giúp bạn học nhanh gấp đôi:</p>
+      
+      <div class="shortcuts-list">
+        <div class="shortcut-row"><kbd>Space</kbd> hoặc <kbd>Enter</kbd> <span>Lật thẻ (Xem Pinyin & Nghĩa)</span></div>
+        <div class="shortcut-row"><kbd>➡️</kbd> hoặc <kbd>D</kbd> <span>Thẻ tiếp theo</span></div>
+        <div class="shortcut-row"><kbd>⬅️</kbd> hoặc <kbd>A</kbd> <span>Thẻ trước đó</span></div>
+        <div class="shortcut-row"><kbd>1</kbd> hoặc <kbd>X</kbd> <span>Đánh dấu CHƯA THUỘC (Cần ôn)</span></div>
+        <div class="shortcut-row"><kbd>2</kbd> hoặc <kbd>C</kbd> <span>Đánh dấu ĐÃ THUỘC</span></div>
+        <div class="shortcut-row"><kbd>S</kbd> <span>Nghe phát âm tiếng Trung Bắc Kinh</span></div>
+        <div class="shortcut-row"><kbd>F</kbd> <span>Đánh dấu Yêu thích ⭐</span></div>
+      </div>
+
+      <button class="cyber-launch-btn" id="fcCloseHelpBtn" style="margin-top: 18px;">
+        ĐÃ HIỂU, HỌC TIẾP THÔI! ✨
+      </button>
+    </div>
+  </div>
+
+  <!-- Words Dataset -->
+  <script src="words.js?v=pop"></script>
+  <!-- Flashcard Logic Script -->
+  <script src="flashcard.js?v=20261005_v1"></script>
+</body>
+</html>

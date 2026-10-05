@@ -34,7 +34,16 @@ Trò chơi luyện gõ Pinyin tiếng Trung phong cách kẹo ngọt vui nhộn,
 - **Âm Thanh Game Vui Nhộn & Giọng Đọc Bản Ngữ (TTS)**:
   - Tự động phát âm chuẩn giọng Bắc Kinh (`zh-CN`) mỗi khi bắn hạ từ vựng.
   - Hiệu ứng âm thanh sinh động, vui tươi kèm nhạc nền chiptune bắt tai.
-- **Cơ Chế 100 Tim Năng Lượng**:
+- **Hệ Thống Thẻ Ghi Nhớ Flashcard Thông Minh (`flashcard.html`)**:
+  - **Thẻ 3D Flip Card tương tác mượt mà**: Lật thẻ để xem Chữ Hán, Pinyin chuẩn thanh điệu, Nghĩa tiếng Việt & tiếng Anh.
+  - **Phân bài học theo Deck (25 từ/bài)**: Dễ dàng chia nhỏ 5.000 từ vựng thành các bài học nhỏ để ghi nhớ nhẹ nhàng không áp lực.
+  - **Cơ chế Active Recall (Ghi nhớ chủ động)**: Đánh dấu `❌ Chưa thuộc` và `✅ Đã thuộc` được lưu trữ tự động vào `localStorage` kèm thanh tiến độ.
+  - **3 Chế độ học linh hoạt**:
+    - 🗂️ **Học Flashcard**: Lật thẻ tự do, xáo trộn (Shuffle), tự động lật (Slideshow).
+    - 🎯 **Trắc nghiệm (Quiz)**: Luyện tập 4 đáp án thử thách phản xạ.
+    - 📜 **Từ điển tổng hợp (Dictionary Grid)**: Tra cứu nhanh toàn bộ từ kèm phát âm chuẩn Bắc Kinh.
+  - **Phát âm giọng bản ngữ (TTS)**: Tự động phát âm hoặc nhấp vào loa 🔊 bất kỳ lúc nào.
+- **Cơ Chế 100 Tim Năng Lượng Trong Game**:
   - Người chơi khởi đầu với 100 Tim năng lượng. Giữ tim càng lâu, combo càng bùng nổ!
 
 ---
