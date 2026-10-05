@@ -3,47 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Cyberpunk China: Pinyin Defender - An intense cyber typing arcade game. Destroy falling Chinese words with exact Pinyin before they breach your 100 HP shield! 5,000 common words included.">
-  <title>CYBERPUNK CHINA // 赛博拼音 - Pinyin Defender</title>
+  <meta name="description" content="PINYIN POP! - Trò chơi luyện gõ Pinyin tiếng Trung cực vui nhộn với 5.000 từ vựng HSK 1-6 kèm chú thích nghĩa tiếng Việt và giọng đọc bản ngữ.">
+  <title>PINYIN POP! 🌟 快乐拼音 - Vui Học Tiếng Trung 5000 Từ HSK</title>
 
-  <!-- Google Fonts: Orbitron, Rajdhani, Fira Code, Noto Sans SC (Sharp & Crisp Chinese) -->
+  <!-- Google Fonts: Fredoka, Quicksand, Outfit, ZCOOL KuaiLe & Noto Sans SC -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Orbitron:wght@600;800;900&family=Rajdhani:wght@600;700&family=Noto+Sans+SC:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700;800;900&family=Outfit:wght@500;600;700;800;900&family=Quicksand:wght@500;600;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=20261005_v3">
+  <link rel="icon" type="image/png" href="assets/logo.png">
 </head>
-<body class="theme-neon-china">
+<body class="theme-pinyin-pop">
 
-  <!-- Background and Laser Particle Canvases -->
+  <!-- Cheerful Background & Star Sparkle Canvases -->
   <canvas id="bgCanvas"></canvas>
   <canvas id="laserCanvas"></canvas>
 
   <!-- Screen Flash & Shake Overlays -->
   <div id="damageFlash" class="damage-flash"></div>
-  <div class="crt-scanlines"></div>
-  <div class="crt-vignette"></div>
+  <div class="pop-sparkle-overlay"></div>
 
   <!-- Main Game Wrapper -->
   <div class="game-wrapper" id="gameWrapper">
 
-    <!-- Top High-Tech Cyber HUD -->
+    <!-- Top Cheerful Candy HUD -->
     <header class="cyber-hud">
       
-      <!-- Brand & Game Mode -->
+      <!-- Brand & Game Logo -->
       <div class="hud-brand">
-        <div class="brand-kanji">赛博拼音</div>
+        <img src="assets/logo.png" alt="Pinyin Pop Mascot Logo" class="brand-logo-img" width="46" height="46" style="width: 46px !important; height: 46px !important; max-width: 46px !important; max-height: 46px !important; object-fit: contain; border-radius: 14px; flex-shrink: 0;">
         <div class="brand-text">
-          <span class="glitch-title" data-text="CYBERPUNK CHINA">CYBERPUNK CHINA</span>
-          <span class="sub-title">PINYIN DEFENDER // PHÒNG THỦ PINYIN</span>
+          <div class="pop-brand-title">PINYIN POP! <span class="brand-sparkle">✨</span></div>
+          <div class="pop-brand-subtitle">🌟 快乐拼音 // VUI HỌC 5000 TỪ HSK</div>
           <div class="brand-author-badge">TÁC GIẢ: KHAI LE</div>
         </div>
       </div>
 
-      <!-- Health Meter (100 HP Shield) -->
+      <!-- Health Meter (100 HP Candy Hearts) -->
       <div class="hud-health-card">
         <div class="health-meta">
-          <span class="shield-label"><span class="shield-icon">🛡️</span> KHIÊN PHÒNG THỦ // SHIELD</span>
+          <span class="shield-label"><span class="shield-icon">💖</span> ĐIỂM TIM</span>
           <span class="health-numeric" id="healthDisplay">100 / 100 HP</span>
         </div>
         <div class="health-bar-track">
@@ -54,7 +54,7 @@
       <!-- Score & Combo Streak -->
       <div class="hud-score-card">
         <div class="score-row">
-          <span class="score-label">ĐIỂM:</span>
+          <span class="score-label">⭐ ĐIỂM:</span>
           <span class="score-val" id="scoreDisplay">0</span>
         </div>
         <div class="combo-row">
@@ -76,7 +76,7 @@
 
         <!-- Pause Button -->
         <button class="icon-toggle" id="pauseBtn" title="Tạm dừng (Esc)">
-          ⏸️ <span class="btn-txt">TẠM DỪNG</span>
+          ⏸️ <span class="btn-txt">TẠM NGHỈ</span>
         </button>
 
         <!-- Settings Gear Button -->
@@ -90,30 +90,30 @@
         <div class="settings-panel-inner">
           <div class="settings-row">
             <div class="control-group">
-              <label for="hskSelect">📚 CẤP HSK:</label>
+              <label for="hskSelect">📚 CẤP ĐỘ HSK:</label>
               <select id="hskSelect" class="cyber-select">
-                <option value="all">TẤT CẢ HSK (5.000 Từ)</option>
-                <option value="1">HSK 1 (150 Từ)</option>
-                <option value="2">HSK 2 (150 Từ)</option>
-                <option value="3">HSK 3 (300 Từ)</option>
-                <option value="4">HSK 4 (600 Từ)</option>
-                <option value="5">HSK 5 (1.300 Từ)</option>
-                <option value="6">HSK 6 (2.500 Từ)</option>
+                <option value="all">🌈 TẤT CẢ HSK (5.000 Từ)</option>
+                <option value="1">🌱 HSK 1 (150 Từ)</option>
+                <option value="2">🌿 HSK 2 (150 Từ)</option>
+                <option value="3">⭐ HSK 3 (300 Từ)</option>
+                <option value="4">🚀 HSK 4 (600 Từ)</option>
+                <option value="5">🔥 HSK 5 (1.300 Từ)</option>
+                <option value="6">👑 HSK 6 (2.500 Từ)</option>
               </select>
             </div>
 
             <div class="control-group">
-              <label for="speedSelect">⚡ TỐC ĐỘ:</label>
+              <label for="speedSelect">⚡ TỐC ĐỘ BÓNG RƠI:</label>
               <select id="speedSelect" class="cyber-select">
-                <option value="0.75">THƯ THÁI (0.75x)</option>
-                <option value="1.0" selected>CHUẨN (1.0x)</option>
-                <option value="1.4">NHANH (1.4x)</option>
-                <option value="2.0">CỰC NHANH (2.0x)</option>
+                <option value="0.75">🧸 THƯ THÁI (0.75x)</option>
+                <option value="1.0" selected>⚡ CHUẨN (1.0x)</option>
+                <option value="1.4">🚀 NHANH (1.4x)</option>
+                <option value="2.0">🌪️ SIÊU TỐC (2.0x)</option>
               </select>
             </div>
 
             <div class="control-group">
-              <label for="langSelect">🌐 CHÚ THÍCH:</label>
+              <label for="langSelect">🌐 CHÚ THÍCH NGHĨA:</label>
               <select id="langSelect" class="cyber-select">
                 <option value="vi" selected>🇻🇳 TIẾNG VIỆT</option>
                 <option value="bi">🇻🇳🇬🇧 SONG NGỮ</option>
@@ -126,11 +126,11 @@
             <button class="icon-toggle active" id="voiceToggleBtn" title="Bật/Tắt phát âm tiếng Trung">
               🗣️ <span class="btn-txt">GIỌNG ĐỌC: BẬT</span>
             </button>
-            <button class="icon-toggle active" id="sfxToggleBtn" title="Bật/Tắt hiệu ứng âm thanh 8-bit">
-              🔊 <span class="btn-txt">HIỆU ỨNG: BẬT</span>
+            <button class="icon-toggle active" id="sfxToggleBtn" title="Bật/Tắt âm thanh hiệu ứng">
+              🔔 <span class="btn-txt">HIỆU ỨNG: BẬT</span>
             </button>
-            <button class="icon-toggle active" id="bgmToggleBtn" title="Bật/Tắt nhạc nền 8-bit chiptune">
-              🎵 <span class="btn-txt">NHẠC: BẬT</span>
+            <button class="icon-toggle active" id="bgmToggleBtn" title="Bật/Tắt nhạc nền vui nhộn">
+              🎵 <span class="btn-txt">NHẠC NỀN: BẬT</span>
             </button>
           </div>
         </div>
@@ -140,19 +140,19 @@
 
     <!-- Falling Arena (Sky) -->
     <main class="game-arena" id="gameArena">
-      <!-- Words dynamically spawn and fall inside here -->
+      <!-- Words dynamically spawn and fall inside here as cute bouncy bubbles -->
       
-      <!-- Ground Laser Defense Grid Barrier -->
+      <!-- Cheerful Rainbow Ground Line -->
       <div class="ground-defense-grid" id="groundGrid">
         <div class="ground-energy-line"></div>
-        <div class="ground-warning-text">⚠️ VÀNH ĐAI BẢO VỆ LÕI // KHÔNG ĐỂ MỤC TIÊU XÂM NHẬP ⚠️</div>
+        <div class="ground-warning-text">✨ VẠCH ĐÍCH CẦU VỒNG // ĐỪNG ĐỂ BÓNG TỪ VỰNG CHẠM ĐÁY NHÉ ✨</div>
       </div>
     </main>
 
     <!-- Bottom Cannon Console & Input Bar -->
     <footer class="cyber-console">
       
-      <!-- Animated Laser Turret -->
+      <!-- Animated Star Blaster Cannon -->
       <div class="turret-wrapper">
         <div class="turret-base">
           <div class="turret-barrel" id="turretBarrel"></div>
@@ -161,9 +161,9 @@
 
       <!-- Main Pinyin Typing Input -->
       <div class="input-console-bar">
-        <div class="input-reticle">⌖</div>
+        <div class="input-reticle">⭐</div>
         <div class="input-field-wrapper">
-          <span class="input-prefix">TARGET_PINYIN:&gt;</span>
+          <span class="input-prefix">PINYIN:&gt;</span>
           <input 
             type="text" 
             id="pinyinInput" 
@@ -171,7 +171,7 @@
             autocorrect="off" 
             autocapitalize="off" 
             spellcheck="false" 
-            placeholder="Gõ Pinyin không dấu (vd: ni, hao, nihao, zhongguo)..." 
+            placeholder="Gõ Pinyin không dấu để bắn bóng từ (vd: ni, hao, nihao, zhongguo)..." 
             autofocus
           >
           <div class="input-glow-indicator"></div>
@@ -179,7 +179,7 @@
         <div class="stats-mini-summary">
           <div class="stat-bubble">
             <span class="bubble-num" id="killsCount">0</span>
-            <span class="bubble-txt">TIÊU DIỆT</span>
+            <span class="bubble-txt">BẮN TRÚNG</span>
           </div>
           <div class="stat-bubble">
             <span class="bubble-num" id="accuracyDisplay">100%</span>
@@ -190,7 +190,7 @@
 
       <!-- Copyright Bar -->
       <div class="console-copyright">
-        BẢN QUYỀN © 2026 <strong>KHAI LE</strong> // ALL RIGHTS RESERVED // CYBERPUNK CHINA
+        BẢN QUYỀN © 2026 <strong>KHAI LE</strong> // ALL RIGHTS RESERVED // PINYIN POP!
       </div>
 
     </footer>
@@ -200,37 +200,39 @@
   <!-- Start Screen Modal -->
   <div class="modal-overlay" id="startModal">
     <div class="cyber-modal">
-      <div class="modal-kanji-watermark">赛博</div>
-      <h1 class="modal-title">CYBERPUNK CHINA</h1>
-      <h2 class="modal-subtitle">赛博拼音 // PINYIN DEFENDER</h2>
+      <div class="modal-hero-logo-wrap">
+        <img src="assets/logo.png" alt="Pinyin Pop Mascot" class="modal-hero-logo" width="80" height="80" style="width: 80px !important; height: 80px !important; max-width: 80px !important; max-height: 80px !important; object-fit: contain; border-radius: 22px; display: block; margin: 0 auto; box-shadow: 0 8px 20px rgba(255, 75, 130, 0.35);">
+      </div>
+      <h1 class="modal-title">PINYIN POP! <span class="title-star">⭐</span></h1>
+      <h2 class="modal-subtitle">🌟 快乐拼音 // VUI HỌC 5.000 TỪ TIẾNG TRUNG HSK 1 - 6</h2>
       
       <div class="modal-rules">
         <div class="rule-card">
-          <span class="rule-icon">☄️</span>
+          <span class="rule-icon">🎈</span>
           <div>
-            <strong>Từ tiếng Trung rơi từ bầu trời:</strong>
-            <p>5.000 từ vựng thông dụng (HSK 1-6) rơi liên tục với chữ Hán sắc nét, Pinyin và <strong>chú thích nghĩa tiếng Việt</strong>.</p>
+            <strong>Bóng chữ rơi tự do:</strong>
+            <p>5.000 từ vựng (HSK 1-6) kèm chú thích nghĩa tiếng Việt.</p>
           </div>
         </div>
         <div class="rule-card">
           <span class="rule-icon">⌨️</span>
           <div>
             <strong>Gõ Pinyin không dấu:</strong>
-            <p>Gõ Pinyin của bất kỳ từ nào (vd: <code>ni</code>, <code>hao</code>, <code>nihao</code>, <code>zhongwen</code>). Không cần gõ dấu thanh điệu!</p>
+            <p>Nhập Pinyin (vd: <code>ni</code>, <code>hao</code>, <code>zhongguo</code>) để pháo sao bắn nổ!</p>
           </div>
         </div>
         <div class="rule-card">
-          <span class="rule-icon">🛡️</span>
+          <span class="rule-icon">💖</span>
           <div>
-            <strong>Khiên phòng thủ 100 HP:</strong>
-            <p>Mỗi từ chạm đáy sẽ gây sát thương <strong>-1 HP</strong> cho khiên. Khiên về 0 = Lõi sụp đổ, thất thủ!</p>
+            <strong>Bảo vệ 100 Tim:</strong>
+            <p>Mỗi từ chạm vạch trừ <strong>-1 Tim</strong>. Đạt Combo x5 để bùng nổ điểm số!</p>
           </div>
         </div>
         <div class="rule-card">
           <span class="rule-icon">🗣️</span>
           <div>
-            <strong>Luyện nghe & Nhớ nghĩa:</strong>
-            <p>Mỗi khi bắn hạ một từ, hệ thống sẽ phát âm tiếng Trung chuẩn (zh-CN) cùng chú thích nghĩa tiếng Việt giúp nhớ từ cực nhanh!</p>
+            <strong>Luyện nghe giọng chuẩn:</strong>
+            <p>Phát âm bản ngữ chuẩn Bắc Kinh (zh-CN) giúp nhớ từ siêu tốc!</p>
           </div>
         </div>
       </div>
@@ -238,7 +240,7 @@
       <div class="modal-actions">
         <button class="cyber-launch-btn" id="startGameBtn">
           <span class="btn-laser-glow"></span>
-          KHỞI ĐỘNG PHÁO LASER & BẮT ĐẦU PHÒNG THỦ
+          🚀 BẮT ĐẦU CHƠI NGAY THÔI!
         </button>
       </div>
 
@@ -252,25 +254,25 @@
   <div class="modal-overlay" id="gameOverModal" style="display: none;">
     <div class="cyber-modal game-over-modal">
       <div class="game-over-header">
-        <span class="game-over-glitch" data-text="KHIÊN BỊ PHÁ HỦY">KHIÊN BỊ PHÁ HỦY</span>
-        <div class="game-over-sub">LÕI NĂNG LƯỢNG SỤP ĐỔ // KẾT THÚC TRÒ CHƠI</div>
+        <span class="game-over-glitch" data-text="HOÀN THÀNH CHUYẾN PHIÊU LƯU!">🎉 HOÀN THÀNH CHUYẾN PHIÊU LƯU!</span>
+        <div class="game-over-sub">BẠN ĐÃ RẤT NỖ LỰC! CÙNG XEM LẠI THÀNH TÍCH NHÉ:</div>
       </div>
 
       <div class="stats-summary-grid">
         <div class="summary-card">
-          <span class="summary-label">TỔNG ĐIỂM</span>
+          <span class="summary-label">⭐ TỔNG ĐIỂM</span>
           <span class="summary-val" id="finalScore">0</span>
         </div>
         <div class="summary-card">
-          <span class="summary-label">TỪ ĐÃ DIỆT</span>
+          <span class="summary-label">🎯 TỪ ĐÃ BẮN NỔ</span>
           <span class="summary-val accent-val" id="finalKills">0</span>
         </div>
         <div class="summary-card">
-          <span class="summary-label">CHUỖI COMBO TỐI ĐA</span>
+          <span class="summary-label">🔥 COMBO CAO NHẤT</span>
           <span class="summary-val" id="finalMaxCombo">0</span>
         </div>
         <div class="summary-card">
-          <span class="summary-label">TỪ BỎ LỠ</span>
+          <span class="summary-label">💨 TỪ BỎ LỠ</span>
           <span class="summary-val alert-val" id="finalMissed">0</span>
         </div>
       </div>
@@ -278,7 +280,7 @@
       <div class="modal-actions">
         <button class="cyber-launch-btn" id="restartGameBtn">
           <span class="btn-laser-glow"></span>
-          TÁI KHỞI ĐỘNG KHIÊN (CHƠI LẠI)
+          🔄 CHƠI LẠI NGAY ĐỂ LẬP KỶ LỤC MỚI!
         </button>
       </div>
 
@@ -291,10 +293,10 @@
   <!-- Pause Modal -->
   <div class="modal-overlay" id="pauseModal" style="display: none;">
     <div class="cyber-modal pause-modal">
-      <h2 class="modal-title">TẠM DỪNG CHIẾN THUẬT</h2>
-      <p style="color: var(--text-muted); margin: 15px 0;">Toàn bộ hệ thống phòng thủ đang ở trạng thái chờ.</p>
+      <h2 class="modal-title">☕ TẠM NGHỈ CHÚT NÀO!</h2>
+      <p style="color: var(--text-muted); margin: 15px 0;">Trò chơi đang dừng. Hãy uống ngụm nước rồi quay lại tiếp tục chinh phục tiếng Trung nhé!</p>
       <button class="cyber-launch-btn" id="resumeGameBtn">
-        TIẾP TỤC PHÒNG THỦ
+        ✨ TIẾP TỤC CHƠI NGAY
       </button>
 
       <div class="modal-copyright-tag">
@@ -304,10 +306,11 @@
   </div>
 
   <!-- 5000 Words Vocabulary Library Script -->
-  <script src="words.js?v=8bit"></script>
+  <script src="words.js?v=pop"></script>
   <!-- Audio Synthesizer & Speech Engine -->
-  <script src="audio.js?v=8bit"></script>
+  <script src="audio.js?v=pop"></script>
   <!-- Main Game Mechanics Script -->
-  <script src="game.js?v=8bit"></script>
+  <script src="game.js?v=pop"></script>
 </body>
 </html>
+

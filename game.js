@@ -712,33 +712,37 @@ class PinyinDefenderGame {
   }
 
   fireLaser(startX, startY, endX, endY) {
-    // Laser beam animation
+    // Laser star beam animation
     this.lasers.push({
       startX,
       startY,
       endX,
       endY,
-      life: 0.18,
-      maxLife: 0.18,
-      color: '#00f3ff'
+      life: 0.22,
+      maxLife: 0.22,
+      color: '#ff4b82'
     });
 
-    // Particle explosion at target location
-    const particleCount = 28;
-    const colors = ['#00f3ff', '#ff0055', '#ffe600', '#00ff88', '#ffffff'];
+    // Festive Confetti burst at target location
+    const particleCount = 36;
+    const colors = ['#ff4b82', '#ffb703', '#06d6a0', '#00b4d8', '#7209b7', '#f72585', '#ffffff', '#fbbf24'];
+    const shapes = ['star', 'rect', 'circle'];
 
     for (let i = 0; i < particleCount; i++) {
       const angle = Math.random() * Math.PI * 2;
-      const speed = 80 + Math.random() * 220;
+      const speed = 90 + Math.random() * 260;
       this.particles.push({
         x: endX,
         y: endY,
         vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        size: 2 + Math.random() * 3,
+        vy: Math.sin(angle) * speed - 60, // Slight upward burst
+        size: 3 + Math.random() * 4,
         color: colors[Math.floor(Math.random() * colors.length)],
-        life: 0.5 + Math.random() * 0.3,
-        maxLife: 0.8
+        shape: shapes[Math.floor(Math.random() * shapes.length)],
+        rot: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 12,
+        life: 0.6 + Math.random() * 0.4,
+        maxLife: 1.0
       });
     }
   }
@@ -784,66 +788,160 @@ class PinyinDefenderGame {
 
   initBgParticles() {
     this.bgParticles = [];
-    const count = 45;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
+    // Floating Clouds
+    this.clouds = [
+      { x: w * 0.1, y: h * 0.15, size: 75, speed: 12, opacity: 0.85 },
+      { x: w * 0.65, y: h * 0.25, size: 95, speed: 16, opacity: 0.9 },
+      { x: w * 0.85, y: h * 0.08, size: 60, speed: 9, opacity: 0.75 },
+      { x: w * 0.35, y: h * 0.35, size: 80, speed: 14, opacity: 0.8 }
+    ];
+
+    // Cheerful Rising Bubbles & Sparkle Stars
+    const count = 35;
+    const bubbleColors = [
+      'rgba(255, 182, 193, 0.45)', // Pink
+      'rgba(186, 230, 253, 0.45)', // Sky blue
+      'rgba(254, 240, 138, 0.45)', // Soft yellow
+      'rgba(187, 247, 208, 0.45)', // Mint
+      'rgba(233, 213, 255, 0.45)'  // Lavender
+    ];
+
     for (let i = 0; i < count; i++) {
       this.bgParticles.push({
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
-        speed: 40 + Math.random() * 80,
-        len: 10 + Math.random() * 25,
-        opacity: 0.15 + Math.random() * 0.35
+        x: Math.random() * w,
+        y: Math.random() * h,
+        radius: 6 + Math.random() * 18,
+        speed: 15 + Math.random() * 35,
+        swingSpeed: 1 + Math.random() * 2,
+        swingAmp: 10 + Math.random() * 20,
+        initialX: Math.random() * w,
+        color: bubbleColors[Math.floor(Math.random() * bubbleColors.length)],
+        isStar: Math.random() > 0.6,
+        rot: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 2
       });
     }
   }
 
   startRenderLoops() {
-    const renderBg = () => {
-      this.drawCyberBackground();
+    let lastT = performance.now();
+    const renderBg = (currT) => {
+      const dt = Math.min(0.1, (currT - lastT) / 1000);
+      lastT = currT;
+      this.drawCheerfulBackground(dt, currT);
       requestAnimationFrame(renderBg);
     };
     requestAnimationFrame(renderBg);
   }
 
-  drawCyberBackground() {
+  drawCheerfulBackground(dt, currT) {
     const ctx = this.bgCtx;
     const w = this.bgCanvas.width;
     const h = this.bgCanvas.height;
 
-    ctx.fillStyle = '#04060d';
+    // Vibrant & Cheerful Dreamy Candy Sky Gradient
+    const skyGrad = ctx.createLinearGradient(0, 0, 0, h);
+    skyGrad.addColorStop(0, '#7dd3fc');    // Crisp sunny sky blue
+    skyGrad.addColorStop(0.35, '#bae6fd'); // Soft pastel blue
+    skyGrad.addColorStop(0.7, '#fbcfe8');  // Pastel candy pink
+    skyGrad.addColorStop(1, '#fed7aa');    // Warm peach sunset
+    ctx.fillStyle = skyGrad;
     ctx.fillRect(0, 0, w, h);
 
-    // Subtle Neon Chinese Neon Signs in Distance
-    ctx.font = '900 64px "ZCOOL QingKe HuangYou", sans-serif';
-    ctx.fillStyle = 'rgba(0, 243, 255, 0.03)';
-    ctx.fillText('赛博重庆', 60, 180);
-    ctx.fillStyle = 'rgba(255, 0, 85, 0.03)';
-    ctx.fillText('霓虹夜城', w - 300, 260);
-    ctx.fillStyle = 'rgba(255, 230, 0, 0.025)';
-    ctx.fillText('未来科技', w / 2 - 120, h / 2);
+    // Floating Clouds
+    if (this.clouds) {
+      for (let i = 0; i < this.clouds.length; i++) {
+        const c = this.clouds[i];
+        c.x += c.speed * dt;
+        if (c.x - c.size * 2 > w) {
+          c.x = -c.size * 2;
+          c.y = Math.random() * (h * 0.4);
+        }
 
-    // Cyber Rain Lines
-    ctx.lineWidth = 1.2;
+        ctx.fillStyle = `rgba(255, 255, 255, ${c.opacity})`;
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, c.size * 0.6, 0, Math.PI * 2);
+        ctx.arc(c.x + c.size * 0.45, c.y - c.size * 0.25, c.size * 0.5, 0, Math.PI * 2);
+        ctx.arc(c.x + c.size * 0.9, c.y, c.size * 0.55, 0, Math.PI * 2);
+        ctx.arc(c.x + c.size * 0.45, c.y + c.size * 0.1, c.size * 0.4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Rising Bubbles & Twinkling Floating Stars
+    const timeSec = currT * 0.001;
     for (let i = 0; i < this.bgParticles.length; i++) {
       const p = this.bgParticles[i];
-      p.y += p.speed * 0.016;
-      if (p.y > h) {
-        p.y = -30;
-        p.x = Math.random() * w;
+      p.y -= p.speed * dt;
+      p.x = p.initialX + Math.sin(timeSec * p.swingSpeed + i) * p.swingAmp;
+      p.rot += p.rotSpeed * dt;
+
+      if (p.y < -30) {
+        p.y = h + 20;
+        p.initialX = Math.random() * w;
       }
 
-      ctx.strokeStyle = `rgba(0, 243, 255, ${p.opacity})`;
-      ctx.beginPath();
-      ctx.moveTo(p.x, p.y);
-      ctx.lineTo(p.x, p.y + p.len);
-      ctx.stroke();
+      if (p.isStar) {
+        // Draw Twinkling Golden Star
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        const starSize = 5 + Math.sin(timeSec * 3 + i) * 2;
+        ctx.fillStyle = '#fef08a';
+        ctx.shadowColor = '#facc15';
+        ctx.shadowBlur = 8;
+        this.drawStarShape(ctx, 0, 0, 5, starSize, starSize * 0.45);
+        ctx.fill();
+        ctx.restore();
+      } else {
+        // Draw Glossy Translucent Bubble
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+
+        // Bubble Highlight
+        ctx.beginPath();
+        ctx.arc(p.x - p.radius * 0.35, p.y - p.radius * 0.35, p.radius * 0.28, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.fill();
+        ctx.restore();
+      }
     }
+  }
+
+  drawStarShape(ctx, cx, cy, spikes, outerRadius, innerRadius) {
+    let rot = (Math.PI / 2) * 3;
+    let x = cx;
+    let y = cy;
+    const step = Math.PI / spikes;
+
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - outerRadius);
+    for (let i = 0; i < spikes; i++) {
+      x = cx + Math.cos(rot) * outerRadius;
+      y = cy + Math.sin(rot) * outerRadius;
+      ctx.lineTo(x, y);
+      rot += step;
+
+      x = cx + Math.cos(rot) * innerRadius;
+      y = cy + Math.sin(rot) * innerRadius;
+      ctx.lineTo(x, y);
+      rot += step;
+    }
+    ctx.lineTo(cx, cy - outerRadius);
+    ctx.closePath();
   }
 
   renderLasersAndParticles(dt) {
     const ctx = this.laserCtx;
     ctx.clearRect(0, 0, this.laserCanvas.width, this.laserCanvas.height);
 
-    // Draw Laser Beams
+    // Draw Cheerful Rainbow Laser Star Beams
     for (let i = this.lasers.length - 1; i >= 0; i--) {
       const l = this.lasers[i];
       l.life -= dt;
@@ -854,24 +952,40 @@ class PinyinDefenderGame {
 
       const alpha = l.life / l.maxLife;
 
-      // Outer glow beam
-      ctx.lineWidth = 6;
-      ctx.strokeStyle = `rgba(0, 243, 255, ${alpha * 0.6})`;
+      // Outer Rainbow Glow Beam
+      ctx.lineWidth = 9;
+      ctx.strokeStyle = `rgba(255, 110, 180, ${alpha * 0.65})`;
       ctx.beginPath();
       ctx.moveTo(l.startX, l.startY);
       ctx.lineTo(l.endX, l.endY);
       ctx.stroke();
 
-      // Inner intense core beam
+      // Middle Golden Beam
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = `rgba(254, 240, 138, ${alpha * 0.85})`;
+      ctx.beginPath();
+      ctx.moveTo(l.startX, l.startY);
+      ctx.lineTo(l.endX, l.endY);
+      ctx.stroke();
+
+      // Inner Diamond White Core
       ctx.lineWidth = 2.5;
       ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
       ctx.beginPath();
       ctx.moveTo(l.startX, l.startY);
       ctx.lineTo(l.endX, l.endY);
       ctx.stroke();
+
+      // Star Head at target
+      ctx.save();
+      ctx.translate(l.endX, l.endY);
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+      this.drawStarShape(ctx, 0, 0, 4, 14 * alpha, 5 * alpha);
+      ctx.fill();
+      ctx.restore();
     }
 
-    // Draw Explosion Particles
+    // Draw Colorful Festive Confetti Explosion Particles
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const p = this.particles[i];
       p.life -= dt;
@@ -882,14 +996,28 @@ class PinyinDefenderGame {
 
       p.x += p.vx * dt;
       p.y += p.vy * dt;
-      p.vy += 80 * dt; // Light gravity
+      p.vy += 140 * dt; // Gravity
+      p.vx *= 0.98;    // Air resistance
+      if (p.rot !== undefined) p.rot += p.rotSpeed * dt;
 
       const alpha = p.life / p.maxLife;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      if (p.rot) ctx.rotate(p.rot);
       ctx.fillStyle = p.color;
       ctx.globalAlpha = alpha;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      ctx.fill();
+
+      if (p.shape === 'star') {
+        this.drawStarShape(ctx, 0, 0, 5, p.size * 1.5, p.size * 0.6);
+        ctx.fill();
+      } else if (p.shape === 'rect') {
+        ctx.fillRect(-p.size, -p.size * 0.5, p.size * 2, p.size);
+      } else {
+        ctx.beginPath();
+        ctx.arc(0, 0, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
     }
     ctx.globalAlpha = 1.0;
   }

@@ -1,41 +1,41 @@
-# 赛博拼音 // CYBERPUNK CHINA: PINYIN DEFENDER
+# 🌟 PINYIN POP! // 快乐拼音 - Vui Học Tiếng Trung 5000 Từ HSK
 
-An intense, retro-futuristic Cyberpunk Chinese typing arcade game. Chinese words fall from the cyber sky towards your city's defense perimeter. Type the exact Pinyin to lock-on and vaporize each target with laser cannons before they breach your 100 HP Core Shield!
+Trò chơi luyện gõ Pinyin tiếng Trung phong cách kẹo ngọt vui nhộn, sống động! Các bong bóng từ vựng tiếng Trung rơi nhẹ nhàng từ bầu trời cầu vồng. Gõ chính xác phiên âm Pinyin để pháo sao bắn nổ từ vựng, tích điểm combo và bảo vệ 100 Tim năng lượng!
 
-![Cyberpunk China Pinyin Defender](preview.png)
+<p align="center">
+  <img src="assets/logo.png" alt="Pinyin Pop Logo" width="220" style="border-radius: 32px; box-shadow: 0 10px 30px rgba(255,75,130,0.3);">
+</p>
 
 ---
 
 ## ⚡ Tính Năng Nổi Bật / Key Features
 
+- **Giao Diện Candy Pop Vui Tươi & Sống Động**:
+  - Tông màu kẹo ngọt rực rỡ, mây bồng bềnh lơ lửng, bong bóng cầu vồng và các vì sao lấp lánh.
+  - Các thẻ bài từ vựng thiết kế dạng viên kẹo tròn trịa, hiệu ứng pháo giấy confetti lung linh khi bắn trúng!
 - **5.000 Từ Vựng Tiếng Trung Chuẩn HSK 1 - 6 (Đầy đủ Chú thích Tiếng Việt & Tiếng Anh)**:
   - Bộ dữ liệu từ vựng tích hợp sẵn trong `words.js`.
   - Hỗ trợ bộ lọc: Toàn bộ HSK (5.000 từ), HSK 1 (150 từ), HSK 2 (150 từ), HSK 3 (300 từ), HSK 4 (600 từ), HSK 5 (1.300 từ), HSK 6 (2.500 từ).
   - Tùy chọn hiển thị chú thích nghĩa: **🇻🇳 Tiếng Việt**, **🇻🇳🇬🇧 Song ngữ**, hoặc **🇬🇧 Tiếng Anh**.
 - **Thang Điểm Theo Cấp Độ HSK (HSK Tier Scoring)**:
-  - Càng từ vựng HSK cấp cao càng nhận được nhiều điểm thưởng vượt bậc:
+  - Càng từ vựng HSK cấp cao càng nhận được nhiều điểm thưởng:
     - **HSK 1**: 100 điểm
     - **HSK 2**: 250 điểm
     - **HSK 3**: 500 điểm
     - **HSK 4**: 1.000 điểm
     - **HSK 5**: 2.000 điểm
     - **HSK 6**: 4.000 điểm
-  - Kết hợp hệ số nhân Chuỗi Combo (x1, x2, x3, x4, x5 OVERDRIVE) mang lại điểm số bùng nổ!
-- **Thẻ HSK Đỏ Hiển Thị Đầy Đủ Sắc Nét**:
-  - Huy hiệu HSK màu đỏ neon nằm gọn gàng bên trong thẻ bài rơi, không bị che khuất hay cắt xén bởi viền vát góc.
+  - Kết hợp hệ số nhân Chuỗi Combo (x1, x2, x3, x4, x5 SIÊU TỐC) mang lại điểm số bùng nổ!
 - **Nút Bật / Ẩn Pinyin Nổi Bật (Chế Độ Luyện Trí Nhớ Chữ Hán)**:
-  - Nút chuyển đổi Pinyin nổi bật trên thanh điều khiển HUD với trạng thái trực quan:
-    - **👁️ PINYIN: HIỆN**: Hiển thị đầy đủ phiên âm Pinyin để người học dễ nhận biết.
-    - **🙈 PINYIN: ẨN (THỬ THÁCH)**: Ẩn/làm mờ Pinyin để người chơi tự nhớ mặt chữ Hán. Khi gõ đúng các ký tự Pinyin, hệ thống sẽ mở khóa và hiển thị phản hồi tức thì.
-    - Hỗ trợ phím tắt nhanh: **F2** hoặc **Alt + P**.
-- **Hệ Thống Âm Thanh Game 8-Bit Sống Động (Mặc định Bật - Default ON)**:
-  - Tích hợp các file âm thanh retro 8-bit chuẩn game arcade (Laser, Explosion, Coin Chime, Level Up, Chiptune BGM) kết hợp bộ tổng hợp âm thanh Web Audio API đa tầng.
-  - Tự động kích hoạt phát nhạc và hiệu ứng âm thanh ngay khi người dùng bấm khởi động trò chơi.
-- **Phát Âm Giọng Đọc Bản Ngữ (TTS)**:
-  - Tự động đọc chuẩn giọng Bắc Kinh (`zh-CN`) mỗi khi bắn hạ một từ vựng, hỗ trợ tối đa kỹ năng nghe và ghi nhớ phát âm.
-- **Cơ Chế Phòng Thủ Khiên Năng Lượng 100 HP**:
-  - Người chơi khởi đầu với 100 HP khiên. Mỗi từ chạm đáy sẽ gây sát thương -1 HP.
-  - Hiệu ứng rung màn hình, cảnh báo đỏ nguy cấp khi HP < 25.
+  - Nút chuyển đổi Pinyin nổi bật trên thanh điều khiển HUD:
+    - **👁️ PINYIN: HIỆN**: Hiển thị đầy đủ phiên âm Pinyin.
+    - **🙈 PINYIN: ẨN (THỬ THÁCH)**: Ẩn/làm mờ Pinyin để tự nhớ mặt chữ Hán.
+    - Phím tắt nhanh: **F2** hoặc **Alt + P**.
+- **Âm Thanh Game Vui Nhộn & Giọng Đọc Bản Ngữ (TTS)**:
+  - Tự động phát âm chuẩn giọng Bắc Kinh (`zh-CN`) mỗi khi bắn hạ từ vựng.
+  - Hiệu ứng âm thanh sinh động, vui tươi kèm nhạc nền chiptune bắt tai.
+- **Cơ Chế 100 Tim Năng Lượng**:
+  - Người chơi khởi đầu với 100 Tim năng lượng. Giữ tim càng lâu, combo càng bùng nổ!
 
 ---
 
