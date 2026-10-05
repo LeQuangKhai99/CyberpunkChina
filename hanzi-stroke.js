@@ -621,8 +621,6 @@
           markStrokeCorrectAfterMisses: 3
         });
 
-        this.setPrompt(`👉 Đã sẵn sàng luyện chữ "${char}"! Nhấp "Xem Mẫu Bút Thuận" hoặc "Tự Tay Luyện Viết".`);
-
         // Fetch stroke data for breakdown track
         this.writer.getCharacterData().then(data => {
           this.renderStrokeBreakdown(data);
@@ -630,6 +628,10 @@
           this.dom.lblTotalStrokes.textContent = 'Bút thuận tiêu chuẩn';
           this.dom.breakdownTrack.innerHTML = '<span style="font-size: 11px; color: #94a3b8; padding: 10px;">Chưa có dữ liệu phân rã SVG chi tiết cho chữ này</span>';
         });
+
+        // ACTIVATE WRITING MODE DIRECTLY BY DEFAULT!
+        // The user can write right away with mouse/finger/stylus without watching animation first!
+        this.startQuizMode();
 
       } catch (err) {
         console.error('HanziWriter setup error:', err);
@@ -697,11 +699,23 @@
       if (!this.writer) return;
       this.isQuizMode = false;
       this.dom.btnQuiz.classList.remove('active');
-      this.setPrompt('🎬 Đang vẽ mẫu từng nét theo bút thuận chuẩn...', 'hint');
+      this.dom.btnAnimate.classList.add('active');
+      const char = this.getCurrentChar();
+      this.setPrompt(`🎬 Đang phát nét bút thuận chữ "${char}"... (Xem xong bạn sẽ được tự tay viết ngay)`, 'hint');
+
+      // Cancel any ongoing quiz before playing animation
+      if (typeof this.writer.cancelQuiz === 'function') {
+        this.writer.cancelQuiz();
+      }
 
       this.writer.animateCharacter({
         onComplete: () => {
-          this.setPrompt('✨ Đã xem xong mẫu! Bây giờ hãy nhấp "Tự Tay Luyện Viết" để ghi nhớ nhé.', 'success');
+          this.dom.btnAnimate.classList.remove('active');
+          // Automatically return to quiz mode so user can write immediately!
+          setTimeout(() => {
+            this.startQuizMode();
+            this.setPrompt(`✨ Đã xem xong mẫu! Bạn hãy tự tay viết lại chữ "${char}" ngay nhé!`, 'success');
+          }, 350);
         }
       });
     }
@@ -710,7 +724,9 @@
       if (!this.writer) return;
       this.isQuizMode = true;
       this.dom.btnQuiz.classList.add('active');
-      this.setPrompt('✍️ Hãy dùng chuột hoặc ngón tay vẽ nét thứ 1 trên ô Mễ Điền!', 'hint');
+      this.dom.btnAnimate.classList.remove('active');
+      const char = this.getCurrentChar();
+      this.setPrompt(`✍️ Bạn hãy tự tay viết nét thứ 1 của chữ "${char}"! (Nếu quên có thể nhấp "Xem Mẫu")`, 'hint');
 
       let mistakeCount = 0;
       let strokeIndex = 0;

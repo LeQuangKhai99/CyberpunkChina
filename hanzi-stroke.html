@@ -140,8 +140,8 @@
         <div class="hs-canvas-stage">
 
           <!-- Dynamic Status / Guidance Prompt -->
-          <div class="hs-prompt-banner" id="hsPromptBanner">
-            👉 Nhấp "Xem Mẫu Bút Thuận" hoặc "Tự Tay Luyện Viết" để bắt đầu!
+          <div class="hs-prompt-banner hint" id="hsPromptBanner">
+            ✍️ Hãy đặt bút vẽ luôn nét thứ 1! (Nếu quên có thể nhấp "Xem Mẫu Bút Thuận" hoặc "Gợi Ý")
           </div>
 
           <!-- Mễ Điền (米字格) Canvas Box -->
@@ -170,11 +170,11 @@
 
           <!-- Control Toolbar -->
           <div class="hs-controls-toolbar">
-            <button class="hs-ctrl-btn hs-ctrl-animate" id="btnAnimateChar" title="Tự động vẽ từng nét theo đúng bút thuận">
-              🎬 Xem Mẫu Bút Thuận
-            </button>
             <button class="hs-ctrl-btn hs-ctrl-quiz" id="btnStartQuiz" title="Tự tay viết từng nét bằng chuột hoặc ngón tay">
               ✍️ Tự Tay Luyện Viết
+            </button>
+            <button class="hs-ctrl-btn hs-ctrl-animate" id="btnAnimateChar" title="Xem chuyển động từng nét nếu bạn quên nét">
+              🎬 Xem Mẫu (Khi Quên)
             </button>
             <button class="hs-ctrl-btn hs-ctrl-hint" id="btnStrokeHint" title="Gợi ý nét tiếp theo">
               💡 Gợi Ý Nét
@@ -330,7 +330,7 @@
   <!-- Scripts -->
   <script src="assets/hanzi-writer.min.js"></script>
   <script src="words.js?v=pop"></script>
-  <script src="hanzi-stroke.js?v=20261005_v3"></script>
+  <script src="hanzi-stroke.js?v=20261005_v6"></script>
 
 </body>
 </html>
