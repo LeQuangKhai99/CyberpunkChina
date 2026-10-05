@@ -242,6 +242,7 @@
 
         // Canvas & Prompts
         promptBanner: document.getElementById('hsPromptBanner'),
+        gridBox: document.getElementById('gridBoxContainer'),
         writerTarget: document.getElementById('hanziWriterTarget'),
         btnAnimate: document.getElementById('btnAnimateChar'),
         btnQuiz: document.getElementById('btnStartQuiz'),
@@ -391,6 +392,17 @@
         if (scrollTop + clientHeight >= scrollHeight - 120) {
           this.renderMoreWords();
         }
+      });
+
+      // Responsive redraw on mobile orientation change
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          if (this.currentWord) {
+            this.setupHanziWriter(this.getCurrentChar());
+          }
+        }, 250);
       });
     }
 
@@ -603,11 +615,20 @@
       this.isQuizMode = false;
       this.dom.btnQuiz.classList.remove('active');
 
+      // Compute responsive canvas dimension
+      let targetSize = 320;
+      if (this.dom.gridBox && this.dom.gridBox.parentElement) {
+        const availableW = this.dom.gridBox.parentElement.clientWidth - 24;
+        targetSize = Math.min(320, Math.max(260, availableW));
+        this.dom.gridBox.style.width = `${targetSize}px`;
+        this.dom.gridBox.style.height = `${targetSize}px`;
+      }
+
       try {
         this.writer = HanziWriter.create(this.dom.writerTarget, char, {
-          width: 320,
-          height: 320,
-          padding: 18,
+          width: targetSize,
+          height: targetSize,
+          padding: Math.round(targetSize * 0.056),
           showOutline: this.outlineVisible,
           strokeAnimationSpeed: this.currentSpeed,
           delayBetweenStrokes: Math.max(100, 200 / this.currentSpeed),
@@ -615,7 +636,7 @@
           radicalColor: '#ec4899',
           highlightColor: '#10b981',
           drawingColor: '#e11d48',
-          drawingWidth: 14,
+          drawingWidth: Math.max(10, Math.round(targetSize * 0.042)),
           showCharacter: false,
           showHintAfterMisses: 2,
           markStrokeCorrectAfterMisses: 3

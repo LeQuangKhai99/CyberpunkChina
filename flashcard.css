@@ -867,3 +867,104 @@
   color: #64748b;
   padding-top: 12px;
 }
+
+/* ==========================================================================
+   MOBILE RESPONSIVE STYLES
+   ========================================================================== */
+@media (max-width: 768px) {
+  .fc-container {
+    padding: 8px 10px 24px;
+    gap: 10px;
+  }
+
+  .fc-navbar {
+    padding: 8px 12px;
+    border-radius: 18px;
+    gap: 8px;
+  }
+
+  .fc-brand-link img {
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  .fc-brand-title {
+    font-size: 17px;
+  }
+
+  .fc-brand-sub {
+    font-size: 9px;
+  }
+
+  .fc-nav-tabs {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 4px 6px;
+  }
+
+  .fc-nav-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .fc-tab-btn {
+    white-space: nowrap;
+    padding: 6px 12px;
+    font-size: 10.5px;
+    flex-shrink: 0;
+  }
+
+  .fc-header-actions {
+    width: 100%;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+
+  .fc-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 18px;
+  }
+
+  .toolbar-left, .toolbar-center, .toolbar-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .flashcard {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 300px;
+  }
+
+  .card-face {
+    padding: 18px 14px;
+  }
+
+  .card-hanzi {
+    font-size: 58px;
+  }
+
+  .card-meaning {
+    font-size: 18px;
+  }
+
+  .fc-deck-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .deck-ctrl-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+}
+

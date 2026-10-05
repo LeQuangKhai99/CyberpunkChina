@@ -185,17 +185,25 @@ body.hs-body {
   .hs-workspace {
     grid-template-columns: 320px 1fr;
   }
-  .hs-col-guide {
+  .hs-guide-panel {
     grid-column: span 2;
   }
 }
 
 @media (max-width: 860px) {
   .hs-workspace {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
-  .hs-col-guide {
-    grid-column: span 1;
+  .hs-center-panel {
+    order: 1; /* Center panel (calligraphy canvas & target word) at TOP on mobile! */
+  }
+  .hs-vocab-panel {
+    order: 2; /* Vocabulary selector below the canvas */
+  }
+  .hs-guide-panel {
+    order: 3; /* Rules & 8 strokes at bottom */
   }
 }
 
@@ -674,6 +682,7 @@ body.hs-body {
 .hs-grid-box {
   width: 320px;
   height: 320px;
+  max-width: 100%;
   position: relative;
   border-radius: 20px;
   background-color: var(--hs-bg-grid);
@@ -681,6 +690,9 @@ body.hs-body {
   box-shadow: 0 12px 30px rgba(236, 72, 153, 0.12), inset 0 0 20px rgba(236, 72, 153, 0.04);
   overflow: hidden;
   cursor: crosshair;
+  touch-action: none !important;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* SVG background grid lines */
@@ -699,9 +711,10 @@ body.hs-body {
   position: absolute;
   top: 0;
   left: 0;
-  width: 320px;
-  height: 320px;
+  width: 100%;
+  height: 100%;
   z-index: 2;
+  touch-action: none !important;
 }
 
 /* Canvas Corner Traditional Red Seals / Marks */
@@ -1168,4 +1181,244 @@ body.hs-body {
 .hs-modal-btn-retry {
   background: #f1f5f9;
   color: #475569;
+}
+
+/* ==========================================================================
+   MOBILE & TOUCH SCREEN OPTIMIZATIONS (PHONE PORTRAIT & LANDSCAPE)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .hs-container {
+    padding: 10px 12px 36px;
+    gap: 14px;
+  }
+
+  .hs-card {
+    padding: 16px 14px;
+    border-radius: 22px;
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.06);
+  }
+
+  /* Compact Navbar */
+  .hs-navbar {
+    padding: 10px 14px;
+    border-radius: 18px;
+    gap: 8px;
+  }
+
+  .hs-brand-link {
+    gap: 10px;
+  }
+
+  .hs-brand-logo {
+    width: 36px;
+    height: 36px;
+  }
+
+  .hs-brand-title {
+    font-size: 16px;
+  }
+
+  .hs-brand-sub {
+    font-size: 9.5px;
+  }
+
+  .hs-header-actions {
+    margin-left: auto;
+  }
+
+  .hs-action-pill {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+
+  /* Horizontally Swipeable Nav Tabs on Phones */
+  .hs-nav-tabs {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+
+  .hs-nav-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hs-tab-btn {
+    padding: 6px 12px;
+    font-size: 11px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* Target word details header */
+  .hs-target-banner {
+    padding: 14px;
+    border-radius: 18px;
+    gap: 12px;
+  }
+
+  .hs-target-hanzi-display {
+    font-size: 38px;
+  }
+
+  .hs-target-pinyin {
+    font-size: 18px;
+  }
+
+  .hs-target-vn-meanings {
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  /* Canvas Stage */
+  .hs-canvas-stage {
+    padding: 14px 10px;
+    border-radius: 22px;
+    gap: 12px;
+  }
+
+  .hs-prompt-banner {
+    font-size: 11.5px;
+    padding: 6px 12px;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  /* Mễ Điền Touch & Scale */
+  .hs-grid-box {
+    touch-action: none !important;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  #hanziWriterTarget {
+    touch-action: none !important;
+  }
+
+  /* Responsive 2-column action buttons for thumb taps */
+  .hs-controls-toolbar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .hs-ctrl-btn {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 8px;
+    font-size: 11.5px;
+    border-radius: 12px;
+    justify-content: center;
+    text-align: center;
+    min-height: 42px;
+  }
+
+  .hs-ctrl-btn:nth-child(5) {
+    grid-column: span 2;
+  }
+
+  .hs-speed-controls {
+    grid-column: span 2;
+    justify-content: center;
+    margin-top: 4px;
+    padding: 6px 12px;
+  }
+
+  /* Stroke Breakdown Track */
+  .hs-breakdown-track {
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+
+  .hs-step-card {
+    width: 58px;
+    height: 72px;
+  }
+
+  /* Vocab panel */
+  .hs-custom-input-box {
+    padding: 10px;
+    border-radius: 14px;
+  }
+
+  .hs-custom-input {
+    font-size: 13.5px;
+    padding: 7px 10px;
+  }
+
+  .hs-custom-btn {
+    padding: 7px 12px;
+    font-size: 11.5px;
+  }
+
+  .hs-search-input {
+    font-size: 12.5px;
+    padding: 9px 34px 9px 12px;
+  }
+
+  .hs-hsk-chips {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+
+  .hs-hsk-chips::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hs-hsk-chip {
+    flex-shrink: 0;
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+
+  .hs-word-list {
+    max-height: 360px;
+  }
+
+  .hs-item-hanzi {
+    font-size: 18px;
+  }
+
+  .hs-item-pinyin {
+    font-size: 11.5px;
+  }
+
+  .hs-item-meaning {
+    font-size: 10.5px;
+    max-width: 110px;
+  }
+
+  /* Modal on Mobile */
+  .hs-modal-card {
+    padding: 24px 18px;
+    border-radius: 22px;
+    max-width: calc(100vw - 32px);
+  }
+
+  .hs-modal-trophy {
+    font-size: 42px;
+  }
+
+  .hs-modal-char-preview {
+    font-size: 52px;
+  }
+
+  .hs-modal-title {
+    font-size: 18px;
+  }
+
+  .hs-modal-desc {
+    font-size: 12px;
+  }
+
+  .hs-modal-btn {
+    padding: 10px 14px;
+    font-size: 12px;
+  }
 }

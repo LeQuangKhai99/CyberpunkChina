@@ -1586,3 +1586,123 @@ body.tm-body {
   color: #64748b;
   padding-top: 12px;
 }
+
+/* ==========================================================================
+   MOBILE & TOUCH SCREEN OPTIMIZATIONS FOR TONE MASTER
+   ========================================================================== */
+@media (max-width: 768px) {
+  .tm-container {
+    padding: 10px 12px 36px;
+    gap: 14px;
+  }
+
+  .tm-navbar {
+    padding: 10px 14px;
+    border-radius: 18px;
+    gap: 8px;
+  }
+
+  .tm-brand-logo {
+    width: 36px;
+    height: 36px;
+  }
+
+  .tm-brand-title {
+    font-size: 16px;
+  }
+
+  .tm-brand-sub {
+    font-size: 9.5px;
+  }
+
+  .tm-nav-tabs {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+
+  .tm-nav-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tm-tab-btn {
+    padding: 6px 12px;
+    font-size: 11px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .tm-mode-switch-bar {
+    padding: 8px 12px;
+    border-radius: 18px;
+    gap: 8px;
+  }
+
+  .tm-mode-buttons {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  .tm-mode-buttons::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mode-pill-btn {
+    padding: 7px 14px;
+    font-size: 11px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* Speaking Lab mobile */
+  .speaking-arena-card {
+    padding: 20px 14px;
+    border-radius: 22px;
+    gap: 16px;
+  }
+
+  .speaking-hanzi {
+    font-size: 52px;
+  }
+
+  .speaking-pinyin {
+    font-size: 20px;
+  }
+
+  .speaking-meaning {
+    font-size: 12.5px;
+  }
+
+  .speaking-mic-btn {
+    width: 100px;
+    height: 100px;
+  }
+
+  .speaking-mic-btn .mic-icon {
+    font-size: 32px;
+  }
+
+  .speaking-mic-btn .mic-btn-txt {
+    font-size: 10px;
+  }
+
+  .result-comparison-grid {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  .compare-hanzi {
+    font-size: 30px;
+  }
+
+  .compare-pinyin {
+    font-size: 14px;
+  }
+}

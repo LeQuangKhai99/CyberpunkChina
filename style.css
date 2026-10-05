@@ -1159,3 +1159,103 @@ body.pinyin-hidden .falling-word.locked-target .word-pinyin-badge,
   .pop-brand-subtitle { display: none; }
   .brand-author-badge { display: none; }
 }
+
+@media (max-width: 768px) {
+  .cyber-hud {
+    padding: 8px 12px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .brand-logo-img {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+  }
+
+  .pop-brand-title {
+    font-size: 17px;
+  }
+
+  .hud-health-card {
+    padding: 4px 10px;
+  }
+
+  .health-hearts-display {
+    font-size: 13px;
+  }
+
+  .hud-right-actions {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+    gap: 6px;
+  }
+
+  .hud-right-actions::-webkit-scrollbar {
+    display: none;
+  }
+
+  .fc-nav-link-btn, .pinyin-toggle-btn, .icon-toggle, .settings-gear-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+
+  .cyber-console {
+    padding: 8px 14px 6px;
+  }
+
+  .input-console-bar {
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .input-reticle {
+    font-size: 20px;
+  }
+
+  .input-field-wrapper {
+    padding: 3px 12px;
+  }
+
+  .input-prefix {
+    font-size: 11px;
+    margin-right: 4px;
+  }
+
+  .input-field-wrapper input {
+    font-size: 16px; /* Prevents auto-zoom on iOS Safari */
+  }
+
+  .input-field-wrapper input::placeholder {
+    font-size: 12px;
+  }
+
+  .console-copyright {
+    font-size: 9px;
+  }
+
+  .cyber-modal {
+    width: 94vw;
+    max-width: 94vw;
+    padding: 18px 14px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-hero-title {
+    font-size: 22px;
+  }
+
+  .cyber-launch-btn {
+    padding: 10px 24px;
+    font-size: 14.5px;
+    width: 100%;
+  }
+}
+
