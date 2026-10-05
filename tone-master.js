@@ -178,16 +178,50 @@ const MINIMAL_PAIRS = [
   },
   {
     options: [
-      { hanzi: '妈', pinyin: 'mā', tone: 1, meaning: 'mẹ' },
-      { hanzi: '马', pinyin: 'mǎ', tone: 3, meaning: 'con ngựa' }
+      { hanzi: '妈', pinyin: 'mā', tone: 1, meaning: 'người mẹ' },
+      { hanzi: '麻', pinyin: 'má', tone: 2, meaning: 'cây gai / tê' },
+      { hanzi: '马', pinyin: 'mǎ', tone: 3, meaning: 'con ngựa' },
+      { hanzi: '骂', pinyin: 'mà', tone: 4, meaning: 'mắng chửi' }
+    ]
+  },
+  {
+    options: [
+      { hanzi: '巴', pinyin: 'bā', tone: 1, meaning: 'mong ước' },
+      { hanzi: '拔', pinyin: 'bá', tone: 2, meaning: 'nhổ lên' },
+      { hanzi: '把', pinyin: 'bǎ', tone: 3, meaning: 'nắm lấy' },
+      { hanzi: '爸', pinyin: 'bà', tone: 4, meaning: 'người cha' }
+    ]
+  },
+  {
+    options: [
+      { hanzi: '温', pinyin: 'wēn', tone: 1, meaning: 'ấm áp' },
+      { hanzi: '文', pinyin: 'wén', tone: 2, meaning: 'văn hóa' },
+      { hanzi: '吻', pinyin: 'wěn', tone: 3, meaning: 'nụ hôn' },
+      { hanzi: '问', pinyin: 'wèn', tone: 4, meaning: 'hỏi han' }
+    ]
+  },
+  {
+    options: [
+      { hanzi: '衣', pinyin: 'yī', tone: 1, meaning: 'quần áo' },
+      { hanzi: '移', pinyin: 'yí', tone: 2, meaning: 'di chuyển' },
+      { hanzi: '椅', pinyin: 'yǐ', tone: 3, meaning: 'cái ghế' },
+      { hanzi: '意', pinyin: 'yì', tone: 4, meaning: 'ý nghĩa' }
+    ]
+  },
+  {
+    options: [
+      { hanzi: '搭', pinyin: 'dā', tone: 1, meaning: 'dựng lên, đi nhờ xe' },
+      { hanzi: '答', pinyin: 'dá', tone: 2, meaning: 'trả lời' },
+      { hanzi: '打', pinyin: 'dǎ', tone: 3, meaning: 'đánh, gõ' },
+      { hanzi: '大', pinyin: 'dà', tone: 4, meaning: 'to lớn' }
     ]
   },
   {
     options: [
       { hanzi: '期', pinyin: 'qī', tone: 1, meaning: 'kỳ hạn' },
-      { hanzi: '七', pinyin: 'qī', tone: 1, meaning: 'số 7' },
+      { hanzi: '骑', pinyin: 'qí', tone: 2, meaning: 'cưỡi (xe/ngựa)' },
       { hanzi: '起', pinyin: 'qǐ', tone: 3, meaning: 'dậy, bắt đầu' },
-      { hanzi: '气', pinyin: 'qì', tone: 4, meaning: 'khí, tức giận' }
+      { hanzi: '气', pinyin: 'qì', tone: 4, meaning: 'không khí' }
     ]
   }
 ];
@@ -444,6 +478,7 @@ class ToneMasterGame {
 
     const pairGroup = MINIMAL_PAIRS[Math.floor(Math.random() * MINIMAL_PAIRS.length)];
     const targetWord = pairGroup.options[Math.floor(Math.random() * pairGroup.options.length)];
+    const bareBase = this.stripTone(targetWord.pinyin);
 
     this.currentQuestion = {
       type: 'minimal_pairs',
@@ -452,12 +487,13 @@ class ToneMasterGame {
       correctTone: targetWord.tone,
       meaning: targetWord.meaning,
       options: pairGroup.options,
-      analysis: `Bạn vừa nghe "${targetWord.hanzi}" (${targetWord.pinyin}) - Thanh ${targetWord.tone}, mang nghĩa là "${targetWord.meaning}".`
+      analysis: `Bạn vừa nghe từ "<strong>${targetWord.hanzi}</strong>" (${targetWord.pinyin}) - <strong>Thanh ${targetWord.tone}</strong>, mang nghĩa là "${targetWord.meaning}".`
     };
 
     this.promptHanzi.textContent = '🎧 ?';
-    this.promptMeaning.textContent = 'Lắng nghe xem là từ nào dưới đây:';
-    this.promptMaskedPinyin.textContent = targetWord.pinyin;
+    this.promptMeaning.textContent = 'Lắng nghe âm thanh và chọn đúng từ:';
+    // Mask the tone so player must listen, NOT just read the pinyin!
+    this.promptMaskedPinyin.textContent = `${bareBase} + [?]`;
     this.promptGuide.textContent = 'CHỌN TỪ ĐÚNG VỚI ÂM THANH BẠN VỪA NGHE:';
     this.hskBadge.textContent = 'ĐỐI LẬP THANH';
     this.questionBadge.textContent = 'CẶP TỪ TƯƠNG PHẢN';
