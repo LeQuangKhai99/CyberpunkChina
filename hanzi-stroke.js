@@ -182,7 +182,7 @@
       this.currentWord = null;
       this.currentCharIndex = 0;
       this.currentSpeed = 1.0;
-      this.outlineVisible = false; // Initially hide stroke outlines so user writes from memory!
+      this.outlineVisible = true; // Faint stroke outline always ON by default!
       this.breakdownRevealedAll = false; // Initially hide breakdown cards until user draws them correctly
       this.currentCorrectStrokeIndex = 0;
       this.isQuizMode = false;
