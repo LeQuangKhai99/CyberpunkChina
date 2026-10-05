@@ -419,11 +419,13 @@
 
 .card-hanzi {
   font-family: var(--font-chinese);
-  font-size: 86px;
-  font-weight: 700;
-  color: #1e1b4b;
-  text-shadow: 0 4px 12px rgba(30, 27, 75, 0.08);
-  letter-spacing: 2px;
+  font-size: 76px;
+  font-weight: 350;
+  color: #0f172a;
+  letter-spacing: 1px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   transition: transform 0.2s;
 }
 
@@ -465,9 +467,11 @@
 
 .card-back-hanzi-mini {
   font-family: var(--font-chinese);
-  font-size: 38px;
-  font-weight: 700;
-  color: #1e1b4b;
+  font-size: 34px;
+  font-weight: 400;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .card-pinyin {
@@ -645,9 +649,12 @@
 
 .quiz-target-hanzi {
   font-family: var(--font-chinese);
-  font-size: 64px;
-  font-weight: 700;
-  color: #1e1b4b;
+  font-size: 58px;
+  font-weight: 350;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 .quiz-options-grid {
@@ -793,10 +800,12 @@
 
 .vocab-hanzi {
   font-family: var(--font-chinese);
-  font-size: 26px;
-  font-weight: 700;
-  color: #1e1b4b;
+  font-size: 24px;
+  font-weight: 400;
+  color: #0f172a;
   line-height: 1.1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .vocab-pinyin {
