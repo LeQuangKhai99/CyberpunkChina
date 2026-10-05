@@ -69,7 +69,7 @@ html, body {
   text-rendering: optimizeLegibility;
 }
 
-body {
+body:not(.hs-body):not(.puzzle-body):not(.tm-body):not(.fc-body) {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
