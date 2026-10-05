@@ -76,6 +76,9 @@
         <button class="mode-pill-btn" id="tabRulesMode" title="Quy tắc biến điệu thanh 3, chữ 不 và chữ 一">
           📈 BÍ KÍP BIẾN ĐIỆU & QUY TẮC
         </button>
+        <button class="mode-pill-btn" id="tabSpeakingMode" title="Luyện nói qua Micro và AI chấm điểm phát âm tiếng Trung">
+          🗣️ LUYỆN NÓI AI (MICRO)
+        </button>
       </div>
 
       <!-- Quick Speed Control -->
@@ -413,6 +416,140 @@
         </article>
 
       </div>
+    </section>
+
+    <!-- ====================================================================
+         SECTION 4: PHÒNG LUYỆN NÓI & CHẤM ĐIỂM AI QUA MICRO (AI SPEAKING LAB)
+         ==================================================================== -->
+    <section class="tm-section-view" id="viewSpeakingSection" style="display: none;">
+      
+      <!-- Speaking Toolbar -->
+      <section class="tm-toolbar speaking-toolbar">
+        <div class="tm-tool-item">
+          <label for="speakingModeSelect">🎙️ CHẾ ĐỘ LUYỆN NÓI:</label>
+          <select id="speakingModeSelect" class="cyber-select">
+            <option value="speaking_tones">🎵 Luyện Nói 4 Thanh Điệu (mā, má, mǎ, mà...)</option>
+            <option value="speaking_hsk">📚 Luyện Nói Từ Vựng HSK 1 - 6</option>
+            <option value="speaking_pairs">⚖️ Luyện Cặp Từ Đối Lập Thanh Điệu</option>
+          </select>
+        </div>
+
+        <div class="tm-tool-item">
+          <label for="speakingHskSelect">📚 CẤP ĐỘ TỪ:</label>
+          <select id="speakingHskSelect" class="cyber-select">
+            <option value="all">Tất cả HSK (1 - 6)</option>
+            <option value="1">HSK 1 (Căn bản)</option>
+            <option value="2">HSK 2 (Sơ cấp)</option>
+            <option value="3">HSK 3 (Trung cấp 1)</option>
+            <option value="4">HSK 4 (Trung cấp 2)</option>
+            <option value="5">HSK 5 (Cao cấp)</option>
+            <option value="6">HSK 6 (Thành thạo)</option>
+          </select>
+        </div>
+
+        <!-- Telemetry Stats -->
+        <div class="tm-stats-group">
+          <div class="stat-pill score-pill">
+            <span class="stat-icon">🌟</span>
+            <span class="stat-label">ĐIỂM:</span>
+            <strong id="speakingScoreDisplay">0</strong>
+          </div>
+          <div class="stat-pill streak-pill">
+            <span class="stat-icon">🔥</span>
+            <span class="stat-label">CHUỖI:</span>
+            <strong id="speakingStreakDisplay">0</strong>
+          </div>
+          <div class="stat-pill accuracy-pill">
+            <span class="stat-icon">🎯</span>
+            <span class="stat-label">CHUẨN XÁC:</span>
+            <strong id="speakingAccuracyDisplay">100%</strong>
+          </div>
+        </div>
+      </section>
+
+      <!-- Speaking Arena Card -->
+      <div class="speaking-arena-card">
+        
+        <div class="speaking-header-badges">
+          <span class="speaking-badge-level" id="speakingPromptLevel">HSK 1</span>
+          <span class="speaking-badge-mode" id="speakingPromptCategory">4 THANH ĐIỆU</span>
+        </div>
+
+        <!-- Word Presentation -->
+        <div class="speaking-word-box">
+          <div class="speaking-hanzi" id="speakingPromptHanzi">妈</div>
+          <div class="speaking-pinyin" id="speakingPromptPinyin">mā</div>
+          <div class="speaking-meaning" id="speakingPromptMeaning">người mẹ</div>
+          
+          <button class="speaking-sample-btn" id="speakingPlaySampleBtn" title="Nghe người bản xứ phát âm mẫu">
+            🔊 Nghe Giọng Mẫu
+          </button>
+        </div>
+
+        <!-- Interactive Microphone Centerpiece -->
+        <div class="speaking-mic-container">
+          <div class="mic-ripple-rings" id="micRippleRings">
+            <div class="ripple-ring r1"></div>
+            <div class="ripple-ring r2"></div>
+            <div class="ripple-ring r3"></div>
+          </div>
+
+          <button class="speaking-mic-btn" id="speakingMicBtn" title="Bấm để bắt đầu nói hoặc Nhấn phím SPACE">
+            <span class="mic-icon">🎙️</span>
+            <span class="mic-btn-txt" id="speakingMicTxt">BẤM ĐỂ NÓI</span>
+          </button>
+
+          <!-- Waveform visualizer bars -->
+          <div class="mic-waveform" id="micWaveform">
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+          </div>
+
+          <div class="speaking-hint-sub">Nhấn Micro hoặc nhấn phím <kbd>SPACE</kbd> để nói</div>
+        </div>
+
+        <!-- Real-time Recognition & Result Card -->
+        <div class="speaking-result-panel" id="speakingResultPanel" style="display: none;">
+          <div class="result-badge-row">
+            <span class="result-status-tag" id="speakingStatusTag">🎉 CHÍNH XÁC 100%</span>
+            <span class="result-score-tag" id="speakingScoreTag">+100 ĐIỂM</span>
+          </div>
+
+          <div class="result-comparison-grid">
+            <div class="compare-col you-said">
+              <span class="compare-label">BẠN VỪA PHÁT ÂM:</span>
+              <span class="compare-hanzi" id="speakingYouSaidHanzi">妈</span>
+              <span class="compare-pinyin" id="speakingYouSaidPinyin">mā</span>
+            </div>
+            <div class="compare-divider">➜</div>
+            <div class="compare-col target-word">
+              <span class="compare-label">TỪ MỤC TIÊU:</span>
+              <span class="compare-hanzi" id="speakingTargetHanzi">妈</span>
+              <span class="compare-pinyin" id="speakingTargetPinyin">mā</span>
+            </div>
+          </div>
+
+          <div class="speaking-feedback-tip" id="speakingFeedbackTip">
+            Tuyệt vời! Thanh điệu cao bằng ngân vang chuẩn xác giọng Bắc Kinh!
+          </div>
+
+          <button class="speaking-next-btn" id="speakingNextBtn" title="Chuyển sang từ tiếp theo (Phím Enter)">
+            TIẾP TỤC ⏩
+          </button>
+        </div>
+
+        <!-- Speech recognition fallback notice (if mic is blocked) -->
+        <div class="mic-permission-notice" id="micPermissionNotice" style="display: none;">
+          ⚠️ Trình duyệt cần cấp quyền Micro để nhận diện giọng nói. Hãy nhấn vào biểu tượng 🔒 hoặc 🎙️ trên thanh địa chỉ và chọn <strong>"Cho phép" (Allow)</strong>.
+        </div>
+
+      </div>
+
     </section>
 
     <!-- Footer Copyright -->

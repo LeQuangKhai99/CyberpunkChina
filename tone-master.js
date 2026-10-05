@@ -276,6 +276,7 @@ class ToneMasterGame {
     this.setupEventListeners();
     this.renderPhoneticsLab();
     this.loadNewQuestion();
+    this.speakingEngine = new SpeakingPracticeEngine(this);
   }
 
   /* ========================================================================
@@ -751,35 +752,48 @@ class ToneMasterGame {
      EVENT LISTENERS & CONTROLS
      ======================================================================== */
   setupEventListeners() {
-    // Mode Switcher Buttons (Game vs Chart vs Rules)
+    // Mode Switcher Buttons (Game vs Chart vs Rules vs Speaking Lab)
     const tabGame = document.getElementById('tabGameMode');
     const tabChart = document.getElementById('tabChartMode');
     const tabRules = document.getElementById('tabRulesMode');
+    const tabSpeaking = document.getElementById('tabSpeakingMode');
 
     const viewGame = document.getElementById('viewGameSection');
     const viewChart = document.getElementById('viewChartSection');
     const viewRules = document.getElementById('viewRulesSection');
+    const viewSpeaking = document.getElementById('viewSpeakingSection');
     const speedControl = document.getElementById('tmSpeedControl');
 
     const switchView = (activeTab, activeView) => {
-      [tabGame, tabChart, tabRules].forEach(b => b.classList.remove('active'));
-      [viewGame, viewChart, viewRules].forEach(v => {
-        v.style.display = 'none';
-        v.classList.remove('active');
+      [tabGame, tabChart, tabRules, tabSpeaking].forEach(b => { if (b) b.classList.remove('active'); });
+      [viewGame, viewChart, viewRules, viewSpeaking].forEach(v => {
+        if (v) {
+          v.style.display = 'none';
+          v.classList.remove('active');
+        }
       });
 
-      activeTab.classList.add('active');
-      activeView.style.display = 'flex';
-      activeView.classList.add('active');
+      if (activeTab) activeTab.classList.add('active');
+      if (activeView) {
+        activeView.style.display = 'flex';
+        activeView.classList.add('active');
+      }
 
       if (activeTab === tabGame) {
         speedControl.style.display = 'flex';
+      } else {
+        speedControl.style.display = 'none';
+      }
+
+      if (activeTab === tabSpeaking && this.speakingEngine) {
+        this.speakingEngine.start();
       }
     };
 
-    tabGame.addEventListener('click', () => switchView(tabGame, viewGame));
-    tabChart.addEventListener('click', () => switchView(tabChart, viewChart));
-    tabRules.addEventListener('click', () => switchView(tabRules, viewRules));
+    if (tabGame) tabGame.addEventListener('click', () => switchView(tabGame, viewGame));
+    if (tabChart) tabChart.addEventListener('click', () => switchView(tabChart, viewChart));
+    if (tabRules) tabRules.addEventListener('click', () => switchView(tabRules, viewRules));
+    if (tabSpeaking) tabSpeaking.addEventListener('click', () => switchView(tabSpeaking, viewSpeaking));
 
     // Sub Tabs inside Chart Section (Initials vs Finals)
     const btnSubInitials = document.getElementById('btnSubInitials');
@@ -908,8 +922,23 @@ class ToneMasterGame {
         }
       }
 
+      // If in Speaking Lab section
+      if (viewSpeaking && viewSpeaking.style.display !== 'none' && this.speakingEngine) {
+        if (e.key === ' ' && !e.repeat) {
+          e.preventDefault();
+          this.speakingEngine.toggleListening();
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          this.speakingEngine.loadNewPrompt();
+        } else if (e.key === 'r' || e.key === 'R') {
+          e.preventDefault();
+          this.speakingEngine.playSample();
+        }
+        return;
+      }
+
       // If in game section and pads are visible
-      if (viewGame.style.display !== 'none' && this.padsGrid.style.display !== 'none') {
+      if (viewGame && viewGame.style.display !== 'none' && this.padsGrid.style.display !== 'none') {
         if (e.key === '1') { this.playTonePitch(1); this.submitAnswer(1); }
         else if (e.key === '2') { this.playTonePitch(2); this.submitAnswer(2); }
         else if (e.key === '3') { this.playTonePitch(3); this.submitAnswer(3); }
@@ -975,6 +1004,290 @@ class ToneMasterGame {
       ctx.font = `${p.size}px sans-serif`;
       ctx.fillStyle = p.color;
       ctx.fillText(p.char, p.x, p.y);
+    }
+  }
+}
+
+/* ========================================================================
+   AI SPEAKING PRACTICE ENGINE (Speech Recognition & Tone Scoring)
+   ======================================================================== */
+const TONE_SPEAKING_SETS = [
+  { hanzi: '妈', pinyin: 'mā', tone: 1, level: 1, meaning: 'người mẹ', note: 'Thanh 1: Ngang cao (55), giữ trường độ và cao độ đều đặn từ đầu đến cuối.' },
+  { hanzi: '麻', pinyin: 'má', tone: 2, level: 1, meaning: 'cây gai / tê', note: 'Thanh 2: Đi lên (35), vuốt giọng từ cao độ trung bình vút lên đỉnh.' },
+  { hanzi: '马', pinyin: 'mǎ', tone: 3, level: 1, meaning: 'con ngựa', note: 'Thanh 3: Trầm vút (214), hạ giọng thật trầm ở cuống họng rồi đưa nhẹ lên.' },
+  { hanzi: '骂', pinyin: 'mà', tone: 4, level: 1, meaning: 'mắng chửi', note: 'Thanh 4: Rơi nhanh (51), nhấn giọng dứt khoát, mạnh mẽ từ đỉnh xuống đáy.' },
+  { hanzi: '八', pinyin: 'bā', tone: 1, level: 1, meaning: 'số 8', note: 'Thanh 1: Hai môi khép mở nhẹ, âm lượng ngang bằng.' },
+  { hanzi: '拔', pinyin: 'bá', tone: 2, level: 1, meaning: 'nhổ lên', note: 'Thanh 2: Vuốt âm thanh dứt khoát đi lên.' },
+  { hanzi: '把', pinyin: 'bǎ', tone: 3, level: 1, meaning: 'nắm / cầm', note: 'Thanh 3: Nén hơi ở cuống họng, trầm rồi vút.' },
+  { hanzi: '爸', pinyin: 'bà', tone: 4, level: 1, meaning: 'người cha', note: 'Thanh 4: Đánh giọng dứt khoát từ trên cao xuống.' },
+  { hanzi: '汤', pinyin: 'tāng', tone: 1, level: 1, meaning: 'canh / súp', note: 'Thanh 1: Âm t bật hơi mạnh, thanh điệu ngân vang.' },
+  { hanzi: '糖', pinyin: 'táng', tone: 2, level: 1, meaning: 'kẹo / đường', note: 'Thanh 2: Bật hơi mạnh, giọng đi lên thanh thoát.' },
+  { hanzi: '躺', pinyin: 'tǎng', tone: 3, level: 1, meaning: 'nằm xuống', note: 'Thanh 3: Hạ giọng thật trầm ở giữa âm tiết.' },
+  { hanzi: '烫', pinyin: 'tàng', tone: 4, level: 1, meaning: 'nóng bỏng', note: 'Thanh 4: Rơi dứt khoát từ đỉnh cao độ xuống.' },
+  { hanzi: '温', pinyin: 'wēn', tone: 1, level: 1, meaning: 'ấm áp', note: 'Thanh 1: Môi tròn chúm lại, thanh cao bằng.' },
+  { hanzi: '文', pinyin: 'wén', tone: 2, level: 1, meaning: 'văn hóa', note: 'Thanh 2: Vuốt cao độ từ trầm lên cao.' },
+  { hanzi: '吻', pinyin: 'wěn', tone: 3, level: 1, meaning: 'nụ hôn', note: 'Thanh 3: Hạ thấp độ cao giọng nói rồi hất nhẹ.' },
+  { hanzi: '问', pinyin: 'wèn', tone: 4, level: 1, meaning: 'hỏi han', note: 'Thanh 4: Dứt khoát mạnh mẽ.' },
+  { hanzi: '诗', pinyin: 'shī', tone: 1, level: 1, meaning: 'bài thơ', note: 'Thanh 1: Uốn cong đầu lưỡi lên chạm vòm miệng, hơi ma sát êm.' },
+  { hanzi: '十', pinyin: 'shí', tone: 2, level: 1, meaning: 'số 10', note: 'Thanh 2: Uốn cong lưỡi, giọng vuốt đi lên.' },
+  { hanzi: '始', pinyin: 'shǐ', tone: 3, level: 1, meaning: 'bắt đầu', note: 'Thanh 3: Uốn lưỡi, giọng trầm xuống rồi hất lên.' },
+  { hanzi: '是', pinyin: 'shì', tone: 4, level: 1, meaning: 'là / phải', note: 'Thanh 4: Uốn cong lưỡi, phát âm dứt khoát rơi xuống.' }
+];
+
+class SpeakingPracticeEngine {
+  constructor(game) {
+    this.game = game;
+    this.recognition = null;
+    this.isListening = false;
+    this.currentPrompt = null;
+    this.speakingMode = 'speaking_tones';
+    this.speakingLevel = 'all';
+
+    this.score = 0;
+    this.streak = 0;
+    this.totalAttempts = 0;
+    this.correctAttempts = 0;
+
+    // DOM Elements
+    this.modeSelect = document.getElementById('speakingModeSelect');
+    this.hskSelect = document.getElementById('speakingHskSelect');
+    this.scoreDisplay = document.getElementById('speakingScoreDisplay');
+    this.streakDisplay = document.getElementById('speakingStreakDisplay');
+    this.accuracyDisplay = document.getElementById('speakingAccuracyDisplay');
+
+    this.promptLevel = document.getElementById('speakingPromptLevel');
+    this.promptCategory = document.getElementById('speakingPromptCategory');
+    this.promptHanzi = document.getElementById('speakingPromptHanzi');
+    this.promptPinyin = document.getElementById('speakingPromptPinyin');
+    this.promptMeaning = document.getElementById('speakingPromptMeaning');
+    this.playSampleBtn = document.getElementById('speakingPlaySampleBtn');
+
+    this.micBtn = document.getElementById('speakingMicBtn');
+    this.micTxt = document.getElementById('speakingMicTxt');
+    this.rippleRings = document.getElementById('micRippleRings');
+    this.waveform = document.getElementById('micWaveform');
+
+    this.resultPanel = document.getElementById('speakingResultPanel');
+    this.statusTag = document.getElementById('speakingStatusTag');
+    this.scoreTag = document.getElementById('speakingScoreTag');
+    this.youSaidHanzi = document.getElementById('speakingYouSaidHanzi');
+    this.youSaidPinyin = document.getElementById('speakingYouSaidPinyin');
+    this.targetHanzi = document.getElementById('speakingTargetHanzi');
+    this.targetPinyin = document.getElementById('speakingTargetPinyin');
+    this.feedbackTip = document.getElementById('speakingFeedbackTip');
+    this.nextBtn = document.getElementById('speakingNextBtn');
+    this.permNotice = document.getElementById('micPermissionNotice');
+
+    this.initSpeechRecognition();
+    this.setupListeners();
+  }
+
+  initSpeechRecognition() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      try {
+        this.recognition = new SpeechRecognition();
+        this.recognition.lang = 'zh-CN';
+        this.recognition.continuous = false;
+        this.recognition.interimResults = false;
+        this.recognition.maxAlternatives = 3;
+
+        this.recognition.onstart = () => {
+          this.isListening = true;
+          if (this.micBtn) this.micBtn.classList.add('listening');
+          if (this.rippleRings) this.rippleRings.classList.add('active');
+          if (this.waveform) this.waveform.classList.add('active');
+          if (this.micTxt) this.micTxt.textContent = 'ĐANG NGHE...';
+        };
+
+        this.recognition.onresult = (event) => {
+          const results = Array.from(event.results[0]).map(r => r.transcript.trim());
+          this.evaluateSpokenText(results);
+        };
+
+        this.recognition.onerror = (e) => {
+          this.isListening = false;
+          this.resetMicState();
+          if (e.error === 'not-allowed' && this.permNotice) {
+            this.permNotice.style.display = 'block';
+          }
+        };
+
+        this.recognition.onend = () => {
+          this.isListening = false;
+          this.resetMicState();
+        };
+      } catch (err) {
+        this.recognition = null;
+      }
+    }
+  }
+
+  resetMicState() {
+    if (this.micBtn) this.micBtn.classList.remove('listening');
+    if (this.rippleRings) this.rippleRings.classList.remove('active');
+    if (this.waveform) this.waveform.classList.remove('active');
+    if (this.micTxt) this.micTxt.textContent = 'BẤM ĐỂ NÓI';
+  }
+
+  setupListeners() {
+    if (this.micBtn) {
+      this.micBtn.addEventListener('click', () => this.toggleListening());
+    }
+
+    if (this.playSampleBtn) {
+      this.playSampleBtn.addEventListener('click', () => this.playSample());
+    }
+
+    if (this.nextBtn) {
+      this.nextBtn.addEventListener('click', () => this.loadNewPrompt());
+    }
+
+    if (this.modeSelect) {
+      this.modeSelect.addEventListener('change', () => {
+        this.speakingMode = this.modeSelect.value;
+        this.loadNewPrompt();
+      });
+    }
+
+    if (this.hskSelect) {
+      this.hskSelect.addEventListener('change', () => {
+        this.speakingLevel = this.hskSelect.value;
+        this.loadNewPrompt();
+      });
+    }
+  }
+
+  start() {
+    if (!this.currentPrompt) {
+      this.loadNewPrompt();
+    }
+  }
+
+  playSample() {
+    if (this.currentPrompt && this.currentPrompt.hanzi) {
+      this.game.speakChinese(this.currentPrompt.hanzi);
+    }
+  }
+
+  toggleListening() {
+    if (!this.recognition) {
+      alert('Trình duyệt hiện tại chưa hỗ trợ Web Speech API nhận diện giọng nói tiếng Trung. Vui lòng mở trang trên Google Chrome hoặc Microsoft Edge để sử dụng micro!');
+      return;
+    }
+
+    if (this.isListening) {
+      try { this.recognition.stop(); } catch (e) {}
+    } else {
+      if (this.permNotice) this.permNotice.style.display = 'none';
+      if (this.resultPanel) this.resultPanel.style.display = 'none';
+      try {
+        this.recognition.start();
+      } catch (e) {
+        try { this.recognition.stop(); setTimeout(() => this.recognition.start(), 150); } catch (err) {}
+      }
+    }
+  }
+
+  loadNewPrompt() {
+    if (this.resultPanel) this.resultPanel.style.display = 'none';
+    this.resetMicState();
+
+    if (this.speakingMode === 'speaking_tones') {
+      const item = TONE_SPEAKING_SETS[Math.floor(Math.random() * TONE_SPEAKING_SETS.length)];
+      this.currentPrompt = item;
+      if (this.promptCategory) this.promptCategory.textContent = `THANH ${item.tone}`;
+      if (this.promptLevel) this.promptLevel.textContent = `THANH ĐIỆU`;
+    } else if (this.speakingMode === 'speaking_pairs') {
+      const pair = MINIMAL_PAIRS[Math.floor(Math.random() * MINIMAL_PAIRS.length)];
+      const opt = pair.options[Math.floor(Math.random() * pair.options.length)];
+      this.currentPrompt = {
+        hanzi: opt.hanzi,
+        pinyin: opt.pinyin,
+        meaning: opt.meaning,
+        tone: opt.tone,
+        note: `Cặp từ phân biệt thanh ${opt.tone}. Nhấn mạnh cao độ chuẩn xác!`
+      };
+      if (this.promptCategory) this.promptCategory.textContent = 'CẶP TỪ ĐỐI LẬP';
+      if (this.promptLevel) this.promptLevel.textContent = `THANH ${opt.tone}`;
+    } else {
+      let pool = this.game.rawWords.filter(w => w.hanzi && w.pinyin);
+      if (this.speakingLevel !== 'all') {
+        const lvl = parseInt(this.speakingLevel, 10);
+        const filtered = pool.filter(w => w.level === lvl);
+        if (filtered.length > 0) pool = filtered;
+      }
+      const word = pool[Math.floor(Math.random() * pool.length)];
+      this.currentPrompt = {
+        hanzi: word.hanzi,
+        pinyin: word.pinyin,
+        meaning: word.meaning_vn || word.meaning || '',
+        note: 'Luyện nói từ vựng giao tiếp tự nhiên chuẩn ngữ điệu.'
+      };
+      if (this.promptCategory) this.promptCategory.textContent = 'HSK VOCAB';
+      if (this.promptLevel) this.promptLevel.textContent = `HSK ${word.level || 1}`;
+    }
+
+    if (this.promptHanzi) this.promptHanzi.textContent = this.currentPrompt.hanzi;
+    if (this.promptPinyin) this.promptPinyin.textContent = this.currentPrompt.pinyin;
+    if (this.promptMeaning) this.promptMeaning.textContent = this.currentPrompt.meaning;
+  }
+
+  evaluateSpokenText(results) {
+    if (!this.currentPrompt) return;
+    this.totalAttempts++;
+
+    const spokenRaw = results[0] || '';
+    const cleanSpoken = spokenRaw.replace(/[\s\p{P}]/gu, '');
+    const targetClean = this.currentPrompt.hanzi.replace(/[\s\p{P}]/gu, '');
+
+    const isDirectMatch = results.some(r => {
+      const clean = r.replace(/[\s\p{P}]/gu, '');
+      return clean === targetClean || clean.includes(targetClean) || targetClean.includes(clean);
+    });
+
+    if (this.resultPanel) this.resultPanel.style.display = 'flex';
+    if (this.youSaidHanzi) this.youSaidHanzi.textContent = spokenRaw || '—';
+    if (this.targetHanzi) this.targetHanzi.textContent = this.currentPrompt.hanzi;
+    if (this.targetPinyin) this.targetPinyin.textContent = this.currentPrompt.pinyin;
+
+    if (isDirectMatch) {
+      this.correctAttempts++;
+      this.streak++;
+      const earnedScore = 100 + (this.streak * 10);
+      this.score += earnedScore;
+
+      if (this.statusTag) {
+        this.statusTag.className = 'result-status-tag tag-correct';
+        this.statusTag.textContent = '🎉 CHÍNH XÁC 100%!';
+      }
+      if (this.scoreTag) this.scoreTag.textContent = `+${earnedScore} ĐIỂM`;
+      if (this.feedbackTip) {
+        this.feedbackTip.textContent = `Xuất sắc! Bạn đã phát âm chuẩn chỉnh chữ "${this.currentPrompt.hanzi}" (${this.currentPrompt.pinyin})!`;
+      }
+      this.game.playToneSound('correct');
+    } else {
+      this.streak = 0;
+      if (this.statusTag) {
+        this.statusTag.className = 'result-status-tag tag-warning';
+        this.statusTag.textContent = '⚠️ CẦN LUYỆN THÊM';
+      }
+      if (this.scoreTag) this.scoreTag.textContent = '+0 ĐIỂM';
+      if (this.feedbackTip) {
+        this.feedbackTip.textContent = `Bạn vừa phát âm thành: "${spokenRaw}". ${this.currentPrompt.note || 'Hãy chú ý khẩu hình và độ cao của thanh điệu!'}`;
+      }
+      this.game.playToneSound('wrong');
+    }
+
+    this.updateStats();
+  }
+
+  updateStats() {
+    if (this.scoreDisplay) this.scoreDisplay.textContent = this.score;
+    if (this.streakDisplay) this.streakDisplay.textContent = this.streak;
+    if (this.accuracyDisplay) {
+      const acc = this.totalAttempts > 0 ? Math.round((this.correctAttempts / this.totalAttempts) * 100) : 100;
+      this.accuracyDisplay.textContent = `${acc}%`;
     }
   }
 }
