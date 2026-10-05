@@ -4,6 +4,11 @@
  */
 
 :root {
+  /* Typography - 100% Native Vietnamese & CJK Support */
+  --font-brand: 'Lexend', 'Nunito', 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+  --font-ui: 'Be Vietnam Pro', 'Lexend', system-ui, -apple-system, sans-serif;
+  --font-chinese: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+
   --tm-cyan: #0284c7;
   --tm-green: #059669;
   --tm-amber: #d97706;
@@ -14,6 +19,12 @@
 /* ==========================================================================
    PAGE CONTAINER & LAYOUT
    ========================================================================== */
+html, body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
 html {
   overflow-y: auto !important;
   height: auto !important;
