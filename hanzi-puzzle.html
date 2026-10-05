@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PINYIN POP! Ghép Bộ Thủ & Từ Ghép - Game xếp hình chiết tự chữ Hán và ghép từ vựng tiếng Trung HSK 1-6 cực kỳ trực quan và bổ ích.">
+  <title>PINYIN POP! 🧩 Ghép Bộ Thủ & Từ Ghép Tiếng Trung HSK</title>
+
+  <!-- Google Fonts: Fredoka, Quicksand, Outfit & Noto Sans SC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Outfit:wght@500;600;700;800;900&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css?v=20261005_v5">
+  <link rel="stylesheet" href="hanzi-puzzle.css?v=20261005_v1">
+  <link rel="icon" type="image/png" href="assets/logo.png">
+</head>
+<body class="theme-pinyin-pop puzzle-body">
+
+  <!-- Background Animated Canvas -->
+  <canvas id="puzzleBgCanvas"></canvas>
+
+  <div class="pz-container">
+
+    <!-- Top Navigation Header -->
+    <header class="pz-navbar">
+      <div class="pz-brand">
+        <a href="index.html" class="pz-brand-link" title="Quay về Trang Chủ Menu">
+          <img src="assets/logo.png" alt="Pinyin Pop Mascot" class="brand-logo-img" width="46" height="46" style="width: 46px; height: 46px; border-radius: 14px; object-fit: contain;">
+          <div class="pz-brand-text">
+            <span class="pz-brand-title">PINYIN POP! <span class="brand-sparkle">✨</span></span>
+            <span class="pz-brand-sub">🧩 GHÉP BỘ THỦ & TỪ GHÉP</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="pz-nav-tabs">
+        <a href="index.html" class="pz-tab-btn" title="Về Menu Trung Tâm">
+          🏠 <span class="tab-label">MENU CHÍNH</span>
+        </a>
+        <a href="pinyin-pop.html" class="pz-tab-btn" title="Chơi Game Bắn Chữ">
+          🎮 <span class="tab-label">BẮN CHỮ</span>
+        </a>
+        <a href="flashcard.html" class="pz-tab-btn" title="Học Flashcard 3D">
+          🗂️ <span class="tab-label">FLASHCARD</span>
+        </a>
+        <button class="pz-tab-btn active" id="tabPuzzleGame">
+          🧩 <span class="tab-label">GHÉP CHỮ HÁN</span>
+        </button>
+      </nav>
+
+      <!-- Global Actions -->
+      <div class="pz-header-actions">
+        <button class="icon-toggle active" id="pzVoiceToggle" title="Bật/Tắt phát âm tự động">
+          🗣️ <span class="btn-txt">GIỌNG ĐỌC: BẬT</span>
+        </button>
+        <button class="icon-toggle" id="pzHelpBtn" title="Xem hướng dẫn chơi">
+          ❓ <span class="btn-txt">CÁCH CHƠI</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Game Mode Switcher Banner -->
+    <div class="pz-mode-switch-bar">
+      <div class="mode-switch-label">CHỌN CHẾ ĐỘ CHƠI:</div>
+      <div class="mode-switch-buttons">
+        <button class="mode-pill-btn active" id="modeRadicalsBtn">
+          🧩 CHẾ ĐỘ 1: GHÉP BỘ THỦ ➔ CHỮ HÁN
+        </button>
+        <button class="mode-pill-btn" id="modeCompoundsBtn">
+          🔗 CHẾ ĐỘ 2: GHÉP TỪ VỰNG 5.000 TỪ HSK
+        </button>
+      </div>
+    </div>
+
+    <!-- Controls Toolbar (Level filter, Score, Streak, Hints) -->
+    <section class="pz-toolbar">
+      
+      <!-- Level / Category Filter -->
+      <div class="pz-tool-item">
+        <label for="pzHskSelect">📚 CẤP ĐỘ / BỘ LỌC:</label>
+        <select id="pzHskSelect" class="cyber-select pz-select">
+          <option value="all">🌈 TẤT CẢ (Đa Dạng)</option>
+          <option value="1">🌱 HSK 1</option>
+          <option value="2">🌿 HSK 2</option>
+          <option value="3">⭐ HSK 3</option>
+          <option value="4">🚀 HSK 4</option>
+          <option value="5">🔥 HSK 5</option>
+          <option value="6">👑 HSK 6</option>
+        </select>
+      </div>
+
+      <!-- Score & Streak Telemetry -->
+      <div class="pz-stats-group">
+        <div class="stat-pill score-pill">
+          <span>⭐ ĐIỂM:</span> <strong id="pzScoreDisplay">0</strong>
+        </div>
+        <div class="stat-pill streak-pill">
+          <span>🔥 CHUỖI:</span> <strong id="pzStreakDisplay">0</strong>
+        </div>
+        <div class="stat-pill solved-pill">
+          <span>✅ ĐÃ GHÉP:</span> <strong id="pzSolvedDisplay">0</strong>
+        </div>
+      </div>
+
+      <!-- Controls: Hint & Skip -->
+      <div class="pz-tool-actions">
+        <button class="pz-btn-tool hint-btn" id="pzHintBtn" title="Xem gợi ý chiết tự hoặc vị trí">
+          💡 <span class="btn-txt">GỢI Ý</span>
+        </button>
+        <button class="pz-btn-tool skip-btn" id="pzSkipBtn" title="Bỏ qua câu này để sang câu khác">
+          ⏭️ <span class="btn-txt">CÂU KHÁC</span>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- Main Game Board Stage -->
+    <main class="pz-stage">
+      
+      <!-- Target Question Card -->
+      <div class="pz-target-card">
+        <div class="target-meta">
+          <span class="target-hsk-badge" id="pzTargetHsk">HSK 1</span>
+          <span class="target-mode-tag" id="pzTargetModeTag">🧩 CHIẾT TỰ HÌNH TƯỢNG</span>
+        </div>
+
+        <div class="target-prompt-wrap">
+          <span class="prompt-sub">MỤC TIÊU CẦN GHÉP:</span>
+          <div class="target-meaning" id="pzTargetMeaning">nghỉ ngơi</div>
+          <div class="target-pinyin" id="pzTargetPinyin">xiū</div>
+        </div>
+
+        <!-- Speaker button for target -->
+        <button class="card-icon-btn speak-btn target-speaker" id="pzTargetSpeakBtn" title="Nghe phát âm">
+          🔊
+        </button>
+      </div>
+
+      <!-- Drop Target Assembly Area -->
+      <div class="pz-assembly-zone">
+        <div class="assembly-header">
+          <span class="assembly-label">🎯 KÉO CÁC MẢNH GHÉP VÀO Ô BÊN DƯỚI (HOẶC NHẤP CHUỘT):</span>
+          <button class="pz-reset-slots-btn" id="pzResetSlotsBtn" title="Lấy lại các mảnh ghép về khay">
+            🔄 ĐẶT LẠI
+          </button>
+        </div>
+
+        <!-- Drop Slots Container (Dynamically 2, 3 or 4 slots) -->
+        <div class="pz-slots-container" id="pzSlotsContainer">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Draggable Pieces / Tiles Tray -->
+      <div class="pz-pieces-tray">
+        <div class="tray-header">
+          <span class="tray-label">🧩 CÁC BỘ THỦ / CHỮ CÓ THỂ CHỌN:</span>
+          <span class="tray-tip">💡 Có thể kéo thả hoặc nhấp thẳng vào mảnh để đưa vào ô</span>
+        </div>
+
+        <div class="pz-pieces-grid" id="pzPiecesGrid">
+          <!-- Draggable/clickable pieces populated by JS -->
+        </div>
+      </div>
+
+      <!-- Etymology & Explanation Modal Popup (Triggered upon successful assembly!) -->
+      <div class="pz-success-box" id="pzSuccessBox" style="display: none;">
+        <div class="success-header">
+          <div class="success-icon">🎉</div>
+          <div class="success-title">GHÉP THÀNH CÔNG!</div>
+          <div class="success-pts">+<span id="pzSuccessPts">150</span> ĐIỂM</div>
+        </div>
+
+        <div class="success-char-showcase">
+          <span class="showcase-hanzi" id="pzSuccessHanzi">休</span>
+          <span class="showcase-pinyin" id="pzSuccessPinyin">xiū</span>
+          <span class="showcase-meaning" id="pzSuccessMeaning">nghỉ ngơi</span>
+        </div>
+
+        <div class="success-explanation" id="pzSuccessExplanation">
+          <!-- Detailed etymological story / compound word decomposition -->
+        </div>
+
+        <button class="cyber-launch-btn pz-next-btn" id="pzNextQuestionBtn">
+          TIẾP TỤC CÂU MỚI ➡️
+        </button>
+      </div>
+
+    </main>
+
+    <!-- Footer Copyright -->
+    <footer class="pz-footer">
+      PINYIN POP! GHÉP BỘ THỦ & TỪ GHÉP // BẢN QUYỀN © 2026 <strong>KHAI LE</strong> // HỆ THỐNG 5.000 TỪ HSK
+    </footer>
+
+  </div>
+
+  <!-- How to Play Instructions Modal -->
+  <div class="modal-overlay" id="pzHelpModal" style="display: none;">
+    <div class="cyber-modal pz-modal-inner">
+      <h2 class="modal-title">🧩 CÁCH CHƠI GHÉP CHỮ HÁN</h2>
+      <p style="color: var(--text-muted); margin-bottom: 16px;">Phương pháp học tiếng Trung ghi nhớ gốc rễ chữ Hán cực kỳ nhanh:</p>
+
+      <div class="modal-rules" style="display: flex; flex-direction: column;">
+        <div class="rule-card">
+          <span class="rule-icon">🧩</span>
+          <div>
+            <strong>Chế độ Ghép Bộ Thủ:</strong>
+            <p>Mỗi chữ Hán được cấu tạo từ các bộ thủ mang ý nghĩa hình tượng (Ví dụ: Người <code>亻</code> tựa vào Cây <code>木</code> ➔ Nghỉ ngơi <code>休</code>). Hãy ghép đúng các bộ thủ để hiểu nguồn gốc của chữ!</p>
+          </div>
+        </div>
+        <div class="rule-card">
+          <span class="rule-icon">🔗</span>
+          <div>
+            <strong>Chế độ Ghép Từ Ghép HSK 1 - 6:</strong>
+            <p>Tận dụng toàn bộ kho 5.000 từ vựng. Đọc nghĩa tiếng Việt và ghép các viên gạch chữ Hán theo thứ tự chuẩn xác.</p>
+          </div>
+        </div>
+        <div class="rule-card">
+          <span class="rule-icon">🖱️</span>
+          <div>
+            <strong>Thao tác kéo thả hoặc nhấp chuột:</strong>
+            <p>Bạn có thể <strong>kéo & thả (drag & drop)</strong> trực tiếp vào ô, hoặc <strong>nhấp chuột vào mảnh ghép</strong> để tự động đặt vào ô trống tiếp theo.</p>
+          </div>
+        </div>
+        <div class="rule-card">
+          <span class="rule-icon">💡</span>
+          <div>
+            <strong>Gợi ý chiết tự & Phát âm chuẩn:</strong>
+            <p>Khi gặp câu khó, bấm nút <strong>💡 Gợi ý</strong>. Sau khi ghép đúng, hệ thống sẽ phát âm giọng Bắc Kinh và hiển thị giải thích chiết tự chi tiết.</p>
+          </div>
+        </div>
+      </div>
+
+      <button class="cyber-launch-btn" id="pzCloseHelpBtn" style="margin-top: 16px;">
+        ĐÃ HIỂU, VÀO CHƠI NGAY! 🚀
+      </button>
+    </div>
+  </div>
+
+  <!-- Dataset & Scripts -->
+  <script src="words.js?v=pop"></script>
+  <script src="hanzi-puzzle.js?v=20261005_v1"></script>
+</body>
+</html>

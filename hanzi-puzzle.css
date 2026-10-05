@@ -1,0 +1,648 @@
+/* ==========================================================================
+   PINYIN POP! 🧩 HANZI PUZZLE STYLESHEET
+   Drag & Drop Radical & Compound Word Assembly
+   ========================================================================== */
+
+.puzzle-body {
+  overflow-y: auto !important;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#puzzleBgCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.pz-container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 20px 30px;
+  gap: 14px;
+}
+
+/* ==========================================================================
+   NAVBAR & HEADER
+   ========================================================================== */
+.pz-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  border-radius: 24px;
+  padding: 10px 20px;
+  border: 3px solid #ffffff;
+  box-shadow: 0 10px 25px rgba(79, 70, 229, 0.12);
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.pz-brand-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.pz-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.pz-brand-title {
+  font-family: var(--font-brand);
+  font-size: 20px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ff4b82, #ffb703, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.pz-brand-sub {
+  font-size: 10px;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.pz-nav-tabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 999px;
+  border: 1px solid #e2e8f0;
+}
+
+.pz-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  color: #475569;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.pz-tab-btn:hover {
+  color: #1e293b;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.pz-tab-btn.active {
+  background: #ffffff;
+  color: #ff4b82;
+  box-shadow: 0 4px 12px rgba(255, 75, 130, 0.2);
+}
+
+.pz-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ==========================================================================
+   GAME MODE SWITCHER
+   ========================================================================== */
+.pz-mode-switch-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 8px 18px;
+  border: 2px solid #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.mode-switch-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: #475569;
+}
+
+.mode-switch-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mode-pill-btn {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 2px solid #e2e8f0;
+  background: #ffffff;
+  font-family: var(--font-brand);
+  font-size: 12px;
+  font-weight: 800;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.mode-pill-btn:hover {
+  transform: translateY(-2px);
+  border-color: #3b82f6;
+  color: #2563eb;
+}
+
+.mode-pill-btn.active {
+  background: linear-gradient(135deg, #ff4b82, #ff758c);
+  border-color: #ff4b82;
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(255, 75, 130, 0.35);
+}
+
+/* ==========================================================================
+   TOOLBAR (FILTERS, STATS, ACTIONS)
+   ========================================================================== */
+.pz-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.90);
+  border-radius: 20px;
+  padding: 10px 18px;
+  border: 2px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pz-tool-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pz-tool-item label {
+  font-size: 11px;
+  font-weight: 800;
+  color: #475569;
+  white-space: nowrap;
+}
+
+.pz-stats-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.stat-pill {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 999px;
+  padding: 4px 14px;
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.score-pill strong { color: #d97706; font-family: var(--font-brand); font-size: 14px; }
+.streak-pill strong { color: #ef4444; font-family: var(--font-brand); font-size: 14px; }
+.solved-pill strong { color: #10b981; font-family: var(--font-brand); font-size: 14px; }
+
+.pz-tool-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pz-btn-tool {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 2px solid #e2e8f0;
+  background: #ffffff;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.pz-btn-tool:hover {
+  transform: translateY(-2px);
+}
+
+.hint-btn {
+  border-color: #fde047;
+  background: #fefce8;
+  color: #a16207;
+}
+
+.skip-btn {
+  border-color: #cbd5e1;
+  color: #64748b;
+}
+
+/* ==========================================================================
+   MAIN GAME BOARD STAGE
+   ========================================================================== */
+.pz-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+}
+
+/* Target Question Card */
+.pz-target-card {
+  width: 100%;
+  max-width: 620px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  border-radius: 26px;
+  padding: 18px 24px;
+  border: 3px solid #ffffff;
+  box-shadow: 0 12px 30px rgba(99, 102, 241, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.target-meta {
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  display: flex;
+  gap: 8px;
+}
+
+.target-hsk-badge {
+  font-family: var(--font-brand);
+  font-size: 10px;
+  font-weight: 800;
+  color: #ffffff;
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  padding: 2px 10px;
+  border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+}
+
+.target-mode-tag {
+  font-size: 10px;
+  font-weight: 800;
+  color: #ff4b82;
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+
+.target-prompt-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.prompt-sub {
+  font-size: 10px;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.target-meaning {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1e1b4b;
+  line-height: 1.2;
+}
+
+.target-pinyin {
+  font-family: var(--font-brand);
+  font-size: 16px;
+  font-weight: 700;
+  color: #ff4b82;
+}
+
+.target-speaker {
+  width: 44px;
+  height: 44px;
+  font-size: 20px;
+}
+
+/* Assembly Drop Zone */
+.pz-assembly-zone {
+  width: 100%;
+  max-width: 620px;
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 28px;
+  border: 3px solid #ffffff;
+  box-shadow: 0 14px 32px rgba(99, 102, 241, 0.12);
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.assembly-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.assembly-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: #475569;
+}
+
+.pz-reset-slots-btn {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 10px;
+  font-weight: 800;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.pz-reset-slots-btn:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+/* Slots Container */
+.pz-slots-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 10px 0;
+  flex-wrap: wrap;
+}
+
+/* Drop Target Slot */
+.pz-slot {
+  width: 90px;
+  height: 90px;
+  background: #f8fafc;
+  border: 3px dashed #cbd5e1;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.pz-slot.drag-over {
+  border-color: #ff4b82;
+  background: #fff1f2;
+  transform: scale(1.08);
+  box-shadow: 0 0 16px rgba(255, 75, 130, 0.35);
+}
+
+.pz-slot.filled {
+  border-style: solid;
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.slot-index-hint {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  color: #94a3b8;
+}
+
+/* Draggable Tile Piece */
+.pz-piece {
+  width: 82px;
+  height: 82px;
+  background: linear-gradient(145deg, #ffffff 0%, #fdf2f8 60%, #eff6ff 100%);
+  border: 3px solid #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 18px rgba(99, 102, 241, 0.16), 0 3px 0 #cbd5e1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease;
+  position: relative;
+}
+
+.pz-piece:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 24px rgba(255, 75, 130, 0.25), 0 4px 0 #cbd5e1;
+}
+
+.pz-piece:active {
+  cursor: grabbing;
+  transform: translateY(2px) scale(0.98);
+}
+
+.pz-piece.placed {
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.piece-char {
+  font-family: var(--font-chinese);
+  font-size: 40px;
+  font-weight: 400;
+  color: #0f172a;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.piece-tag {
+  font-size: 9px;
+  font-weight: 800;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+/* Tray of Pieces */
+.pz-pieces-tray {
+  width: 100%;
+  max-width: 620px;
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 28px;
+  border: 3px solid #ffffff;
+  box-shadow: 0 14px 32px rgba(99, 102, 241, 0.12);
+  padding: 18px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tray-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tray-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: #475569;
+}
+
+.tray-tip {
+  font-size: 10px;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.pz-pieces-grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  min-height: 94px;
+}
+
+/* Success Etymology Showcase Box */
+.pz-success-box {
+  width: 100%;
+  max-width: 620px;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 30px;
+  border: 4px solid #10b981;
+  box-shadow: 0 20px 45px rgba(16, 185, 129, 0.25);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+  animation: modalPopIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.success-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.success-icon {
+  font-size: 36px;
+  animation: bouncePop 1s infinite ease-in-out;
+}
+
+@keyframes bouncePop {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.success-title {
+  font-family: var(--font-brand);
+  font-size: 20px;
+  font-weight: 800;
+  color: #10b981;
+}
+
+.success-pts {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  font-weight: 800;
+  color: #d97706;
+}
+
+.success-char-showcase {
+  background: #f0fdf4;
+  border: 2px solid #bbf7d0;
+  border-radius: 20px;
+  padding: 12px 28px;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.showcase-hanzi {
+  font-family: var(--font-chinese);
+  font-size: 64px;
+  font-weight: 400;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+}
+
+.showcase-pinyin {
+  font-family: var(--font-brand);
+  font-size: 24px;
+  font-weight: 700;
+  color: #ff4b82;
+}
+
+.showcase-meaning {
+  font-size: 16px;
+  font-weight: 800;
+  color: #15803d;
+}
+
+.success-explanation {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  border-radius: 16px;
+  padding: 12px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #92400e;
+  line-height: 1.5;
+  text-align: left;
+  width: 100%;
+}
+
+.pz-next-btn {
+  padding: 12px 36px;
+  font-size: 16px;
+}
+
+/* Footer */
+.pz-footer {
+  margin-top: auto;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  padding-top: 12px;
+}

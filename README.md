@@ -43,6 +43,15 @@ Trò chơi luyện gõ Pinyin tiếng Trung phong cách kẹo ngọt vui nhộn,
     - 🎯 **Trắc nghiệm (Quiz)**: Luyện tập 4 đáp án thử thách phản xạ.
     - 📜 **Từ điển tổng hợp (Dictionary Grid)**: Tra cứu nhanh toàn bộ từ kèm phát âm chuẩn Bắc Kinh.
   - **Phát âm giọng bản ngữ (TTS)**: Tự động phát âm hoặc nhấp vào loa 🔊 bất kỳ lúc nào.
+- **Game Ghép Bộ Thủ & Từ Ghép (`hanzi-puzzle.html`)**:
+  - **Chế độ Ghép Bộ Thủ Cội Nguồn (Radical Decomposer)**:
+    - Kéo thả các bộ thủ rời rạc (`亻`, `木`, `日`, `月`, `氵`, `讠`, `氵`, `女`...) để ghép thành chữ Hán hoàn chỉnh.
+    - Thẻ kiến thức mở rộng (Etymology Card) trực quan sau khi hoàn thành, giải thích nguồn gốc, văn hóa hình thành chữ Hán.
+  - **Chế độ Ghép Từ Ghép HSK 1 - 6 (Compound Word Builder)**:
+    - Khai thác trọn vẹn **kho 5.000 từ vựng HSK** trong `words.js`.
+    - Thử thách ghép các chữ đơn lẻ thành từ ghép chuẩn HSK kèm nghĩa tiếng Việt & phiên âm Pinyin.
+  - **Tương tác linh hoạt & mượt mà**: Hỗ trợ đồng thời kéo thả (Drag & Drop) và nhấp chọn (Click-to-slot) cực kỳ thuận tiện trên cả máy tính lẫn điện thoại/tablet.
+  - **Âm thanh hiệu ứng & Phát âm TTS**: Tự động phát âm chuẩn giọng Bắc Kinh khi ghép đúng.
 - **Cơ Chế 100 Tim Năng Lượng Trong Game**:
   - Người chơi khởi đầu với 100 Tim năng lượng. Giữ tim càng lâu, combo càng bùng nổ!
 
@@ -85,6 +94,9 @@ Truy cập: [http://localhost:8080](http://localhost:8080)
 ├── flashcard.html              # 🗂️ Thẻ Ghi Nhớ Flashcard 3D, Trắc Nghiệm Quiz & Từ Điển
 ├── flashcard.css               # Phong cách thẻ 3D Flip Card và bộ học tập
 ├── flashcard.js                # Logic Flashcard, lọc bài theo Deck, chấm điểm Quiz & lưu tiến độ
+├── hanzi-puzzle.html           # 🧩 Game Ghép Bộ Thủ Cội Nguồn & Ghép Từ Ghép HSK 1 - 6
+├── hanzi-puzzle.css            # Giao diện kéo thả Puzzle Candy Pop hiện đại
+├── hanzi-puzzle.js             # Logic ghép chữ, cội nguồn bộ thủ & kết nối 5.000 từ vựng
 ├── style.css                   # Thiết kế Candy Pop sống động, font chữ Noto Sans SC thanh mảnh
 ├── words.js                    # Thư viện 5.000 từ vựng tiếng Trung HSK 1-6 chuẩn nghĩa tiếng Việt
 ├── audio.js                    # Bộ phát âm thanh 8-bit, chiptune BGM sequencer & TTS bản ngữ
