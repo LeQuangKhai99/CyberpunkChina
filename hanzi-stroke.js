@@ -210,9 +210,25 @@
       this.initVocabDataset();
       this.updateStatsUI();
 
-      // Default load: first word or '学'
+      // Check URL parameters for specific character or word: ?char=... or ?word=...
+      const urlParams = new URLSearchParams(window.location.search);
+      const requestedChar = urlParams.get('char') || urlParams.get('word');
+
+      if (requestedChar) {
+        const found = this.allWords.find(w => w.hanzi === requestedChar || w.hanzi.includes(requestedChar));
+        if (found) {
+          this.loadWord(found);
+          return;
+        } else {
+          this.loadCustomWord(requestedChar);
+          return;
+        }
+      }
+
+      // Default load: Pick a fresh random word from the 5,000 vocabulary dataset on each visit!
       if (this.filteredWords.length > 0) {
-        this.loadWord(this.filteredWords[0]);
+        const randomIndex = Math.floor(Math.random() * this.filteredWords.length);
+        this.loadWord(this.filteredWords[randomIndex]);
       } else {
         this.loadCustomWord('学', 'xué', 'Hán Việt: HỌC', 'Học tập, nghiên cứu', 1);
       }
@@ -595,9 +611,13 @@
     }
 
     updateActiveListItem() {
+      if (!this.currentWord) return;
       this.dom.wordList.querySelectorAll('.hs-word-item').forEach(item => {
-        const isCur = this.currentWord && item.dataset.hanzi === this.currentWord.hanzi;
+        const isCur = item.dataset.hanzi === this.currentWord.hanzi;
         item.classList.toggle('active', isCur);
+        if (isCur) {
+          item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
       });
     }
 
