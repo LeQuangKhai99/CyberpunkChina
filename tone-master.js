@@ -123,10 +123,10 @@ const FINALS_DATA = [
       { base: 'ang', vi: 'ang', tones: [{ text: 'āng', hanzi: '肮' }, { text: 'áng', hanzi: '昂' }, { text: 'ǎng', hanzi: '昂' }, { text: 'àng', hanzi: '盎' }] },
       { base: 'eng', vi: 'âng', tones: [{ text: 'ēng', hanzi: '鞥' }, { text: 'éng', hanzi: '鞥' }, { text: 'ěng', hanzi: '鞥' }, { text: 'èng', hanzi: '鞥' }] },
       { base: 'ing', vi: 'inh', tones: [{ text: 'īng', hanzi: '英' }, { text: 'íng', hanzi: '迎' }, { text: 'ǐng', hanzi: '影' }, { text: 'ìng', hanzi: '硬' }] },
-      { base: 'ong', vi: 'ung', tones: [{ text: 'ōng', hanzi: '翁' }, { text: 'óng', hanzi: '翁' }, { text: 'ǒng', hanzi: '蓊' }, { text: 'òng', hanzi: '瓮' }] },
-      { base: 'iang', vi: 'iang', tones: [{ text: 'iāng', hanzi: '央' }, { text: 'iáng', hanzi: '羊' }, { text: 'iǎng', hanzi: '养' }, { text: 'iàng', hanzi: '样' }] },
+      { base: 'ong', vi: 'ung', tones: [{ text: 'ōng', hanzi: '东', tip: 'dōng (东 - đông)' }, { text: 'óng', hanzi: '红', tip: 'hóng (红 - hồng/đỏ)' }, { text: 'ǒng', hanzi: '懂', tip: 'dǒng (懂 - hiểu)' }, { text: 'òng', hanzi: '动', tip: 'dòng (动 - cử động)' }] },
+      { base: 'iang', vi: 'iang (hoặc ương)', tones: [{ text: 'iāng', hanzi: '香', tip: 'xiāng (香 - hương/thơm)' }, { text: 'iáng', hanzi: '详', tip: 'xiáng (详 - tường tận)' }, { text: 'iǎng', hanzi: '想', tip: 'xiǎng (想 - tưởng/nhớ)' }, { text: 'iàng', hanzi: '像', tip: 'xiàng (像 - giống/tượng)' }] },
       { base: 'uang', vi: 'oang', tones: [{ text: 'uāng', hanzi: '汪' }, { text: 'uáng', hanzi: '王' }, { text: 'uǎng', hanzi: '网' }, { text: 'uàng', hanzi: '望' }] },
-      { base: 'ueng', vi: 'uâng', tones: [{ text: 'uēng', hanzi: '翁' }, { text: 'uéng', hanzi: '翁' }, { text: 'uěng', hanzi: '蓊' }, { text: 'uèng', hanzi: '瓮' }] },
+      { base: 'ueng', vi: 'uâng (độc lập: weng)', tones: [{ text: 'uēng', hanzi: '翁', tip: 'wēng (翁 - ông lão / 嗡 tiếng vo ve)' }, { text: 'uéng', hanzi: '翁', tip: 'wéng (trong tiếng Trung ít dùng thanh 2)' }, { text: 'uěng', hanzi: '蓊', tip: 'wěng (蓊 - rậm rạp)' }, { text: 'uèng', hanzi: '瓮', tip: 'wèng (瓮 - hũ sành/vò sành)' }] },
       { base: 'iong', vi: 'i-ung', tones: [{ text: 'iōng', hanzi: '雍' }, { text: 'ióng', hanzi: '雍' }, { text: 'iǒng', hanzi: '勇' }, { text: 'iòng', hanzi: '用' }] }
     ]
   },
@@ -702,7 +702,7 @@ class ToneMasterGame {
 
       let tilesHtml = group.items.map(item => {
         const toneBtns = item.tones.map((t, idx) => `
-          <button class="tone-sub-btn" data-speak="${t.hanzi}" title="Nghe Thanh ${idx + 1} (${t.text})">${t.text}</button>
+          <button class="tone-sub-btn" data-speak="${t.hanzi}" title="${t.tip || `Nghe Thanh ${idx + 1} (${t.text})`}">${t.text}</button>
         `).join('');
 
         return `
