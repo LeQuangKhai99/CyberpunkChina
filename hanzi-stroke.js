@@ -663,10 +663,13 @@
           markStrokeCorrectAfterMisses: 3
         });
 
-        // Fetch stroke data for breakdown track
-        this.writer.getCharacterData().then(data => {
+        // Fetch stroke data for breakdown track using official HanziWriter API
+        const targetChar = char;
+        HanziWriter.loadCharacterData(targetChar).then(data => {
+          if (this.getCurrentChar() !== targetChar) return;
           this.renderStrokeBreakdown(data);
-        }).catch(() => {
+        }).catch(err => {
+          console.warn('Could not load stroke breakdown for:', targetChar, err);
           this.dom.lblTotalStrokes.textContent = 'Bút thuận tiêu chuẩn';
           this.dom.breakdownTrack.innerHTML = '<span style="font-size: 11px; color: #94a3b8; padding: 10px;">Chưa có dữ liệu phân rã SVG chi tiết cho chữ này</span>';
         });
@@ -682,10 +685,19 @@
     }
 
     renderStrokeBreakdown(data) {
-      if (!data || !data.strokes || data.strokes.length === 0) return;
+      if (!data || !data.strokes || data.strokes.length === 0) {
+        this.dom.lblTotalStrokes.textContent = 'Bút thuận tiêu chuẩn';
+        this.dom.breakdownTrack.innerHTML = '<span style="font-size: 11px; color: #94a3b8; padding: 10px;">Đang cập nhật dữ liệu nét...</span>';
+        return;
+      }
 
       const total = data.strokes.length;
       this.dom.lblTotalStrokes.textContent = `Tổng: ${total} nét`;
+
+      // Use HanziWriter official glyph coordinate scaling transform
+      const transformStr = (window.HanziWriter && typeof HanziWriter.getScalingTransform === 'function')
+        ? HanziWriter.getScalingTransform(1024, 1024, 60).transform
+        : 'translate(60, 847) scale(0.88, -0.88)';
 
       let html = '';
       for (let i = 0; i < total; i++) {
@@ -693,7 +705,7 @@
         let pathsHtml = '';
         for (let j = 0; j <= i; j++) {
           const isLatest = (j === i);
-          const strokeFill = isLatest ? '#ec4899' : '#94a3b8';
+          const strokeFill = isLatest ? '#ec4899' : '#cbd5e1';
           pathsHtml += `<path d="${data.strokes[j]}" fill="${strokeFill}" />`;
         }
 
@@ -701,8 +713,8 @@
           <div class="hs-step-card" data-step="${i + 1}" title="Nét thứ ${i + 1}">
             <span class="hs-step-num">Nét ${i + 1}</span>
             <div class="hs-step-canvas-wrap">
-              <svg viewBox="0 0 1024 1024" width="44" height="44">
-                <g transform="translate(0, 900) scale(1, -1)">
+              <svg viewBox="0 0 1024 1024" width="44" height="44" style="display: block; overflow: visible;">
+                <g transform="${transformStr}">
                   ${pathsHtml}
                 </g>
               </svg>
@@ -713,15 +725,19 @@
 
       this.dom.breakdownTrack.innerHTML = html;
 
-      // Click step card to animate up to that step
+      // Click step card to animate that specific stroke
       this.dom.breakdownTrack.querySelectorAll('.hs-step-card').forEach(card => {
         card.addEventListener('click', () => {
           const step = parseInt(card.dataset.step, 10);
           this.highlightStepCard(step);
           if (this.writer) {
-            this.writer.animateCharacter({
-              strokeAnimationSpeed: this.currentSpeed * 1.5
-            });
+            if (typeof this.writer.animateStroke === 'function') {
+              this.writer.animateStroke(step - 1);
+            } else {
+              this.writer.animateCharacter({
+                strokeAnimationSpeed: this.currentSpeed * 1.5
+              });
+            }
           }
         });
       });
@@ -730,7 +746,11 @@
     highlightStepCard(step) {
       this.dom.breakdownTrack.querySelectorAll('.hs-step-card').forEach(c => {
         const s = parseInt(c.dataset.step, 10);
-        c.classList.toggle('active', s === step);
+        const isActive = (s === step);
+        c.classList.toggle('active', isActive);
+        if (isActive) {
+          c.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+        }
       });
     }
 
