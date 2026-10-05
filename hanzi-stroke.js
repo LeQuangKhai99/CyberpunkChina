@@ -618,8 +618,9 @@
       // Compute responsive canvas dimension
       let targetSize = 320;
       if (this.dom.gridBox && this.dom.gridBox.parentElement) {
-        const availableW = this.dom.gridBox.parentElement.clientWidth - 24;
-        targetSize = Math.min(320, Math.max(260, availableW));
+        const parentW = this.dom.gridBox.parentElement.getBoundingClientRect().width;
+        const availableW = Math.floor(parentW - 20);
+        targetSize = Math.min(320, Math.max(220, availableW));
         this.dom.gridBox.style.width = `${targetSize}px`;
         this.dom.gridBox.style.height = `${targetSize}px`;
       }
