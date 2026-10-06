@@ -336,6 +336,7 @@
           }
         });
       }
+    }
 
     openModal(tab = 'login') {
       if (!this.backdrop) return;
@@ -359,6 +360,28 @@
     switchTab(tabName) {
       this.currentTab = tabName;
       this.clearAlert();
+
+      const tabsWrap = document.getElementById('ppAuthTabs');
+      const titleEl = document.getElementById('ppModalTitle');
+      const subEl = document.getElementById('ppModalSub');
+
+      if (tabName === 'profile') {
+        // Khi đã đăng nhập: ẨN HOÀN TOÀN thanh tab đăng nhập/đăng ký
+        if (tabsWrap) tabsWrap.style.display = 'none';
+        if (titleEl) titleEl.textContent = 'HỒ SƠ HỌC VIÊN';
+        if (subEl) subEl.textContent = 'Tiến độ học tập & Đồng bộ đám mây';
+      } else {
+        // Khi chưa đăng nhập: Hiển thị tab Đăng Nhập / Đăng Ký
+        if (tabsWrap) tabsWrap.style.display = 'flex';
+        if (titleEl) titleEl.textContent = 'PINYIN POP CLOUD';
+        if (subEl) subEl.textContent = 'Đồng bộ tiến độ học tập giữa Máy tính & Điện thoại';
+      }
+
+      // Xóa triệt để các phần tử cấu hình cũ nếu còn lưu trong cache trình duyệt
+      const oldCfgTab = document.querySelector('[data-tab="config"]');
+      if (oldCfgTab) oldCfgTab.remove();
+      const oldCfgPane = document.getElementById('paneConfig');
+      if (oldCfgPane) oldCfgPane.remove();
 
       // Cập nhật tab buttons
       const tabBtns = document.querySelectorAll('.pp-auth-tab');
