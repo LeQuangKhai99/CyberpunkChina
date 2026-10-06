@@ -72,6 +72,15 @@ class ChineseFlashcardApp {
     this.applyHskFilter();
     this.renderCard();
     this.updateStats();
+
+    // Listen for cross-device cloud progress synchronization
+    window.addEventListener('cloud-progress-updated', () => {
+      this.masteredSet = new Set(this.loadFromStorage('pinyin_pop_mastered'));
+      this.reviewSet = new Set(this.loadFromStorage('pinyin_pop_review'));
+      this.favoritesSet = new Set(this.loadFromStorage('pinyin_pop_favs'));
+      this.updateStats();
+      this.updateCardStatusBadges();
+    });
   }
 
   /* ========================================================================
@@ -89,6 +98,9 @@ class ChineseFlashcardApp {
   saveToStorage(key, set) {
     try {
       localStorage.setItem(key, JSON.stringify(Array.from(set)));
+      if (window.PinyinAuth && typeof window.PinyinAuth.triggerDebouncedSync === 'function') {
+        window.PinyinAuth.triggerDebouncedSync();
+      }
     } catch (e) {}
   }
 

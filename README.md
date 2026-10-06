@@ -95,6 +95,37 @@ Truy cập: [http://localhost:8080](http://localhost:8080)
 
 ---
 
+---
+
+## ☁️ Đồng Bộ Tiến Độ Đa Thiết Bị (Supabase Cloud Sync)
+
+PINYIN POP! tích hợp sẵn hệ thống **Đăng Nhập / Đăng Ký** và đồng bộ tiến độ học tập giữa **Máy Tính** và **Điện Thoại** hoàn toàn **MIỄN PHÍ 100%** thông qua **Supabase (PostgreSQL Cloud)**.
+
+### ✨ Ưu Điểm:
+- **Tốc độ cực cao & Không tốn phí máy chủ**: Render vẫn giữ nguyên dạng Static Web, trình duyệt kết nối trực tiếp đến Supabase Database qua kết nối mã hóa SSL.
+- **Hỗ trợ chế độ Offline / Khách (Guest)**: Người học chưa đăng nhập vẫn sử dụng đầy đủ mọi tính năng bình thường qua `localStorage`.
+- **Hợp nhất dữ liệu thông minh**: Khi đăng nhập, tiến độ học trên máy tính và điện thoại được tự động gộp lại mà không sợ mất thẻ đã thuộc hay chữ Hán đã viết.
+
+### 🛠️ Hướng Dẫn Kích Hoạt Supabase Trong 1 Phút:
+1. Đăng ký tài khoản miễn phí tại **[https://supabase.com](https://supabase.com)** và tạo một **New Project**.
+2. Tại thanh điều hướng bên trái, vào mục **SQL Editor** ➔ bấm **New query**.
+3. Mở file [`supabase_schema.sql`](supabase_schema.sql) trong dự án, sao chép toàn bộ nội dung và dán vào SQL Editor, sau đó bấm **RUN** (hoặc nhấn `Ctrl + Enter`).
+4. Vào mục **Project Settings** (biểu tượng bánh răng) ➔ chọn **API**:
+   - Sao chép **Project URL**.
+   - Sao chép **Project API Keys (anon / public)**.
+5. Có 2 cách kích hoạt:
+   - **Cách 1 (Nhanh nhất - Không cần sửa code)**: Mở trang web PINYIN POP! ➔ bấm nút **"☁️ Đăng Nhập"** ở góc trên ➔ chọn tab **"⚙️ Cấu Hình"** ➔ dán URL và Anon Key vào rồi bấm **"Lưu Cấu Hình"**.
+   - **Cách 2 (Cố định vào mã nguồn)**: Mở file `supabase-config.js` và điền URL & Anon Key vào:
+     ```javascript
+     window.SUPABASE_CONFIG = {
+       url: 'https://xyzabcdefg.supabase.co',
+       anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+     };
+     ```
+6. Bạn và người học có thể tạo tài khoản và đăng nhập ngay để tiến độ luôn đồng bộ trên mọi thiết bị!
+
+---
+
 ## 📁 Cấu Trúc Dự Án / Project Structure
 
 ```
@@ -105,13 +136,21 @@ Truy cập: [http://localhost:8080](http://localhost:8080)
 ├── pinyin-pop.html             # 🎮 Game Bắn Chữ Arcade Pinyin Pop (HSK 1 - 6)
 ├── flashcard.html              # 🗂️ Thẻ Ghi Nhớ Flashcard 3D, Trắc Nghiệm Quiz & Từ Điển
 ├── flashcard.css               # Phong cách thẻ 3D Flip Card và bộ học tập
-├── flashcard.js                # Logic Flashcard, lọc bài theo Deck, chấm điểm Quiz & lưu tiến độ
+├── flashcard.js                # Logic Flashcard, lọc bài theo Deck & đồng bộ Cloud
 ├── hanzi-puzzle.html           # 🧩 Game Ghép Bộ Thủ Cội Nguồn & Ghép Từ Ghép HSK 1 - 6
 ├── hanzi-puzzle.css            # Giao diện kéo thả Puzzle Candy Pop hiện đại
-├── hanzi-puzzle.js             # Logic ghép chữ, cội nguồn bộ thủ & kết nối 5.000 từ vựng
+├── hanzi-puzzle.js             # Logic ghép chữ & lưu kỷ lục điểm số
 ├── tone-master.html            # 🎵 Vua Thanh Điệu & Bảng 21 Thanh Mẫu / 36 Vận Mẫu
 ├── tone-master.css             # Giao diện âm thanh, 4 pad thanh điệu & bảng ngữ âm
-├── tone-master.js              # Bộ mô phỏng cao độ thanh điệu, nhận diện âm thanh & phản xạ HSK
+├── tone-master.js              # Bộ mô phỏng cao độ thanh điệu & nhận diện âm thanh
+├── hanzi-stroke.html           # ✍️ Tập Viết Chữ Hán Theo Quy Tắc Bút Thuận Chuẩn HSK
+├── hanzi-stroke.css            # Giao diện ô Mễ Điền (米字格) & tương tác nét vẽ di động
+├── hanzi-stroke.js             # Bộ điều khiển nét bút HanziWriter & đồng bộ tiến độ
+├── auth-modal.css              # Giao diện Popup Đăng Nhập, Đăng Ký & Profile Candy Pop
+├── auth-modal.js               # Điều khiển Modal Auth & nút trạng thái đồng bộ Navbar
+├── supabase-config.js          # File cấu hình URL & API Key Supabase Cloud
+├── supabase-client.js          # Bộ máy đồng bộ 2 chiều (Cloud Sync Engine) & xác thực
+├── supabase_schema.sql         # Kịch bản tạo bảng Database (PostgreSQL RLS) trên Supabase
 ├── style.css                   # Thiết kế Candy Pop sống động, font chữ Noto Sans SC thanh mảnh
 ├── words.js                    # Thư viện 5.000 từ vựng tiếng Trung HSK 1-6 chuẩn nghĩa tiếng Việt
 ├── audio.js                    # Bộ phát âm thanh 8-bit, chiptune BGM sequencer & TTS bản ngữ

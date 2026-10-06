@@ -544,6 +544,14 @@ class HanziPuzzleGame {
     this.streakDisplay.textContent = this.streak;
     this.solvedDisplay.textContent = this.solvedCount;
 
+    const curHigh = parseInt(localStorage.getItem('puzzle_score') || '0', 10);
+    if (this.score > curHigh) {
+      localStorage.setItem('puzzle_score', this.score.toString());
+      if (window.PinyinAuth && typeof window.PinyinAuth.triggerDebouncedSync === 'function') {
+        window.PinyinAuth.triggerDebouncedSync();
+      }
+    }
+
     this.playSuccessSound();
     this.speakChinese(this.currentQuestion.hanzi);
 

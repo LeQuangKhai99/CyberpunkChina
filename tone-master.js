@@ -594,6 +594,14 @@ class ToneMasterGame {
       this.streakDisplay.textContent = this.streak;
       this.accuracyDisplay.textContent = `${Math.round((this.totalCorrect / this.totalAnswered) * 100)}%`;
 
+      const curHigh = parseInt(localStorage.getItem('tone_master_score') || '0', 10);
+      if (this.score > curHigh) {
+        localStorage.setItem('tone_master_score', this.score.toString());
+        if (window.PinyinAuth && typeof window.PinyinAuth.triggerDebouncedSync === 'function') {
+          window.PinyinAuth.triggerDebouncedSync();
+        }
+      }
+
       // Show Popup Modal
       this.showFeedbackModal(true, pts);
     } else {

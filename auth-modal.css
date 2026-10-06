@@ -1,0 +1,550 @@
+/* =========================================================================
+   PINYIN POP! - AUTHENTICATION & CLOUD SYNC UI STYLES
+   Candy Pop & Glassmorphism Theme (Desktop & Mobile Responsive)
+   ========================================================================= */
+
+/* --- AUTH CHIP IN NAVBAR --- */
+.pp-auth-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid #e2e8f0;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  color: #1e293b;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  outline: none;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.pp-auth-chip-btn:hover {
+  transform: translateY(-1px);
+  border-color: #3b82f6;
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.2);
+}
+
+.pp-auth-chip-btn:active {
+  transform: translateY(1px);
+}
+
+.pp-auth-chip-btn.logged-in {
+  background: linear-gradient(135deg, #ffffff, #f0fdf4);
+  border-color: #86efac;
+}
+
+.pp-auth-chip-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff4b82, #3b82f6);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+.pp-auth-chip-text {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pp-auth-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #94a3b8;
+  flex-shrink: 0;
+  transition: background-color 0.3s ease;
+}
+
+.pp-auth-status-dot.synced {
+  background: #22c55e;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+  animation: ppPulseDot 2s infinite ease-in-out;
+}
+
+.pp-auth-status-dot.syncing {
+  background: #f59e0b;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+  animation: ppSpinDot 1s infinite linear;
+}
+
+.pp-auth-status-dot.guest {
+  background: #6366f1;
+}
+
+@keyframes ppPulseDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
+}
+
+@keyframes ppSpinDot {
+  0% { transform: rotate(0deg); opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { transform: rotate(360deg); opacity: 0.5; }
+}
+
+/* Floating fallback if no navbar found */
+.pp-auth-chip-floating {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 9999;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.2);
+}
+
+/* --- AUTH MODAL BACKDROP & DIALOG --- */
+.pp-auth-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.pp-auth-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.pp-auth-dialog {
+  background: #ffffff;
+  border-radius: 28px;
+  width: 100%;
+  max-width: 440px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  transform: scale(0.92) translateY(12px);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.pp-auth-backdrop.active .pp-auth-dialog {
+  transform: scale(1) translateY(0);
+}
+
+/* Modal Close Button */
+.pp-auth-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  transition: all 0.15s ease;
+  z-index: 10;
+}
+
+.pp-auth-close-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+/* Modal Header */
+.pp-auth-header {
+  padding: 24px 24px 16px;
+  text-align: center;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.pp-auth-emblem {
+  font-size: 38px;
+  margin-bottom: 6px;
+  display: inline-block;
+  animation: ppBounce 2s infinite ease-in-out;
+}
+
+@keyframes ppBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.pp-auth-title {
+  font-family: 'Lexend', 'Be Vietnam Pro', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: #1e1b4b;
+  margin: 0 0 4px;
+}
+
+.pp-auth-subtitle {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Tab Switcher */
+.pp-auth-tabs {
+  display: flex;
+  background: #f8fafc;
+  padding: 4px;
+  margin: 14px 20px 0;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  gap: 4px;
+}
+
+.pp-auth-tab {
+  flex: 1;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.pp-auth-tab.active {
+  background: #ffffff;
+  color: #1d4ed8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Modal Body / Tab Panes */
+.pp-auth-body {
+  padding: 20px 24px 24px;
+}
+
+.pp-auth-pane {
+  display: none;
+}
+
+.pp-auth-pane.active {
+  display: block;
+}
+
+/* Form Controls */
+.pp-form-group {
+  margin-bottom: 14px;
+  text-align: left;
+}
+
+.pp-form-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  color: #334155;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pp-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.pp-input-icon {
+  position: absolute;
+  left: 12px;
+  font-size: 14px;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.pp-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 14px 10px 36px;
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  background: #f8fafc;
+  transition: all 0.15s ease;
+  outline: none;
+}
+
+.pp-input:focus {
+  border-color: #3b82f6;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.pp-input-toggle-pwd {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+  opacity: 0.6;
+}
+
+.pp-input-toggle-pwd:hover {
+  opacity: 1;
+}
+
+/* Alerts / Message Notice */
+.pp-auth-alert {
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 14px;
+  display: none;
+}
+
+.pp-auth-alert.error {
+  display: block;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+.pp-auth-alert.success {
+  display: block;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+}
+
+.pp-auth-alert.info {
+  display: block;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+}
+
+/* Submit Buttons */
+.pp-btn-submit {
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, #ff4b82, #ff758c);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(255, 75, 130, 0.35);
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.pp-btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(255, 75, 130, 0.45);
+}
+
+.pp-btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pp-btn-submit.btn-blue {
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  box-shadow: 0 8px 18px rgba(59, 130, 246, 0.35);
+}
+
+.pp-btn-submit.btn-emerald {
+  background: linear-gradient(135deg, #10b981, #059669);
+  box-shadow: 0 8px 18px rgba(16, 185, 129, 0.35);
+}
+
+/* User Profile Card (When logged in) */
+.pp-profile-card {
+  text-align: center;
+}
+
+.pp-profile-avatar-big {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff4b82, #3b82f6);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 900;
+  margin: 0 auto 10px;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25);
+}
+
+.pp-profile-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 2px;
+}
+
+.pp-profile-email {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0 0 16px;
+}
+
+/* Progress Stats Grid inside Profile */
+.pp-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.pp-stat-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 10px 6px;
+  text-align: center;
+}
+
+.pp-stat-val {
+  font-size: 16px;
+  font-weight: 900;
+  color: #1e1b4b;
+  display: block;
+}
+
+.pp-stat-lbl {
+  font-size: 10px;
+  font-weight: 700;
+  color: #64748b;
+  margin-top: 2px;
+  display: block;
+}
+
+.pp-sync-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #15803d;
+}
+
+.pp-profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pp-btn-secondary {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+  background: #ffffff;
+  color: #475569;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.pp-btn-secondary:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+.pp-btn-danger {
+  color: #ef4444;
+  border-color: #fee2e2;
+  background: #fef2f2;
+}
+
+.pp-btn-danger:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #dc2626;
+}
+
+/* Config Help Box */
+.pp-config-help {
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.45;
+  margin-top: 10px;
+}
+
+.pp-config-help code {
+  background: #e2e8f0;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 10px;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+  .pp-auth-dialog {
+    max-width: 100%;
+    border-radius: 24px;
+  }
+  .pp-auth-header {
+    padding: 18px 18px 12px;
+  }
+  .pp-auth-body {
+    padding: 16px 18px 20px;
+  }
+  .pp-auth-tabs {
+    margin: 10px 14px 0;
+  }
+  .pp-auth-chip-text {
+    max-width: 90px;
+  }
+}

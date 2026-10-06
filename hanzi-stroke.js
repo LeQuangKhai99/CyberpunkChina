@@ -212,6 +212,15 @@
       this.initVocabDataset();
       this.updateStatsUI();
 
+      // Listen for cross-device cloud progress synchronization
+      window.addEventListener('cloud-progress-updated', () => {
+        this.stats.completed = parseInt(localStorage.getItem('hs_completed_chars') || '0', 10);
+        this.stats.correctStrokes = parseInt(localStorage.getItem('hs_correct_strokes') || '0', 10);
+        this.stats.totalAttempts = parseInt(localStorage.getItem('hs_total_attempts') || '0', 10);
+        this.stats.streak = parseInt(localStorage.getItem('hs_current_streak') || '0', 10);
+        this.updateStatsUI();
+      });
+
       // Check URL parameters for specific character or word: ?char=... or ?word=...
       const urlParams = new URLSearchParams(window.location.search);
       const requestedChar = urlParams.get('char') || urlParams.get('word');
@@ -958,6 +967,10 @@
       localStorage.setItem('hs_correct_strokes', this.stats.correctStrokes.toString());
       localStorage.setItem('hs_total_attempts', this.stats.totalAttempts.toString());
       localStorage.setItem('hs_current_streak', this.stats.streak.toString());
+
+      if (window.PinyinAuth && typeof window.PinyinAuth.triggerDebouncedSync === 'function') {
+        window.PinyinAuth.triggerDebouncedSync();
+      }
     }
   }
 

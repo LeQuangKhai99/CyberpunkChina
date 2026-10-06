@@ -523,6 +523,15 @@ class PinyinDefenderGame {
     document.getElementById('finalMaxCombo').textContent = `x${this.maxCombo}`;
     document.getElementById('finalMissed').textContent = this.missed;
 
+    // Update local and cloud high score
+    const currentHigh = parseInt(localStorage.getItem('pinyin_pop_highscore') || '0', 10);
+    if (this.score > currentHigh) {
+      localStorage.setItem('pinyin_pop_highscore', this.score.toString());
+      if (window.PinyinAuth && typeof window.PinyinAuth.triggerDebouncedSync === 'function') {
+        window.PinyinAuth.triggerDebouncedSync();
+      }
+    }
+
     document.getElementById('gameOverModal').style.display = 'flex';
   }
 
