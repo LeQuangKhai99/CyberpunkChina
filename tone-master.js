@@ -226,9 +226,21 @@ const MINIMAL_PAIRS = [
   }
 ];
 
+// Bộ từ vựng bổ sung chuyên biệt cho các âm đặc thù (như vận mẫu ueng độc lập viết là weng)
+const PHONETIC_SUPPLEMENT_WORDS = [
+  { id: 9801, hanzi: '富翁', pinyin: 'fù wēng', clean: 'fuweng', spaced: 'fu weng', num: 'fu4weng1', level: 5, meaning: 'rich person; millionaire; tycoon', meaning_vn: 'phú ông; triệu phú; người giàu có' },
+  { id: 9802, hanzi: '老翁', pinyin: 'lǎo wēng', clean: 'laoweng', spaced: 'lao weng', num: 'lao3weng1', level: 4, meaning: 'old man; elderly gentleman', meaning_vn: 'ông lão; cụ già' },
+  { id: 9803, hanzi: '嗡嗡', pinyin: 'wēng wēng', clean: 'wengweng', spaced: 'weng weng', num: 'weng1weng1', level: 3, meaning: 'buzz; hum (sound of bees, insects)', meaning_vn: 'tiếng vo ve (tiếng ong kêu, máy móc)' },
+  { id: 9804, hanzi: '瓮', pinyin: 'wèng', clean: 'weng', spaced: 'weng', num: 'weng4', level: 5, meaning: 'earthen jar; urn; large pot', meaning_vn: 'cái vò sành; chum; hũ đựng nước' },
+  { id: 9805, hanzi: '塞翁失马', pinyin: 'sài wēng shī mǎ', clean: 'saiwengshima', spaced: 'sai weng shi ma', num: 'sai4weng1shi1ma3', level: 6, meaning: 'the old man loses his horse (blessing in disguise)', meaning_vn: 'Tái ông thất mã (Họa may trong phúc, phúc trong họa)' },
+  { id: 9806, hanzi: '渔翁', pinyin: 'yú wēng', clean: 'yuweng', spaced: 'yu weng', num: 'yu2weng1', level: 5, meaning: 'fisherman; old angler', meaning_vn: 'ngư ông; ông lão đánh cá' },
+  { id: 9807, hanzi: '不倒翁', pinyin: 'bù dǎo wēng', clean: 'budaoweng', spaced: 'bu dao weng', num: 'bu4dao3weng1', level: 4, meaning: 'roly-poly toy; tumbler', meaning_vn: 'con lật đật' },
+  { id: 9808, hanzi: '瓮城', pinyin: 'wèng chéng', clean: 'wengcheng', spaced: 'weng cheng', num: 'weng4cheng2', level: 6, meaning: 'barbican; crescent gate in city wall', meaning_vn: 'thành quách hình bán nguyệt bảo vệ cổng thành' }
+];
+
 class ToneMasterGame {
   constructor() {
-    this.rawWords = window.CHINESE_WORDS_5000 || [];
+    this.rawWords = [...(window.CHINESE_WORDS_5000 || []), ...PHONETIC_SUPPLEMENT_WORDS];
     this.subMode = 'single_tone'; // 'single_tone', 'minimal_pairs', 'sandhi_quiz'
     this.hskLevel = 'all';
     this.playbackRate = 1.0;
@@ -952,6 +964,11 @@ class ToneMasterGame {
         phoneticDesc = `Phần vần [${this.explorerCode}]`;
         sampleHanzi = '';
       }
+      // Ghi chú đặc biệt cho vận mẫu ueng độc lập
+      if (this.explorerCode.toLowerCase() === 'ueng') {
+        phoneticDesc = '💡 Quy tắc ngữ âm: Vận mẫu [ueng] không bao giờ đi với phụ âm đầu. Khi đứng độc lập luôn được viết trong Pinyin là "weng" (ví dụ: 富翁 fù wēng, 嗡嗡 wēng wēng, 瓮 wèng).';
+        sampleHanzi = '翁';
+      }
     }
     this.explorerSampleHanzi = sampleHanzi;
 
@@ -993,8 +1010,8 @@ class ToneMasterGame {
     // Render Quick Nav Pills (Dải chuyển nhanh giữa các âm)
     this.renderExplorerQuickNav();
 
-    // Lọc danh sách từ gốc từ kho 5.000 từ HSK
-    const allWords = window.CHINESE_WORDS_5000 || this.rawWords || [];
+    // Lọc danh sách từ gốc (ưu tiên this.rawWords chứa cả bộ bổ sung ngữ âm)
+    const allWords = (this.rawWords && this.rawWords.length > 0) ? this.rawWords : [...(window.CHINESE_WORDS_5000 || []), ...PHONETIC_SUPPLEMENT_WORDS];
     this.explorerBaseWords = allWords.filter(w => {
       if (!w.spaced) return false;
       const syllables = w.spaced.split(' ');
