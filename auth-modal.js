@@ -43,11 +43,13 @@
       if (!mountContainer) {
         // Tìm các container hành động có sẵn trên từng trang
         const possibleSelectors = [
-          '.portal-navbar',
+          '#authChipMount',
+          '.hud-right-actions',
           '.hs-header-actions',
           '.fc-header-actions',
           '.tm-header-actions',
           '.pz-header-actions',
+          '.portal-navbar',
           '.cyber-hud'
         ];
 
@@ -67,13 +69,7 @@
       this.chipBtn.title = 'Đăng nhập để đồng bộ tiến độ học giữa Máy tính & Điện thoại';
 
       if (mountContainer) {
-        if (mountContainer.classList.contains('portal-navbar')) {
-          mountContainer.appendChild(this.chipBtn);
-        } else if (mountContainer.firstChild) {
-          mountContainer.insertBefore(this.chipBtn, mountContainer.firstChild);
-        } else {
-          mountContainer.appendChild(this.chipBtn);
-        }
+        mountContainer.appendChild(this.chipBtn);
       } else {
         // Fallback: Nút nổi góc phải trên cùng
         this.chipBtn.classList.add('pp-auth-chip-floating');
