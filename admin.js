@@ -547,6 +547,69 @@
           }
         });
       }
+
+      // Xóa sạch tiến độ học tập của học viên
+      const resetProgressBtn = document.getElementById('btnResetUserProgressAction');
+      if (resetProgressBtn) {
+        resetProgressBtn.addEventListener('click', async () => {
+          if (!this.selectedUser) return;
+          const confirmMsg = `⚠️ Bạn có chắc chắn muốn XÓA SẠCH toàn bộ tiến độ học của học viên "${this.selectedUser.email}" về 0?`;
+          if (!confirm(confirmMsg)) return;
+
+          resetProgressBtn.disabled = true;
+          resetProgressBtn.textContent = '⏳ Đang xóa...';
+
+          try {
+            const emptyProg = {
+              user_id: this.selectedUser.id,
+              flashcard_mastered: [],
+              flashcard_review: [],
+              flashcard_favs: [],
+              stroke_completed_count: 0,
+              stroke_correct_count: 0,
+              stroke_total_attempts: 0,
+              stroke_streak: 0,
+              stroke_completed_chars: [],
+              pinyin_pop_highscore: 0,
+              tone_master_score: 0,
+              puzzle_score: 0,
+              extra_data: {},
+              updated_at: new Date().toISOString()
+            };
+
+            const { error } = await this.supabase
+              .from('user_progress')
+              .upsert(emptyProg, { onConflict: 'user_id' });
+
+            if (error) throw error;
+
+            // Cập nhật dữ liệu local của admin
+            this.selectedUser.mastered = [];
+            this.selectedUser.stroke_completed = 0;
+            this.selectedUser.stroke_correct = 0;
+            this.selectedUser.stroke_total = 0;
+            this.selectedUser.highscore_pop = 0;
+            this.selectedUser.last_synced = emptyProg.updated_at;
+
+            // Cập nhật lại UI modal
+            document.getElementById('modalStatMastered').textContent = '0';
+            document.getElementById('modalStatStrokes').textContent = '0';
+            document.getElementById('modalStatAccuracy').textContent = '100%';
+            document.getElementById('modalStatScore').textContent = '0';
+            document.getElementById('modalVocabCount').textContent = '0';
+            document.getElementById('modalVocabCloud').innerHTML = `<em>Học viên này chưa đánh dấu thuộc từ vựng nào.</em>`;
+
+            alert(`✅ Đã xóa sạch tiến độ của ${this.selectedUser.email} về 0!`);
+            this.renderDashboardAnalytics();
+            this.renderUsersTable();
+          } catch (err) {
+            alert('❌ Lỗi khi xóa tiến độ: ' + err.message);
+          } finally {
+            resetProgressBtn.disabled = false;
+            resetProgressBtn.textContent = '🗑️ Xóa sạch tiến độ học';
+          }
+        });
+      }
     }
 
     bindTabs() {

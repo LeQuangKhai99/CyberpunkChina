@@ -363,9 +363,14 @@
         <!-- Role Toggle Action -->
         <div class="modal-role-action">
           <span>Quyền hạn tài khoản: <strong id="modalCurrentRole">user</strong></span>
-          <button type="button" class="btn-toggle-role" id="btnToggleRoleAction">
-            🔄 Chuyển vai trò (Admin / User)
-          </button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="btn-toggle-role" id="btnToggleRoleAction">
+              🔄 Chuyển vai trò (Admin / User)
+            </button>
+            <button type="button" class="btn-toggle-role" id="btnResetUserProgressAction" style="background:#fee2e2;color:#dc2626;border-color:#fca5a5;">
+              🗑️ Xóa sạch tiến độ học
+            </button>
+          </div>
         </div>
 
       </div>
@@ -374,8 +379,8 @@
 
   <!-- Supabase & Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js?v=20261006_v5"></script>
-  <script src="supabase-client.js?v=20261006_v5"></script>
-  <script src="admin.js?v=20261006_v1"></script>
+  <script src="supabase-config.js?v=20261006_v6"></script>
+  <script src="supabase-client.js?v=20261006_v6"></script>
+  <script src="admin.js?v=20261006_v2"></script>
 </body>
 </html>

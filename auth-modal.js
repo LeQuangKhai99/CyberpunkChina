@@ -220,6 +220,9 @@
                     <button type="button" class="pp-btn-submit btn-emerald" id="btnSyncNowManual">
                       <span>🔄 Đồng Bộ Ngay Lập Tức</span>
                     </button>
+                    <button type="button" class="pp-btn-secondary" id="btnResetMyProgress" style="background:#fff1f2;border:1px solid #fecdd3;color:#e11d48;font-size:12px;padding:8px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;width:100%;">
+                      <span>🧹 Đặt Lại Tiến Độ Về 0</span>
+                    </button>
                     <button type="button" class="pp-btn-secondary pp-btn-danger" id="btnLogout">
                       <span>🚪 Đăng Xuất Tài Khoản</span>
                     </button>
@@ -322,6 +325,29 @@
           btnSyncNow.disabled = false;
           btnSyncNow.innerHTML = '<span>🔄 Đồng Bộ Ngay Lập Tức</span>';
           this.updateProfileStats();
+        });
+      }
+
+      // Reset my progress
+      const btnResetProg = document.getElementById('btnResetMyProgress');
+      if (btnResetProg) {
+        btnResetProg.addEventListener('click', async () => {
+          if (!confirm('⚠️ Bạn có chắc chắn muốn đặt lại toàn bộ tiến độ học (từ đã thuộc, chữ đã viết, kỷ lục điểm) của tài khoản này về 0 không? Thao tác này sẽ làm sạch cả trên Cloud và trên máy!')) {
+            return;
+          }
+          btnResetProg.disabled = true;
+          btnResetProg.innerHTML = '<span>⏳ Đang đặt lại...</span>';
+          if (window.PinyinAuth) {
+            const ok = await window.PinyinAuth.resetUserProgress();
+            if (ok) {
+              this.showAlert('✅ Đã đặt lại toàn bộ tiến độ về 0 thành công!', 'success');
+              this.updateProfileStats();
+            } else {
+              this.showAlert('❌ Không thể đặt lại tiến độ. Vui lòng thử lại.', 'error');
+            }
+          }
+          btnResetProg.disabled = false;
+          btnResetProg.innerHTML = '<span>🧹 Đặt Lại Tiến Độ Về 0</span>';
         });
       }
 

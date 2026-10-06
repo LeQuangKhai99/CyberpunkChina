@@ -88,7 +88,7 @@ create policy "Users can update their own progress" on public.user_progress
 
 drop policy if exists "Users can insert their own progress" on public.user_progress;
 create policy "Users can insert their own progress" on public.user_progress
-  for insert with check (auth.uid() = user_id);
+  for insert with check (auth.uid() = user_id or public.is_admin());
 
 -- 5. TRIGGER TỰ ĐỘNG KHỞI TẠO BẢN GHI KHI ĐĂNG KÝ MỚI
 create or replace function public.handle_new_user()
@@ -99,7 +99,6 @@ begin
     new.id,
     new.email,
     coalesce(new.raw_user_meta_data->>'full_name', split_part(new.email, '@', 1)),
-    -- Nếu là email admin thì tự động cấp role admin, ngược lại là user
     case 
       when new.email in ('admin@pinyinpop.com', 'admin@gmail.com') then 'admin'
       else 'user'
@@ -120,7 +119,29 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
 
--- Gán quyền admin ngay cho tài khoản admin hiện có (nếu có):
+-- Gán quyền admin ngay cho tài khoản admin hiện có:
 update public.profiles 
 set role = 'admin' 
 where email in ('admin@pinyinpop.com', 'admin@gmail.com');
+
+-- =========================================================================
+-- 6. ĐỒNG BỘ TOÀN BỘ USERS ĐÃ CÓ TRONG auth.users VÀO profiles & user_progress
+-- (Nếu bạn đã có sẵn 2 user nhưng trang admin chỉ hiện 1, chạy lệnh bên dưới sẽ nạp User 2 vào ngay!)
+-- =========================================================================
+insert into public.profiles (id, email, display_name, role)
+select 
+  id, 
+  email, 
+  coalesce(raw_user_meta_data->>'full_name', split_part(email, '@', 1)),
+  case 
+    when email in ('admin@pinyinpop.com', 'admin@gmail.com') then 'admin'
+    else 'user'
+  end
+from auth.users
+on conflict (id) do update set
+  email = excluded.email,
+  display_name = coalesce(public.profiles.display_name, excluded.display_name);
+
+insert into public.user_progress (user_id)
+select id from auth.users
+on conflict (user_id) do nothing;
