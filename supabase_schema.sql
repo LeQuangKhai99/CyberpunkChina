@@ -63,10 +63,11 @@ alter table public.profiles enable row level security;
 alter table public.user_progress enable row level security;
 
 -- Policies cho profiles:
--- Người dùng xem hồ sơ của mình HOẶC Admin được xem toàn bộ hồ sơ
+-- Cho phép tài khoản đã đăng nhập đọc danh sách profiles (tránh đệ quy RLS và phục vụ Admin/Leaderboard)
 drop policy if exists "Users can view their own profile" on public.profiles;
-create policy "Users can view their own profile" on public.profiles
-  for select using (auth.uid() = id or public.is_admin());
+drop policy if exists "Authenticated users can view profiles" on public.profiles;
+create policy "Authenticated users can view profiles" on public.profiles
+  for select using (auth.role() = 'authenticated');
 
 drop policy if exists "Users can update their own profile" on public.profiles;
 create policy "Users can update their own profile" on public.profiles
@@ -74,7 +75,7 @@ create policy "Users can update their own profile" on public.profiles
 
 drop policy if exists "Users can insert their own profile" on public.profiles;
 create policy "Users can insert their own profile" on public.profiles
-  for insert with check (auth.uid() = id);
+  for insert with check (auth.uid() = id or public.is_admin());
 
 -- Policies cho user_progress:
 -- Người dùng xem tiến độ của mình HOẶC Admin được xem toàn bộ để làm báo cáo
