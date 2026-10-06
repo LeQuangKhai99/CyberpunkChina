@@ -686,56 +686,45 @@ class ToneMasterGame {
       card.className = 'phonetic-group-card';
 
       let tilesHtml = group.items.map(item => `
-        <div class="phonetic-tile" data-letter="${item.letter}" data-speak="${item.speak}" title="Bấm vào để tra các từ vựng bắt đầu bằng âm [${item.letter}]">
+        <div class="phonetic-tile" data-letter="${item.letter}" data-speak="${item.speak}" title="Bấm vào để nghe phát âm chuẩn [${item.letter}]">
+          <span class="tile-speaker-hint" title="Bấm vào ô để nghe">🔊</span>
           <span class="tile-letter">${item.letter}</span>
           <span class="tile-badge ${item.aspirated ? 'badge-aspirated' : 'badge-unaspirated'}">
             ${item.aspirated ? 'BẬT HƠI' : 'KHÔNG BẬT HƠI'}
           </span>
           <span class="tile-vi">${item.vi}</span>
-          <div class="tile-actions-row">
-            <button type="button" class="btn-tile-speak" data-speak="${item.speak}" title="Nghe phát âm chuẩn [${item.letter}]">
-              🔊 Nghe
-            </button>
-            <button type="button" class="btn-tile-explore" data-letter="${item.letter}" title="Tra các từ bắt đầu bằng [${item.letter}]">
-              📚 Tra từ
-            </button>
-          </div>
+          <button type="button" class="btn-tile-explore" data-letter="${item.letter}" title="Tra các từ vựng bắt đầu bằng [${item.letter}]">
+            📖 Tra từ
+          </button>
         </div>
       `).join('');
 
       card.innerHTML = `
         <div class="group-header">
           <span class="group-title">🏷️ ${group.group}</span>
-          <span class="group-tip">${group.desc} (Bấm vào thanh mẫu để tra cứu từ vựng)</span>
+          <span class="group-tip">${group.desc} (Nhấp vào ô để nghe phát âm • Bấm 📖 Tra từ để xem từ vựng)</span>
         </div>
         <div class="phonetic-tiles-row">
           ${tilesHtml}
         </div>
       `;
 
-      // Nút phát âm riêng
-      card.querySelectorAll('.btn-tile-speak').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const speakChar = btn.dataset.speak;
+      // Click vào ô (chữ cái, badge, bất kỳ đâu trên tile TRỪ nút tra từ) -> Phát âm như cũ!
+      card.querySelectorAll('.phonetic-tile').forEach(tile => {
+        tile.addEventListener('click', (e) => {
+          if (e.target.closest('.btn-tile-explore')) return;
+          const speakChar = tile.dataset.speak;
           this.speakChinese(speakChar);
-          btn.style.transform = 'scale(1.15)';
-          btn.style.background = '#10b981';
-          btn.style.color = '#ffffff';
-          setTimeout(() => {
-            btn.style.transform = '';
-            btn.style.background = '';
-            btn.style.color = '';
-          }, 350);
+          tile.classList.add('tile-speaking');
+          setTimeout(() => tile.classList.remove('tile-speaking'), 350);
         });
       });
 
-      // Nút tra từ & Click cả Tile -> Mở Word Explorer
-      card.querySelectorAll('.phonetic-tile').forEach(tile => {
-        tile.addEventListener('click', (e) => {
-          // Nếu bấm vào nút nghe thì không mở explorer
-          if (e.target.closest('.btn-tile-speak')) return;
-          const letter = tile.dataset.letter;
+      // Chỉ khi nhấn vào nút tra từ mới chuyển sang Word Explorer!
+      card.querySelectorAll('.btn-tile-explore').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const letter = btn.dataset.letter;
           this.openPhoneticExplorer('initial', letter);
         });
       });
@@ -758,9 +747,12 @@ class ToneMasterGame {
           <button type="button" class="tone-sub-btn" data-speak="${t.hanzi}" title="${t.tip || `Nghe Thanh ${idx + 1} (${t.text})`}">${t.text}</button>
         `).join('');
 
+        const sampleHanzi = item.tones && item.tones[0] ? item.tones[0].hanzi : '';
+
         return `
           <div class="final-tile-card" data-base="${item.base}">
-            <div class="final-card-header" style="cursor: pointer;" title="Tra các từ chứa vận mẫu [${item.base}]">
+            <div class="final-card-header" data-speak="${sampleHanzi}" title="Bấm vào để nghe phát âm [${item.base}]">
+              <span class="final-speaker-hint">🔊</span>
               <span class="final-base-letter">${item.base}</span>
               <span class="final-vi-approx">${item.vi}</span>
             </div>
@@ -768,7 +760,7 @@ class ToneMasterGame {
               ${toneBtns}
             </div>
             <button type="button" class="btn-final-explore" data-base="${item.base}" title="Tra các từ chứa vận mẫu [${item.base}]">
-              📚 Tra từ [${item.base}]
+              📖 Tra từ [${item.base}]
             </button>
           </div>
         `;
@@ -777,7 +769,7 @@ class ToneMasterGame {
       card.innerHTML = `
         <div class="group-header">
           <span class="group-title">🎵 ${group.group}</span>
-          <span class="group-tip">Nhấp thanh điệu để luyện âm chuẩn hoặc bấm 📚 Tra từ để xem từ vựng</span>
+          <span class="group-tip">Nhấp chữ cái hoặc thanh điệu để nghe phát âm • Bấm 📖 Tra từ để xem từ vựng</span>
         </div>
         <div class="phonetic-tiles-row">
           ${tilesHtml}
@@ -797,19 +789,32 @@ class ToneMasterGame {
             btn.style.transform = '';
             btn.style.background = '';
             btn.style.color = '';
-          }, 400);
+          }, 350);
         });
       });
 
-      // Click nút tra từ hoặc header thẻ vận mẫu -> Mở Word Explorer
-      card.querySelectorAll('.btn-final-explore, .final-card-header').forEach(el => {
-        el.addEventListener('click', (e) => {
+      // Click vào header chữ cái vận mẫu -> Phát âm như cũ!
+      card.querySelectorAll('.final-card-header').forEach(header => {
+        header.addEventListener('click', (e) => {
           e.stopPropagation();
-          const tileCard = el.closest('.final-tile-card');
-          if (tileCard) {
-            const base = tileCard.dataset.base;
-            this.openPhoneticExplorer('final', base);
+          const speakHanzi = header.dataset.speak;
+          if (speakHanzi) {
+            this.speakChinese(speakHanzi);
+            const parentCard = header.closest('.final-tile-card');
+            if (parentCard) {
+              parentCard.classList.add('tile-speaking');
+              setTimeout(() => parentCard.classList.remove('tile-speaking'), 350);
+            }
           }
+        });
+      });
+
+      // CHỈ KHI nhấn vào nút tra từ mới chuyển sang Word Explorer!
+      card.querySelectorAll('.btn-final-explore').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const base = btn.dataset.base;
+          this.openPhoneticExplorer('final', base);
         });
       });
 
