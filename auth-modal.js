@@ -436,7 +436,7 @@
       }
 
       if (!window.PinyinAuth || !window.PinyinAuth.isConfigured()) {
-        this.showAlert('⚠️ Chưa cấu hình kết nối Supabase. Vui lòng chọn tab <strong>"⚙️ Cấu Hình"</strong> để nhập URL & Key của dự án.', 'info');
+        this.showAlert('⚠️ Chưa cấu hình kết nối Supabase trong supabase-config.js.', 'error');
         return;
       }
 
@@ -476,7 +476,7 @@
       }
 
       if (!window.PinyinAuth || !window.PinyinAuth.isConfigured()) {
-        this.showAlert('⚠️ Chưa cấu hình kết nối Supabase. Vui lòng chọn tab <strong>"⚙️ Cấu Hình"</strong> để nhập URL & Key.', 'info');
+        this.showAlert('⚠️ Chưa cấu hình kết nối Supabase trong supabase-config.js.', 'error');
         return;
       }
 
