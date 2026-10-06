@@ -69,19 +69,51 @@ Trò chơi luyện gõ Pinyin tiếng Trung phong cách kẹo ngọt vui nhộn,
 
 ---
 
-## 🚀 Khởi Động Trò Chơi / Quick Start
+## 🚀 Hướng Dẫn Chạy Dự Án / How to Run
 
-Không cần cài đặt công cụ phức tạp hay build bundle. Chỉ cần mở `index.html` trên bất kỳ trình duyệt hiện đại nào hoặc chạy qua máy chủ local:
+Dự án là ứng dụng Web Frontend thuần (**HTML5, CSS3, JavaScript ES6**), **không cần cài đặt dependencies nặng hay build bundle (npm build / webpack)**.
 
+### 1️⃣ Khởi Chạy Bằng Local Server (Khuyên dùng)
+
+Chạy qua Local Server giúp trình duyệt hỗ trợ tốt nhất các tính năng Web Audio API, Canvas, giọng đọc TTS và tránh hạn chế CORS.
+
+#### 🐍 Cách A: Sử dụng Python
+Mở cửa sổ dòng lệnh (Terminal / PowerShell / Command Prompt) tại thư mục dự án và chạy:
 ```bash
-# Sử dụng Python
 python -m http.server 8080
-
-# Hoặc sử dụng Node.js
-npx serve .
 ```
+Sau đó truy cập: **[http://localhost:8080](http://localhost:8080)**
 
-Truy cập: [http://localhost:8080](http://localhost:8080)
+#### 🟢 Cách B: Sử dụng Node.js (npx)
+Nếu máy tính đã cài đặt Node.js:
+```bash
+# Dùng serve
+npx serve -l 8080 .
+
+# Hoặc dùng http-server
+npx http-server -p 8080
+```
+Sau đó truy cập: **[http://localhost:8080](http://localhost:8080)**
+
+#### 💻 Cách C: Sử dụng VS Code Live Server
+Nếu bạn đang dùng Visual Studio Code hoặc Cursor:
+1. Cài đặt tiện ích mở rộng **Live Server** (của Ritwick Dey).
+2. Nhấp chuột phải vào file [`index.html`](index.html) ➔ Chọn **"Open with Live Server"**.
+
+### 2️⃣ Mở Trực Tiếp Trên Trình Duyệt (Direct File)
+Nhấp đúp chuột trực tiếp vào file [`index.html`](index.html) để mở trên Google Chrome, Microsoft Edge, Brave hoặc Firefox.
+
+---
+
+### 🗺️ Bảng Điều Hướng & Các Trang Trong Dự Án
+
+| Trang | File | Đường dẫn Local Server | Chức năng nổi bật |
+| :--- | :--- | :--- | :--- |
+| 🌟 **Cổng Trung Tâm & Pinyin Pop** | [`index.html`](index.html) | `http://localhost:8080/index.html` | Menu tổng hợp & Trò chơi gõ Pinyin Arcade HSK 1 - 6 |
+| ✍️ **Tập Viết Chữ Hán** | [`hanzi-stroke.html`](hanzi-stroke.html) | `http://localhost:8080/hanzi-stroke.html` | Luyện viết theo thứ tự bút thuận chuẩn HSK, lưới Mễ Điền (米字格) |
+| 🗂️ **Thẻ Flashcard 3D** | [`flashcard.html`](flashcard.html) | `http://localhost:8080/flashcard.html` | Học 5.000 từ chia bài 25 từ/deck, Active Recall & Quiz 4 đáp án |
+| 🧩 **Ghép Bộ Thủ & Ghép Từ** | [`hanzi-puzzle.html`](hanzi-puzzle.html) | `http://localhost:8080/hanzi-puzzle.html` | Kéo thả ghép bộ thủ tạo chữ & ghép từ vựng HSK |
+| 🎵 **Vua Thanh Điệu** | [`tone-master.html`](tone-master.html) | `http://localhost:8080/tone-master.html` | Luyện nghe 4 thanh điệu, bảng 21 thanh mẫu & 36 vận mẫu |
 
 ---
 
