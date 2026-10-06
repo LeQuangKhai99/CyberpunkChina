@@ -111,7 +111,6 @@
             <div class="pp-auth-tabs" id="ppAuthTabs">
               <button type="button" class="pp-auth-tab active" data-tab="login">Đăng Nhập</button>
               <button type="button" class="pp-auth-tab" data-tab="register">Đăng Ký</button>
-              <button type="button" class="pp-auth-tab" data-tab="config">⚙️ Cấu Hình</button>
             </div>
 
             <!-- Body Contents -->
@@ -215,6 +214,9 @@
 
                   <!-- Các nút thao tác -->
                   <div class="pp-profile-actions">
+                    <a href="admin.html" class="pp-btn-submit" id="btnGoToAdmin" style="display:none;background:linear-gradient(135deg, #f59e0b, #d97706);box-shadow:0 8px 18px rgba(245, 158, 11, 0.35);text-decoration:none;color:#ffffff;">
+                      <span>👑 BẢNG QUẢN TRỊ ADMIN</span>
+                    </a>
                     <button type="button" class="pp-btn-submit btn-emerald" id="btnSyncNowManual">
                       <span>🔄 Đồng Bộ Ngay Lập Tức</span>
                     </button>
@@ -223,36 +225,6 @@
                     </button>
                   </div>
                 </div>
-              </div>
-
-              <!-- PANE 4: CẤU HÌNH KẾT NỐI SUPABASE -->
-              <div class="pp-auth-pane" id="paneConfig">
-                <form id="formConfig">
-                  <div class="pp-form-group">
-                    <label class="pp-form-label">Supabase Project URL:</label>
-                    <div class="pp-input-wrap">
-                      <span class="pp-input-icon">🌐</span>
-                      <input type="url" id="cfgUrl" class="pp-input" placeholder="https://xyzabcdefg.supabase.co">
-                    </div>
-                  </div>
-
-                  <div class="pp-form-group">
-                    <label class="pp-form-label">Supabase Anon Public Key:</label>
-                    <div class="pp-input-wrap">
-                      <span class="pp-input-icon">🔑</span>
-                      <input type="password" id="cfgKey" class="pp-input" placeholder="eyJhbGciOiJIUzI1NiIsIn...">
-                      <button type="button" class="pp-input-toggle-pwd" data-target="cfgKey">👁️</button>
-                    </div>
-                  </div>
-
-                  <button type="submit" class="pp-btn-submit btn-blue" id="btnSaveConfig">
-                    <span>💾 Lưu Cấu Hình & Kết Nối</span>
-                  </button>
-
-                  <div class="pp-config-help">
-                    💡 <strong>Cài đặt nhanh 1 lần:</strong> Tạo project miễn phí trên <a href="https://supabase.com" target="_blank" style="color:#2563eb;font-weight:700;">supabase.com</a>. Vào <code>Project Settings -> API</code> để lấy Project URL và anon key dán vào đây (hoặc dán trực tiếp trong file <code>supabase-config.js</code>).
-                  </div>
-                </form>
               </div>
 
             </div>
@@ -365,20 +337,9 @@
         });
       }
 
-      // Submit Save Config
-      const formConfig = document.getElementById('formConfig');
-      if (formConfig) {
-        formConfig.addEventListener('submit', (e) => {
-          e.preventDefault();
-          this.handleSaveConfig();
-        });
-      }
-    }
-
     openModal(tab = 'login') {
       if (!this.backdrop) return;
       this.clearAlert();
-      this.populateConfigFields();
 
       if (window.PinyinAuth && window.PinyinAuth.isLoggedIn()) {
         this.switchTab('profile');
@@ -406,7 +367,7 @@
       });
 
       // Ẩn tất cả panes
-      const panes = ['paneLogin', 'paneRegister', 'paneProfile', 'paneConfig'];
+      const panes = ['paneLogin', 'paneRegister', 'paneProfile'];
       panes.forEach(p => {
         const el = document.getElementById(p);
         if (el) el.classList.remove('active');
@@ -416,8 +377,7 @@
       const targetPane = {
         'login': 'paneLogin',
         'register': 'paneRegister',
-        'profile': 'paneProfile',
-        'config': 'paneConfig'
+        'profile': 'paneProfile'
       }[tabName] || 'paneLogin';
 
       const targetEl = document.getElementById(targetPane);
@@ -440,45 +400,6 @@
       if (!alertEl) return;
       alertEl.className = 'pp-auth-alert';
       alertEl.innerHTML = '';
-    }
-
-    populateConfigFields() {
-      const cfgUrl = document.getElementById('cfgUrl');
-      const cfgKey = document.getElementById('cfgKey');
-      if (cfgUrl && cfgKey && window.SUPABASE_CONFIG) {
-        cfgUrl.value = window.SUPABASE_CONFIG.url || '';
-        cfgKey.value = window.SUPABASE_CONFIG.anonKey || '';
-      }
-    }
-
-    handleSaveConfig() {
-      const cfgUrl = document.getElementById('cfgUrl');
-      const cfgKey = document.getElementById('cfgKey');
-      if (!cfgUrl || !cfgKey) return;
-
-      const urlVal = cfgUrl.value.trim();
-      const keyVal = cfgKey.value.trim();
-
-      if (!urlVal.startsWith('http')) {
-        this.showAlert('URL Supabase phải bắt đầu bằng http:// hoặc https://', 'error');
-        return;
-      }
-
-      try {
-        localStorage.setItem('pinyin_pop_sb_url', urlVal);
-        localStorage.setItem('pinyin_pop_sb_key', keyVal);
-        window.SUPABASE_CONFIG.url = urlVal;
-        window.SUPABASE_CONFIG.anonKey = keyVal;
-
-        if (window.PinyinAuth) {
-          window.PinyinAuth.initClient();
-        }
-
-        this.showAlert('✅ Đã lưu cấu hình Supabase! Bạn có thể Đăng Nhập hoặc Đăng Ký ngay.', 'success');
-        setTimeout(() => this.switchTab('login'), 1200);
-      } catch (e) {
-        this.showAlert('Lỗi lưu cài đặt: ' + e.message, 'error');
-      }
     }
 
     async handleLogin() {
@@ -581,15 +502,17 @@
       const isLogged = window.PinyinAuth && window.PinyinAuth.isLoggedIn();
       const isSyncing = window.PinyinAuth && window.PinyinAuth.isSyncing;
       const isConfigured = window.PinyinAuth && window.PinyinAuth.isConfigured();
+      const isAdmin = window.PinyinAuth && window.PinyinAuth.isAdmin();
 
       if (isLogged) {
         const name = window.PinyinAuth.getUserDisplayName();
         const initial = name ? name.charAt(0).toUpperCase() : 'U';
+        const adminTag = isAdmin ? ' 👑' : '';
 
-        this.chipBtn.className = 'pp-auth-chip-btn logged-in';
+        this.chipBtn.className = 'pp-auth-chip-btn logged-in' + (isAdmin ? ' is-admin' : '');
         this.chipBtn.innerHTML = `
           <div class="pp-auth-chip-avatar">${initial}</div>
-          <span class="pp-auth-chip-text">${name}</span>
+          <span class="pp-auth-chip-text">${name}${adminTag}</span>
           <span class="pp-auth-status-dot ${isSyncing ? 'syncing' : 'synced'}" title="${isSyncing ? 'Đang đồng bộ...' : 'Đã đồng bộ Cloud'}"></span>
         `;
       } else {
@@ -610,11 +533,15 @@
       const nameEl = document.getElementById('profileDisplayName');
       const emailEl = document.getElementById('profileEmail');
       const avatarEl = document.getElementById('profileAvatarBig');
+      const btnAdmin = document.getElementById('btnGoToAdmin');
 
       const displayName = window.PinyinAuth.getUserDisplayName();
-      if (nameEl) nameEl.textContent = displayName;
+      const isAdmin = window.PinyinAuth.isAdmin();
+
+      if (nameEl) nameEl.innerHTML = displayName + (isAdmin ? ' <span style="font-size:12px;background:#fef3c7;color:#d97706;padding:2px 8px;border-radius:999px;font-weight:800;border:1px solid #fde68a;">👑 ADMIN</span>' : '');
       if (emailEl) emailEl.textContent = user.email || '';
       if (avatarEl) avatarEl.textContent = displayName ? displayName.charAt(0).toUpperCase() : '👤';
+      if (btnAdmin) btnAdmin.style.display = isAdmin ? 'flex' : 'none';
 
       // Đọc thống kê
       const getSetCount = (key) => {

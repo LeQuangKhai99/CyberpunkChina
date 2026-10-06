@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PINYIN POP! 👑 Bảng Quản Trị Admin & Báo Cáo Thống Kê</title>
+  <meta name="description" content="Trang quản trị hệ thống học tiếng Trung Pinyin Pop, theo dõi báo cáo thống kê và quản lý tiến độ học tập của học viên.">
+  <link rel="icon" type="image/png" href="assets/logo.png">
+
+  <!-- Google Fonts: 100% Native Vietnamese & CJK -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=Lexend:wght@500;600;700;800;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css?v=20261005_v6">
+  <link rel="stylesheet" href="auth-modal.css?v=20261006_v1">
+  <link rel="stylesheet" href="admin.css?v=20261006_v1">
+</head>
+<body class="theme-pinyin-pop admin-body">
+
+  <!-- Background Ambient Glow -->
+  <div class="admin-bg-glow"></div>
+
+  <!-- AUTH GUARD OVERLAY (Hiển thị khi chưa đăng nhập hoặc không phải Admin) -->
+  <div class="admin-guard-overlay" id="adminGuardOverlay">
+    <div class="admin-guard-card">
+      <div class="admin-guard-icon" id="guardIcon">🔒</div>
+      <h2 class="admin-guard-title" id="guardTitle">KHU VỰC QUẢN TRỊ ADMIN</h2>
+      <p class="admin-guard-desc" id="guardDesc">
+        Trang này chỉ dành riêng cho Quản Trị Viên hệ thống. Vui lòng đăng nhập bằng tài khoản Admin để tiếp tục.
+      </p>
+
+      <!-- Quick Admin Login Form -->
+      <form id="adminLoginForm" class="admin-guard-form">
+        <div class="guard-input-group">
+          <label>Email Quản Trị:</label>
+          <input type="email" id="adminEmail" placeholder="admin@pinyinpop.com" required autocomplete="username">
+        </div>
+        <div class="guard-input-group">
+          <label>Mật Khẩu:</label>
+          <input type="password" id="adminPassword" placeholder="Nhập mật khẩu..." required autocomplete="current-password">
+        </div>
+        <div class="admin-guard-alert" id="adminGuardAlert"></div>
+        <button type="submit" class="admin-btn-primary" id="btnAdminLoginSubmit">
+          <span>🚀 Đăng Nhập Quản Trị</span>
+        </button>
+      </form>
+
+      <div class="admin-guard-actions">
+        <a href="index.html" class="admin-btn-secondary">
+          🏠 Quay Về Trang Chủ Học Tập
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN ADMIN APP WRAPPER -->
+  <div class="admin-container" id="adminMainContainer" style="display: none;">
+
+    <!-- TOP HEADER -->
+    <header class="admin-navbar">
+      <div class="admin-brand">
+        <img src="assets/logo.png" alt="Pinyin Pop Mascot" class="brand-logo-img" width="46" height="46">
+        <div class="admin-brand-text">
+          <div class="admin-brand-title">
+            PINYIN POP! <span>ADMIN CONSOLE</span> <span class="badge-role">👑 QUẢN TRỊ</span>
+          </div>
+          <div class="admin-brand-sub">HỆ THỐNG QUẢN LÝ TIẾN ĐỘ HỌC VIÊN & BÁO CÁO THỐNG KÊ</div>
+        </div>
+      </div>
+
+      <!-- Quick Telemetry & Nav Actions -->
+      <div class="admin-nav-actions">
+        <div class="admin-live-clock" id="adminClock">--:--:--</div>
+        
+        <button class="admin-btn-chip" id="btnRefreshData" title="Làm mới dữ liệu từ Supabase Cloud">
+          🔄 <span>Làm Mới</span>
+        </button>
+
+        <a href="index.html" class="admin-btn-chip" title="Về trang chủ trò chơi">
+          🏠 <span>Về Web Học</span>
+        </a>
+
+        <!-- Admin Profile Pill -->
+        <div class="admin-user-pill">
+          <div class="admin-avatar-sm" id="adminAvatarSm">A</div>
+          <span class="admin-user-email" id="adminUserEmail">admin@pinyinpop.com</span>
+          <button class="btn-logout-icon" id="btnAdminLogout" title="Đăng xuất">🚪</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- NAVIGATION TABS -->
+    <nav class="admin-tabs-nav">
+      <button class="admin-tab-btn active" id="tabBtnDashboard" data-tab="tabDashboard">
+        📊 <span>Báo Cáo Thống Kê Tổng Quan</span>
+      </button>
+      <button class="admin-tab-btn" id="tabBtnUsers" data-tab="tabUsers">
+        👥 <span>Quản Lý Học Viên & Tiến Độ</span>
+        <span class="count-tag" id="tabUsersCount">0</span>
+      </button>
+    </nav>
+
+    <!-- ===================================================================
+         SECTION 1: DASHBOARD BÁO CÁO THỐNG KÊ (ANALYTICS)
+         =================================================================== -->
+    <main class="admin-tab-pane active" id="tabDashboard">
+
+      <!-- KPI METRIC CARDS -->
+      <section class="admin-kpi-grid">
+        
+        <!-- KPI 1: Tổng số học viên -->
+        <div class="kpi-card card-cyan">
+          <div class="kpi-icon-wrap">👥</div>
+          <div class="kpi-info">
+            <span class="kpi-label">TỔNG HỌC VIÊN ĐĂNG KÝ</span>
+            <div class="kpi-value" id="kpiTotalUsers">0</div>
+            <span class="kpi-subtext" id="kpiActiveUsers">Đang hoạt động trên Cloud</span>
+          </div>
+        </div>
+
+        <!-- KPI 2: Tổng từ Flashcard đã thuộc -->
+        <div class="kpi-card card-purple">
+          <div class="kpi-icon-wrap">🗂️</div>
+          <div class="kpi-info">
+            <span class="kpi-label">TỔNG TỪ FLASHCARD THUỘC</span>
+            <div class="kpi-value" id="kpiTotalMastered">0</div>
+            <span class="kpi-subtext">Kho từ HSK 1 đến HSK 6</span>
+          </div>
+        </div>
+
+        <!-- KPI 3: Tổng chữ Hán đã viết xong -->
+        <div class="kpi-card card-pink">
+          <div class="kpi-icon-wrap">✍️</div>
+          <div class="kpi-info">
+            <span class="kpi-label">CHỮ HÁN ĐÃ VIẾT XONG</span>
+            <div class="kpi-value" id="kpiTotalStrokes">0</div>
+            <span class="kpi-subtext" id="kpiTotalStrokesSub">Luyện bút thuận ô Mễ Điền</span>
+          </div>
+        </div>
+
+        <!-- KPI 4: Kỷ lục điểm Pinyin Pop Arcade -->
+        <div class="kpi-card card-amber">
+          <div class="kpi-icon-wrap">🏆</div>
+          <div class="kpi-info">
+            <span class="kpi-label">ĐIỂM KỶ LỤC HỆ THỐNG</span>
+            <div class="kpi-value" id="kpiHighScore">0</div>
+            <span class="kpi-subtext" id="kpiHighScoreHolder">Pinyin Pop Arcade Record</span>
+          </div>
+        </div>
+
+        <!-- KPI 5: Chuỗi học tập / Streak cao nhất -->
+        <div class="kpi-card card-emerald">
+          <div class="kpi-icon-wrap">🔥</div>
+          <div class="kpi-info">
+            <span class="kpi-label">CHUỖI STREAK KỶ LỤC</span>
+            <div class="kpi-value" id="kpiMaxStreak">0 🔥</div>
+            <span class="kpi-subtext">Độ chuyên cần của học viên</span>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ANALYTICS CHARTS & TOP PERFORMERS -->
+      <section class="admin-charts-grid">
+
+        <!-- Chart Card: Tỷ lệ hoạt động -->
+        <div class="admin-card chart-card">
+          <div class="card-head">
+            <h3 class="card-title">📈 Phân Bổ Hoạt Động Của Học Viên</h3>
+            <span class="card-tag">Dữ liệu thời gian thực</span>
+          </div>
+          <div class="card-body">
+            <div class="activity-bars-wrap">
+              
+              <div class="bar-item">
+                <div class="bar-item-meta">
+                  <span>🗂️ Học Thẻ Flashcard (Active Recall)</span>
+                  <strong id="barPctFlashcard">0%</strong>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill fill-blue" id="barFillFlashcard" style="width: 0%;"></div>
+                </div>
+              </div>
+
+              <div class="bar-item">
+                <div class="bar-item-meta">
+                  <span>✍️ Tập Viết Chữ Hán (Bút Thuận)</span>
+                  <strong id="barPctStroke">0%</strong>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill fill-pink" id="barFillStroke" style="width: 0%;"></div>
+                </div>
+              </div>
+
+              <div class="bar-item">
+                <div class="bar-item-meta">
+                  <span>🎮 Chơi Bắn Chữ Pinyin Pop Arcade</span>
+                  <strong id="barPctArcade">0%</strong>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill fill-amber" id="barFillArcade" style="width: 0%;"></div>
+                </div>
+              </div>
+
+              <div class="bar-item">
+                <div class="bar-item-meta">
+                  <span>🎵 Vua Thanh Điệu & Luyện Phát Âm</span>
+                  <strong id="barPctTone">0%</strong>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill fill-purple" id="barFillTone" style="width: 0%;"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Leaderboard: Bảng vàng học viên chăm chỉ nhất -->
+        <div class="admin-card leaderboard-card">
+          <div class="card-head">
+            <h3 class="card-title">🌟 Bảng Vàng Học Viên Xuất Sắc Nhất</h3>
+            <span class="card-tag gold">Top Leaderboard</span>
+          </div>
+          <div class="card-body">
+            <div class="leaderboard-list" id="leaderboardList">
+              <div class="loading-placeholder">Đang tải bảng xếp hạng...</div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- SYSTEM CLOUD STATUS INFO -->
+      <section class="admin-card system-info-card">
+        <div class="system-status-row">
+          <div class="sys-item">
+            <span class="sys-dot online"></span>
+            <span>Cơ sở dữ liệu Supabase: <strong>Đang kết nối (Online)</strong></span>
+          </div>
+          <div class="sys-item">
+            <span>Bảo mật: <strong>Row Level Security (RLS) Đang kích hoạt</strong></span>
+          </div>
+          <div class="sys-item">
+            <span>Đồng bộ 2 chiều: <strong>Tự động (Debounced 1.8s)</strong></span>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ===================================================================
+         SECTION 2: QUẢN LÝ HỌC VIÊN (USER DIRECTORY)
+         =================================================================== -->
+    <main class="admin-tab-pane" id="tabUsers">
+
+      <!-- TOOLBAR: TÌM KIẾM & BỘ LỌC -->
+      <div class="users-toolbar">
+        
+        <!-- Search Input -->
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="inputSearchUser" class="admin-search-input" placeholder="Tìm theo tên học viên hoặc địa chỉ email...">
+          <button id="btnClearSearch" class="btn-clear-search">✕</button>
+        </div>
+
+        <!-- Filters & Sorters -->
+        <div class="filter-actions">
+          <div class="filter-group">
+            <label>Vai trò:</label>
+            <select id="filterRole" class="admin-select">
+              <option value="all">Tất cả vai trò</option>
+              <option value="user">Chỉ Học viên (User)</option>
+              <option value="admin">Chỉ Quản trị (Admin)</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>Sắp xếp theo:</label>
+            <select id="sortBy" class="admin-select">
+              <option value="newest">Ngày tham gia mới nhất</option>
+              <option value="mastered">Từ thuộc nhiều nhất</option>
+              <option value="strokes">Chữ viết nhiều nhất</option>
+              <option value="highscore">Điểm game cao nhất</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- USERS DATA TABLE -->
+      <div class="admin-table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>HỌC VIÊN</th>
+              <th>VAI TRÒ</th>
+              <th>FLASHCARD ĐÃ THUỘC</th>
+              <th>TẬP VIẾT CHỮ HÁN</th>
+              <th>ĐIỂM CAO NHẤT</th>
+              <th>LẦN ĐỒNG BỘ CUỐI</th>
+              <th style="text-align: right;">THAO TÁC</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+            <tr>
+              <td colspan="7" class="table-loading">Đang tải danh sách học viên từ Supabase...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ===================================================================
+       MODAL: CHI TIẾT TIẾN ĐỘ HỌC VIÊN (USER DETAILS MODAL)
+       =================================================================== -->
+  <div class="admin-modal-backdrop" id="userDetailModalBackdrop">
+    <div class="admin-modal-dialog">
+      <button class="modal-close-btn" id="btnCloseUserModal">✕</button>
+
+      <div class="modal-header">
+        <div class="user-big-avatar" id="modalUserAvatar">👤</div>
+        <div>
+          <h3 class="modal-user-name" id="modalUserName">Học viên</h3>
+          <div class="modal-user-email" id="modalUserEmail">email@example.com</div>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        
+        <!-- Detailed Stats Row -->
+        <div class="modal-stats-grid">
+          <div class="modal-stat-box">
+            <span class="m-val" id="modalStatMastered">0</span>
+            <span class="m-lbl">Từ vựng đã thuộc</span>
+          </div>
+          <div class="modal-stat-box">
+            <span class="m-val" id="modalStatStrokes">0</span>
+            <span class="m-lbl">Chữ Hán đã viết</span>
+          </div>
+          <div class="modal-stat-box">
+            <span class="m-val" id="modalStatAccuracy">100%</span>
+            <span class="m-lbl">Độ chính xác nét</span>
+          </div>
+          <div class="modal-stat-box">
+            <span class="m-val" id="modalStatScore">0</span>
+            <span class="m-lbl">Kỷ lục điểm số</span>
+          </div>
+        </div>
+
+        <!-- Mastered Vocab Tags -->
+        <div class="modal-section-title">
+          📚 Danh Sách Từ Vựng Đã Học Thuộc (<span id="modalVocabCount">0</span> từ):
+        </div>
+        <div class="modal-tags-cloud" id="modalVocabCloud">
+          <em>Chưa có từ vựng nào được đánh dấu thuộc.</em>
+        </div>
+
+        <!-- Role Toggle Action -->
+        <div class="modal-role-action">
+          <span>Quyền hạn tài khoản: <strong id="modalCurrentRole">user</strong></span>
+          <button type="button" class="btn-toggle-role" id="btnToggleRoleAction">
+            🔄 Chuyển vai trò (Admin / User)
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase & Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js?v=20261006_v1"></script>
+  <script src="supabase-client.js?v=20261006_v1"></script>
+  <script src="admin.js?v=20261006_v1"></script>
+</body>
+</html>

@@ -1,11 +1,9 @@
 -- =========================================================================
--- PINYIN POP! - SUPABASE DATABASE SCHEMA (HOÀN TOÀN MIỄN PHÍ)
+-- PINYIN POP! - SUPABASE DATABASE SCHEMA (HỖ TRỢ ADMIN DASHBOARD & BÁO CÁO)
 -- 
--- Hướng dẫn cài đặt trong 1 phút:
--- 1. Đăng nhập Supabase (https://supabase.com) -> Tạo New Project
--- 2. Vào mục "SQL Editor" ở thanh menu bên trái
--- 3. Bấm "New query", dán toàn bộ nội dung file này vào và bấm "RUN" (hoặc Ctrl+Enter)
--- 4. Vào mục "Project Settings" -> "API" để lấy URL và Khóa anon public key.
+-- Hướng dẫn:
+-- 1. Mở Supabase (https://supabase.com) -> Vào mục "SQL Editor"
+-- 2. Dán toàn bộ nội dung file này vào và bấm "RUN" (Ctrl+Enter)
 -- =========================================================================
 
 -- 1. BẢNG HỒ SƠ NGƯỜI DÙNG (profiles)
@@ -14,9 +12,13 @@ create table if not exists public.profiles (
   email text,
   display_name text,
   avatar_url text,
+  role text default 'user' not null, -- 'admin' hoặc 'user'
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
+
+-- Nếu bảng đã tồn tại từ trước, đảm bảo có cột role
+alter table public.profiles add column if not exists role text default 'user' not null;
 
 -- 2. BẢNG TIẾN ĐỘ HỌC TẬP ĐA THIẾT BỊ (user_progress)
 create table if not exists public.user_progress (
@@ -39,53 +41,69 @@ create table if not exists public.user_progress (
   tone_master_score int default 0 not null,
   puzzle_score int default 0 not null,
   
-  -- Trường dữ liệu mở rộng cho tương lai
+  -- Trường dữ liệu mở rộng
   extra_data jsonb default '{}'::jsonb not null,
   
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
--- 3. BẬT BẢO MẬT PHÂN QUYỀN THEO HÀNG (Row Level Security - RLS)
+-- 3. HÀM KIỂM TRA QUYỀN ADMIN (Security Definer)
+create or replace function public.is_admin()
+returns boolean as $$
+begin
+  return exists (
+    select 1 from public.profiles
+    where id = auth.uid() and role = 'admin'
+  );
+end;
+$$ language plpgsql security definer;
+
+-- 4. BẬT BẢO MẬT PHÂN QUYỀN THEO HÀNG (Row Level Security - RLS)
 alter table public.profiles enable row level security;
 alter table public.user_progress enable row level security;
 
--- Chính sách bảo mật (RLS Policies) cho profiles:
--- Người dùng chỉ được xem và cập nhật hồ sơ của chính mình
+-- Policies cho profiles:
+-- Người dùng xem hồ sơ của mình HOẶC Admin được xem toàn bộ hồ sơ
 drop policy if exists "Users can view their own profile" on public.profiles;
 create policy "Users can view their own profile" on public.profiles
-  for select using (auth.uid() = id);
+  for select using (auth.uid() = id or public.is_admin());
 
 drop policy if exists "Users can update their own profile" on public.profiles;
 create policy "Users can update their own profile" on public.profiles
-  for update using (auth.uid() = id);
+  for update using (auth.uid() = id or public.is_admin());
 
 drop policy if exists "Users can insert their own profile" on public.profiles;
 create policy "Users can insert their own profile" on public.profiles
   for insert with check (auth.uid() = id);
 
--- Chính sách bảo mật (RLS Policies) cho user_progress:
--- Mỗi người dùng chỉ được đọc, ghi và cập nhật tiến độ của chính mình
+-- Policies cho user_progress:
+-- Người dùng xem tiến độ của mình HOẶC Admin được xem toàn bộ để làm báo cáo
 drop policy if exists "Users can view their own progress" on public.user_progress;
 create policy "Users can view their own progress" on public.user_progress
-  for select using (auth.uid() = user_id);
+  for select using (auth.uid() = user_id or public.is_admin());
 
 drop policy if exists "Users can update their own progress" on public.user_progress;
 create policy "Users can update their own progress" on public.user_progress
-  for update using (auth.uid() = user_id);
+  for update using (auth.uid() = user_id or public.is_admin());
 
 drop policy if exists "Users can insert their own progress" on public.user_progress;
 create policy "Users can insert their own progress" on public.user_progress
   for insert with check (auth.uid() = user_id);
 
--- 4. TRIGGER TỰ ĐỘNG KHỞI TẠO BẢN GHI KHI ĐĂNG KÝ MỚI
+-- 5. TRIGGER TỰ ĐỘNG KHỞI TẠO BẢN GHI KHI ĐĂNG KÝ MỚI
 create or replace function public.handle_new_user()
 returns trigger as $$
 begin
-  insert into public.profiles (id, email, display_name)
+  insert into public.profiles (id, email, display_name, role)
   values (
     new.id,
     new.email,
-    coalesce(new.raw_user_meta_data->>'full_name', split_part(new.email, '@', 1))
+    coalesce(new.raw_user_meta_data->>'full_name', split_part(new.email, '@', 1)),
+    -- Nếu là email admin thì tự động cấp role admin, ngược lại là user
+    case 
+      when new.email in ('admin@pinyinpop.com', 'admin@gmail.com') then 'admin'
+      else 'user'
+    end
   )
   on conflict (id) do nothing;
 
@@ -101,3 +119,8 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
+
+-- Gán quyền admin ngay cho tài khoản admin hiện có (nếu có):
+update public.profiles 
+set role = 'admin' 
+where email in ('admin@pinyinpop.com', 'admin@gmail.com');

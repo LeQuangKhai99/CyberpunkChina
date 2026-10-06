@@ -13,6 +13,7 @@
       this.syncDebounceTimer = null;
       this.isSyncing = false;
       this.lastSyncTime = null;
+      this.userRole = 'user';
       this.listeners = new Set();
       this.initClient();
     }
@@ -38,22 +39,29 @@
           // Lắng nghe sự kiện đăng nhập / đăng xuất
           this.client.auth.onAuthStateChange(async (event, session) => {
             this.currentUser = session ? session.user : null;
+            if (this.currentUser) {
+              await this.checkUserRole();
+            } else {
+              this.userRole = 'user';
+            }
             this.notifyStatusChange(event);
 
             if (event === 'SIGNED_IN' && this.currentUser) {
-              console.log('✅ Đã đăng nhập Supabase:', this.currentUser.email);
+              console.log('✅ Đã đăng nhập Supabase:', this.currentUser.email, 'Role:', this.userRole);
               // Tự động đồng bộ 2 chiều ngay khi đăng nhập
               await this.syncBidirectional();
             } else if (event === 'SIGNED_OUT') {
               console.log('🚪 Đã đăng xuất Supabase');
               this.currentUser = null;
+              this.userRole = 'user';
             }
           });
 
           // Kiểm tra session hiện tại
-          this.client.auth.getSession().then(({ data: { session } }) => {
+          this.client.auth.getSession().then(async ({ data: { session } }) => {
             this.currentUser = session ? session.user : null;
             if (this.currentUser) {
+              await this.checkUserRole();
               this.syncBidirectional();
             }
             this.notifyStatusChange('INITIAL_CHECK');
@@ -85,6 +93,39 @@
       if (!this.currentUser) return 'Khách';
       const meta = this.currentUser.user_metadata || {};
       return meta.full_name || meta.display_name || (this.currentUser.email ? this.currentUser.email.split('@')[0] : 'Học viên');
+    }
+
+    async checkUserRole() {
+      if (!this.client || !this.currentUser) {
+        this.userRole = 'user';
+        return 'user';
+      }
+      try {
+        const { data, error } = await this.client
+          .from('profiles')
+          .select('role')
+          .eq('id', this.currentUser.id)
+          .maybeSingle();
+
+        if (error) {
+          console.warn('Lỗi lấy quyền người dùng:', error);
+          this.userRole = 'user';
+        } else {
+          this.userRole = (data && data.role === 'admin') ? 'admin' : 'user';
+        }
+        return this.userRole;
+      } catch (e) {
+        this.userRole = 'user';
+        return 'user';
+      }
+    }
+
+    getUserRole() {
+      return this.userRole;
+    }
+
+    isAdmin() {
+      return this.userRole === 'admin';
     }
 
     /* =====================================================================

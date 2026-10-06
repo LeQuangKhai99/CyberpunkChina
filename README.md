@@ -114,6 +114,7 @@ Nhấp đúp chuột trực tiếp vào file [`index.html`](index.html) để m�
 | 🗂️ **Thẻ Flashcard 3D** | [`flashcard.html`](flashcard.html) | `http://localhost:8080/flashcard.html` | Học 5.000 từ chia bài 25 từ/deck, Active Recall & Quiz 4 đáp án |
 | 🧩 **Ghép Bộ Thủ & Ghép Từ** | [`hanzi-puzzle.html`](hanzi-puzzle.html) | `http://localhost:8080/hanzi-puzzle.html` | Kéo thả ghép bộ thủ tạo chữ & ghép từ vựng HSK |
 | 🎵 **Vua Thanh Điệu** | [`tone-master.html`](tone-master.html) | `http://localhost:8080/tone-master.html` | Luyện nghe 4 thanh điệu, bảng 21 thanh mẫu & 36 vận mẫu |
+| 👑 **Quản Trị Admin & Báo Cáo** | [`admin.html`](admin.html) | `http://localhost:8080/admin.html` | Báo cáo KPI, phân tích tiến độ, quản lý & phân quyền học viên |
 
 ---
 
