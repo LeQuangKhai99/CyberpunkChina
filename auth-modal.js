@@ -505,7 +505,13 @@
       btn.innerHTML = '<span>🚀 Đăng Nhập & Đồng Bộ</span>';
 
       if (error) {
-        this.showAlert(`❌ Đăng nhập thất bại: ${error.message}`, 'error');
+        let msg = error.message;
+        if (msg.includes('Email not confirmed') || msg.includes('email_not_confirmed')) {
+          msg = 'Email chưa được kích hoạt. <br>👉 <strong>Cách sửa ngay trong 5 giây:</strong> Vào Supabase ➔ <em>Authentication</em> ➔ <em>Users</em> ➔ Nhấp dấu <strong>[...]</strong> bên cạnh email này ➔ chọn <strong>"Confirm user"</strong>.';
+        } else if (msg.includes('Invalid login credentials')) {
+          msg = 'Email hoặc mật khẩu không chính xác. Vui lòng kiểm tra lại.';
+        }
+        this.showAlert(`❌ Đăng nhập thất bại: ${msg}`, 'error');
       } else {
         this.showAlert('🎉 Đăng nhập thành công! Đang đồng bộ tiến độ...', 'success');
         setTimeout(() => {
@@ -539,7 +545,14 @@
       btn.innerHTML = '<span>✨ Tạo Tài Khoản Miễn Phí</span>';
 
       if (error) {
-        this.showAlert(`❌ Đăng ký thất bại: ${error.message}`, 'error');
+        let msg = error.message;
+        if (msg.includes('User already registered')) {
+          msg = 'Email này đã được đăng ký trước đó. Bạn hãy chuyển sang tab Đăng Nhập.';
+        }
+        this.showAlert(`❌ Đăng ký thất bại: ${msg}`, 'error');
+      } else if (data && data.user && !data.session) {
+        // Dự án đang bật chế độ bắt buộc Confirm Email
+        this.showAlert('🎉 Tạo tài khoản thành công! <br>⚠️ Dự án đang bật bắt buộc xác thực email: Hãy vào Supabase ➔ <em>Authentication</em> ➔ <em>Users</em> ➔ Nhấp <strong>[...]</strong> ➔ chọn <strong>"Confirm user"</strong> để kích hoạt tài khoản ngay!', 'info');
       } else {
         this.showAlert('🎉 Đăng ký thành công! Tiến độ hiện tại đã được sao lưu lên Cloud.', 'success');
         setTimeout(() => {
