@@ -269,14 +269,38 @@ class ToneMasterGame {
     // Canvas Background
     this.bgCanvas = document.getElementById('toneBgCanvas');
     this.bgCtx = this.bgCanvas ? this.bgCanvas.getContext('2d') : null;
+    // Phonetic Word Explorer State
+    this.explorerType = 'initial'; // 'initial' | 'final'
+    this.explorerCode = 'b';
+    this.explorerBaseWords = [];
+    this.explorerFilteredWords = [];
+    this.explorerPage = 1;
+    this.explorerPageSize = 40;
+    this.explorerSearchTerm = '';
+    this.explorerHskFilter = 'all';
+    this.explorerToneFilter = 'all';
+    this.explorerSampleHanzi = '玻';
   }
 
   init() {
     this.setupBackgroundCanvas();
     this.setupEventListeners();
+    this.setupExplorerEventListeners();
     this.renderPhoneticsLab();
     this.loadNewQuestion();
     this.speakingEngine = new SpeakingPracticeEngine(this);
+
+    // Kiểm tra URL params để mở trực tiếp Word Explorer nếu có ?initial=b hoặc ?final=ang
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const initialParam = urlParams.get('initial') || urlParams.get('init');
+      const finalParam = urlParams.get('final');
+      if (initialParam) {
+        setTimeout(() => this.openPhoneticExplorer('initial', initialParam), 80);
+      } else if (finalParam) {
+        setTimeout(() => this.openPhoneticExplorer('final', finalParam), 80);
+      }
+    } catch (e) {}
   }
 
   /* ========================================================================
@@ -662,37 +686,57 @@ class ToneMasterGame {
       card.className = 'phonetic-group-card';
 
       let tilesHtml = group.items.map(item => `
-        <div class="phonetic-tile" data-letter="${item.letter}" data-speak="${item.speak}">
+        <div class="phonetic-tile" data-letter="${item.letter}" data-speak="${item.speak}" title="Bấm vào để tra các từ vựng bắt đầu bằng âm [${item.letter}]">
           <span class="tile-letter">${item.letter}</span>
           <span class="tile-badge ${item.aspirated ? 'badge-aspirated' : 'badge-unaspirated'}">
             ${item.aspirated ? 'BẬT HƠI' : 'KHÔNG BẬT HƠI'}
           </span>
           <span class="tile-vi">${item.vi}</span>
-          <span class="tile-speaker">🔊 Phát âm [${item.letter}]</span>
+          <div class="tile-actions-row">
+            <button type="button" class="btn-tile-speak" data-speak="${item.speak}" title="Nghe phát âm chuẩn [${item.letter}]">
+              🔊 Nghe
+            </button>
+            <button type="button" class="btn-tile-explore" data-letter="${item.letter}" title="Tra các từ bắt đầu bằng [${item.letter}]">
+              📚 Tra từ
+            </button>
+          </div>
         </div>
       `).join('');
 
       card.innerHTML = `
         <div class="group-header">
           <span class="group-title">🏷️ ${group.group}</span>
-          <span class="group-tip">${group.desc}</span>
+          <span class="group-tip">${group.desc} (Bấm vào thanh mẫu để tra cứu từ vựng)</span>
         </div>
         <div class="phonetic-tiles-row">
           ${tilesHtml}
         </div>
       `;
 
-      // Event listener for tiles: speak the authentic initial call-name!
-      card.querySelectorAll('.phonetic-tile').forEach(tile => {
-        tile.addEventListener('click', () => {
-          const speakChar = tile.dataset.speak;
+      // Nút phát âm riêng
+      card.querySelectorAll('.btn-tile-speak').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const speakChar = btn.dataset.speak;
           this.speakChinese(speakChar);
-          tile.style.transform = 'scale(1.15)';
-          tile.style.borderColor = '#10b981';
+          btn.style.transform = 'scale(1.15)';
+          btn.style.background = '#10b981';
+          btn.style.color = '#ffffff';
           setTimeout(() => {
-            tile.style.transform = '';
-            tile.style.borderColor = '';
+            btn.style.transform = '';
+            btn.style.background = '';
+            btn.style.color = '';
           }, 350);
+        });
+      });
+
+      // Nút tra từ & Click cả Tile -> Mở Word Explorer
+      card.querySelectorAll('.phonetic-tile').forEach(tile => {
+        tile.addEventListener('click', (e) => {
+          // Nếu bấm vào nút nghe thì không mở explorer
+          if (e.target.closest('.btn-tile-speak')) return;
+          const letter = tile.dataset.letter;
+          this.openPhoneticExplorer('initial', letter);
         });
       });
 
@@ -711,16 +755,21 @@ class ToneMasterGame {
 
       let tilesHtml = group.items.map(item => {
         const toneBtns = item.tones.map((t, idx) => `
-          <button class="tone-sub-btn" data-speak="${t.hanzi}" title="${t.tip || `Nghe Thanh ${idx + 1} (${t.text})`}">${t.text}</button>
+          <button type="button" class="tone-sub-btn" data-speak="${t.hanzi}" title="${t.tip || `Nghe Thanh ${idx + 1} (${t.text})`}">${t.text}</button>
         `).join('');
 
         return `
-          <div class="final-tile-card">
-            <span class="final-base-letter">${item.base}</span>
-            <span class="final-vi-approx">${item.vi}</span>
+          <div class="final-tile-card" data-base="${item.base}">
+            <div class="final-card-header" style="cursor: pointer;" title="Tra các từ chứa vận mẫu [${item.base}]">
+              <span class="final-base-letter">${item.base}</span>
+              <span class="final-vi-approx">${item.vi}</span>
+            </div>
             <div class="final-tones-row">
               ${toneBtns}
             </div>
+            <button type="button" class="btn-final-explore" data-base="${item.base}" title="Tra các từ chứa vận mẫu [${item.base}]">
+              📚 Tra từ [${item.base}]
+            </button>
           </div>
         `;
       }).join('');
@@ -728,7 +777,7 @@ class ToneMasterGame {
       card.innerHTML = `
         <div class="group-header">
           <span class="group-title">🎵 ${group.group}</span>
-          <span class="group-tip">Nhấp vào từng thanh điệu để luyện ngữ âm chuẩn</span>
+          <span class="group-tip">Nhấp thanh điệu để luyện âm chuẩn hoặc bấm 📚 Tra từ để xem từ vựng</span>
         </div>
         <div class="phonetic-tiles-row">
           ${tilesHtml}
@@ -752,6 +801,18 @@ class ToneMasterGame {
         });
       });
 
+      // Click nút tra từ hoặc header thẻ vận mẫu -> Mở Word Explorer
+      card.querySelectorAll('.btn-final-explore, .final-card-header').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const tileCard = el.closest('.final-tile-card');
+          if (tileCard) {
+            const base = tileCard.dataset.base;
+            this.openPhoneticExplorer('final', base);
+          }
+        });
+      });
+
       container.appendChild(card);
     });
   }
@@ -766,10 +827,11 @@ class ToneMasterGame {
     const viewChart = document.getElementById('viewChartSection');
     const viewRules = document.getElementById('viewRulesSection');
     const viewSpeaking = document.getElementById('viewSpeakingSection');
+    const viewExplorer = document.getElementById('viewWordsExplorer');
     const speedControl = document.getElementById('tmSpeedControl');
 
     [tabGame, tabChart, tabRules, tabSpeaking].forEach(b => { if (b) b.classList.remove('active'); });
-    [viewGame, viewChart, viewRules, viewSpeaking].forEach(v => {
+    [viewGame, viewChart, viewRules, viewSpeaking, viewExplorer].forEach(v => {
       if (v) {
         v.style.display = 'none';
         v.classList.remove('active');
@@ -788,16 +850,23 @@ class ToneMasterGame {
     } else if (modeName === 'speaking') {
       activeTab = tabSpeaking;
       activeView = viewSpeaking;
+    } else if (modeName === 'explorer') {
+      activeTab = tabChart; // Vẫn highlight tab Bảng Ngữ Âm để người dùng biết đang ở khu ngữ âm
+      activeView = viewExplorer;
     }
 
     if (activeTab) activeTab.classList.add('active');
     if (activeView) {
-      activeView.style.display = 'flex';
+      activeView.style.display = (modeName === 'explorer') ? 'block' : 'flex';
       activeView.classList.add('active');
     }
 
     if (speedControl) {
       speedControl.style.display = (modeName === 'game') ? 'flex' : 'none';
+    }
+
+    if (modeName === 'explorer') {
+      window.scrollTo({ top: 120, behavior: 'smooth' });
     }
 
     if (modeName === 'speaking') {
@@ -811,6 +880,502 @@ class ToneMasterGame {
       if (this.speakingEngine) {
         this.speakingEngine.start();
       }
+    }
+  }
+
+  /* ========================================================================
+     PHONETIC WORD EXPLORER (TRA CỨU TỪ VỰNG THEO THANH MẪU & VẬN MẪU)
+     ======================================================================== */
+  openPhoneticExplorer(type, code) {
+    this.explorerType = type; // 'initial' | 'final'
+    this.explorerCode = code.trim();
+    this.explorerPage = 1;
+    this.explorerSearchTerm = '';
+    this.explorerHskFilter = 'all';
+    this.explorerToneFilter = 'all';
+
+    // Cập nhật URLSearchParams
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('tab', 'chart');
+      if (type === 'initial') {
+        url.searchParams.set('initial', this.explorerCode);
+        url.searchParams.delete('final');
+      } else {
+        url.searchParams.set('final', this.explorerCode);
+        url.searchParams.delete('initial');
+      }
+      window.history.replaceState({}, '', url.toString());
+    } catch (e) {}
+
+    // Lấy thông tin ngữ âm tương ứng
+    let groupName = '';
+    let phoneticDesc = '';
+    let sampleHanzi = '';
+
+    if (type === 'initial') {
+      let foundItem = null;
+      for (const grp of INITIALS_DATA) {
+        const item = grp.items.find(i => i.letter.toLowerCase() === this.explorerCode.toLowerCase());
+        if (item) {
+          foundItem = item;
+          groupName = grp.group;
+          phoneticDesc = `${item.vi} • ${item.tip || grp.desc}`;
+          sampleHanzi = item.speak;
+          break;
+        }
+      }
+      if (!foundItem) {
+        groupName = 'Thanh Mẫu Pinyin';
+        phoneticDesc = `Phụ âm đầu [${this.explorerCode}]`;
+        sampleHanzi = this.explorerCode;
+      }
+    } else {
+      let foundItem = null;
+      for (const grp of FINALS_DATA) {
+        const item = grp.items.find(i => i.base.toLowerCase() === this.explorerCode.toLowerCase());
+        if (item) {
+          foundItem = item;
+          groupName = grp.group;
+          phoneticDesc = `Âm đọc: ${item.vi} • Bảng 4 thanh: ${item.tones.map(t => t.text).join(' ')}`;
+          sampleHanzi = item.tones && item.tones[0] ? item.tones[0].hanzi : '';
+          break;
+        }
+      }
+      if (!foundItem) {
+        groupName = 'Vận Mẫu Pinyin';
+        phoneticDesc = `Phần vần [${this.explorerCode}]`;
+        sampleHanzi = '';
+      }
+    }
+    this.explorerSampleHanzi = sampleHanzi;
+
+    // Cập nhật DOM Breadcrumbs
+    const elType = document.getElementById('explorerBreadcrumbType');
+    const elCurrent = document.getElementById('explorerBreadcrumbCurrent');
+    if (elType) elType.textContent = (type === 'initial') ? 'Thanh Mẫu (Phụ âm đầu)' : 'Vận Mẫu (Phần vần)';
+    if (elCurrent) elCurrent.textContent = `[ ${this.explorerCode} ]`;
+
+    // Cập nhật Hero Card
+    const elBadge = document.getElementById('explorerPhoneticBadge');
+    const elTypeTag = document.getElementById('explorerTypeTag');
+    const elGroupBadge = document.getElementById('explorerGroupBadge');
+    const elTitle = document.getElementById('explorerTitle');
+    const elDesc = document.getElementById('explorerDesc');
+    const btnSpeakSample = document.getElementById('btnExplorerSpeakSample');
+
+    if (elBadge) elBadge.textContent = this.explorerCode;
+    if (elTypeTag) elTypeTag.textContent = (type === 'initial') ? '🔡 THANH MẪU (PHỤ ÂM ĐẦU)' : '🔤 VẬN MẪU (PHẦN VẦN)';
+    if (elGroupBadge) elGroupBadge.textContent = groupName;
+    if (elTitle) elTitle.textContent = (type === 'initial') ? `Từ Vựng Bắt Đầu Bằng Âm [ ${this.explorerCode} ]` : `Từ Vựng Chứa Vận Mẫu [ ${this.explorerCode} ]`;
+    if (elDesc) elDesc.textContent = phoneticDesc;
+
+    if (btnSpeakSample) {
+      btnSpeakSample.querySelector('span').textContent = `Nghe Âm Mẫu [${this.explorerCode}]`;
+    }
+
+    // Reset Search & Filter UI
+    const inputSearch = document.getElementById('inputExplorerSearch');
+    const btnClearSearch = document.getElementById('btnClearExplorerSearch');
+    const selectHsk = document.getElementById('selectExplorerHsk');
+    const selectTone = document.getElementById('selectExplorerTone');
+
+    if (inputSearch) inputSearch.value = '';
+    if (btnClearSearch) btnClearSearch.style.display = 'none';
+    if (selectHsk) selectHsk.value = 'all';
+    if (selectTone) selectTone.value = 'all';
+
+    // Render Quick Nav Pills (Dải chuyển nhanh giữa các âm)
+    this.renderExplorerQuickNav();
+
+    // Lọc danh sách từ gốc từ kho 5.000 từ HSK
+    const allWords = window.CHINESE_WORDS_5000 || this.rawWords || [];
+    this.explorerBaseWords = allWords.filter(w => {
+      if (!w.spaced) return false;
+      const syllables = w.spaced.split(' ');
+      if (this.explorerType === 'initial') {
+        return syllables.some(s => this.matchInitial(s, this.explorerCode));
+      } else {
+        return syllables.some(s => this.matchFinal(s, this.explorerCode));
+      }
+    });
+
+    // Chuyển sang giao diện Explorer
+    this.switchMode('explorer');
+
+    // Chạy lọc và hiển thị danh sách từ
+    this.filterExplorerWords();
+    this.renderExplorerWordsList(false);
+  }
+
+  matchInitial(syl, targetInitial) {
+    if (!syl) return false;
+    syl = syl.toLowerCase().trim();
+    const ti = targetInitial.toLowerCase().trim();
+    const initials2 = ['zh', 'ch', 'sh'];
+
+    if (initials2.includes(ti)) {
+      return syl.startsWith(ti);
+    }
+    if (ti === 'z') return syl.startsWith('z') && !syl.startsWith('zh');
+    if (ti === 'c') return syl.startsWith('c') && !syl.startsWith('ch');
+    if (ti === 's') return syl.startsWith('s') && !syl.startsWith('sh');
+
+    return syl.startsWith(ti);
+  }
+
+  matchFinal(syl, targetFinal) {
+    if (!syl) return false;
+    syl = syl.toLowerCase().trim();
+    const tf = targetFinal.toLowerCase().trim();
+
+    // Tách phụ âm đầu
+    const initials2 = ['zh', 'ch', 'sh'];
+    let initial = '';
+    let final = syl;
+    if (initials2.includes(syl.slice(0, 2))) {
+      initial = syl.slice(0, 2);
+      final = syl.slice(2);
+    } else if (/^[bpmfdtnlgkhjqxrzcsyw]/.test(syl)) {
+      initial = syl[0];
+      final = syl.slice(1);
+    }
+
+    if (tf === 'iou (iu)' || tf === 'iu') {
+      return final === 'iu' || final === 'iou' || (initial === 'y' && final === 'ou');
+    }
+    if (tf === 'uei (ui)' || tf === 'ui') {
+      return final === 'ui' || final === 'uei' || (initial === 'w' && final === 'ei');
+    }
+    if (tf === 'uen (un)' || tf === 'un') {
+      return (final === 'un' && !['j', 'q', 'x', 'y'].includes(initial)) || final === 'uen' || (initial === 'w' && final === 'en');
+    }
+    if (tf === 'ü' || tf === 'v') {
+      return (['j', 'q', 'x', 'y'].includes(initial) && final === 'u') || final === 'ü' || final === 'v';
+    }
+    if (tf === 'üe') {
+      return (['j', 'q', 'x', 'y'].includes(initial) && final === 'ue') || final === 'üe' || final === 've';
+    }
+    if (tf === 'üan') {
+      return (['j', 'q', 'x', 'y'].includes(initial) && final === 'uan') || final === 'üan' || final === 'van';
+    }
+    if (tf === 'ün') {
+      return (['j', 'q', 'x', 'y'].includes(initial) && final === 'un') || final === 'ün' || final === 'vn';
+    }
+    if (tf === 'uan') {
+      return final === 'uan' && !['j', 'q', 'x', 'y'].includes(initial);
+    }
+    if (tf === 'u') {
+      return final === 'u' && !['j', 'q', 'x', 'y'].includes(initial);
+    }
+    if (tf === 'iong') {
+      return final === 'iong' || (initial === 'y' && final === 'ong');
+    }
+    if (tf === 'ueng') {
+      return syl === 'weng' || final === 'ueng' || (initial === 'w' && final === 'eng');
+    }
+    if (tf === 'ong') {
+      return final === 'ong' && initial !== 'y';
+    }
+    if (tf === 'eng') {
+      return final === 'eng' && initial !== 'w';
+    }
+    return final === tf;
+  }
+
+  getMatchedSyllableTone(word, type, code) {
+    if (!word || !word.spaced) return 1;
+    const syls = word.spaced.split(' ');
+    let matchedIdx = 0;
+    if (type === 'initial') {
+      matchedIdx = syls.findIndex(s => this.matchInitial(s, code));
+    } else {
+      matchedIdx = syls.findIndex(s => this.matchFinal(s, code));
+    }
+    if (matchedIdx < 0) matchedIdx = 0;
+
+    // Lấy từ word.num (ví dụ "bei3jing1")
+    if (word.num) {
+      const numMatches = word.num.match(/[1-5]/g);
+      if (numMatches && numMatches[matchedIdx]) {
+        const t = parseInt(numMatches[matchedIdx], 10);
+        return (t >= 1 && t <= 4) ? t : 1;
+      }
+    }
+    // Fallback qua extractToneFromPinyin
+    if (word.pinyin) {
+      const pyParts = word.pinyin.split(' ');
+      if (pyParts[matchedIdx]) return this.extractToneFromPinyin(pyParts[matchedIdx]);
+      return this.extractToneFromPinyin(word.pinyin);
+    }
+    return 1;
+  }
+
+  renderExplorerQuickNav() {
+    const container = document.getElementById('explorerQuickNavPills');
+    const titleEl = document.getElementById('explorerQuickNavTitle');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (this.explorerType === 'initial') {
+      if (titleEl) titleEl.textContent = 'Chuyển nhanh sang Thanh Mẫu khác:';
+      INITIALS_DATA.forEach(grp => {
+        grp.items.forEach(item => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = `quick-nav-pill ${item.letter.toLowerCase() === this.explorerCode.toLowerCase() ? 'active' : ''}`;
+          btn.textContent = item.letter;
+          btn.title = `${item.letter} - ${item.vi}`;
+          btn.addEventListener('click', () => this.openPhoneticExplorer('initial', item.letter));
+          container.appendChild(btn);
+        });
+      });
+    } else {
+      if (titleEl) titleEl.textContent = 'Chuyển nhanh sang Vận Mẫu khác:';
+      FINALS_DATA.forEach(grp => {
+        grp.items.forEach(item => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = `quick-nav-pill ${item.base.toLowerCase() === this.explorerCode.toLowerCase() ? 'active' : ''}`;
+          btn.textContent = item.base;
+          btn.title = `${item.base} (${item.vi})`;
+          btn.addEventListener('click', () => this.openPhoneticExplorer('final', item.base));
+          container.appendChild(btn);
+        });
+      });
+    }
+  }
+
+  filterExplorerWords() {
+    let list = [...this.explorerBaseWords];
+
+    // Lọc theo HSK
+    if (this.explorerHskFilter !== 'all') {
+      const targetLevel = parseInt(this.explorerHskFilter, 10);
+      list = list.filter(w => w.level === targetLevel);
+    }
+
+    // Lọc theo thanh điệu của âm tiết khớp
+    if (this.explorerToneFilter !== 'all') {
+      const targetTone = parseInt(this.explorerToneFilter, 10);
+      list = list.filter(w => this.getMatchedSyllableTone(w, this.explorerType, this.explorerCode) === targetTone);
+    }
+
+    // Lọc theo từ khóa tìm kiếm (Chữ Hán, Pinyin, Nghĩa Việt/Anh)
+    if (this.explorerSearchTerm.trim()) {
+      const term = this.explorerSearchTerm.trim().toLowerCase();
+      list = list.filter(w => {
+        return (w.hanzi && w.hanzi.toLowerCase().includes(term)) ||
+               (w.pinyin && w.pinyin.toLowerCase().includes(term)) ||
+               (w.clean && w.clean.toLowerCase().includes(term)) ||
+               (w.meaning_vn && w.meaning_vn.toLowerCase().includes(term)) ||
+               (w.meaning && w.meaning.toLowerCase().includes(term));
+      });
+    }
+
+    // Sắp xếp: Ưu tiên các từ có âm tiết đầu tiên khớp trước, sau đó theo cấp HSK từ thấp đến cao
+    list.sort((a, b) => {
+      const aSyls = (a.spaced || '').split(' ');
+      const bSyls = (b.spaced || '').split(' ');
+      const aFirst = this.explorerType === 'initial' ? this.matchInitial(aSyls[0], this.explorerCode) : this.matchFinal(aSyls[0], this.explorerCode);
+      const bFirst = this.explorerType === 'initial' ? this.matchInitial(bSyls[0], this.explorerCode) : this.matchFinal(bSyls[0], this.explorerCode);
+      if (aFirst && !bFirst) return -1;
+      if (!aFirst && bFirst) return 1;
+      return (a.level || 1) - (b.level || 1);
+    });
+
+    this.explorerFilteredWords = list;
+
+    // Cập nhật kết quả đếm
+    const countBadge = document.getElementById('explorerResultsCountBadge');
+    if (countBadge) {
+      countBadge.textContent = `Tìm thấy ${list.length} từ vựng`;
+    }
+  }
+
+  renderExplorerWordsList(isAppend = false) {
+    const grid = document.getElementById('explorerWordsGrid');
+    const paginationWrap = document.getElementById('explorerPaginationWrap');
+    const emptyState = document.getElementById('explorerEmptyState');
+    if (!grid) return;
+
+    if (!isAppend) {
+      grid.innerHTML = '';
+      this.explorerPage = 1;
+    }
+
+    const start = (this.explorerPage - 1) * this.explorerPageSize;
+    const end = start + this.explorerPageSize;
+    const chunk = this.explorerFilteredWords.slice(start, end);
+
+    if (this.explorerFilteredWords.length === 0) {
+      if (emptyState) emptyState.style.display = 'block';
+      if (paginationWrap) paginationWrap.style.display = 'none';
+      return;
+    } else {
+      if (emptyState) emptyState.style.display = 'none';
+    }
+
+    chunk.forEach(word => {
+      const card = document.createElement('div');
+      card.className = 'explorer-word-card';
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('role', 'button');
+      card.title = `Nhấp để nghe phát âm: ${word.hanzi}`;
+
+      const lvl = word.level || 1;
+      const hskText = `HSK ${lvl}`;
+      const vnMeaning = word.meaning_vn || word.meaning || '';
+
+      card.innerHTML = `
+        <div class="word-card-top">
+          <span class="word-hsk-badge hsk-${lvl}">${hskText}</span>
+          <button type="button" class="btn-card-audio" title="Nghe phát âm '${word.hanzi}'">
+            🔊
+          </button>
+        </div>
+        <div class="word-card-hanzi">${word.hanzi}</div>
+        <div class="word-card-pinyin">${this.highlightPhoneticPinyin(word.pinyin || '', this.explorerType, this.explorerCode)}</div>
+        <div class="word-card-meaning" title="${vnMeaning}">${vnMeaning}</div>
+      `;
+
+      // Click vào card hoặc nút loa để nghe phát âm
+      const playCardVoice = (e) => {
+        if (e) e.stopPropagation();
+        this.speakChinese(word.hanzi);
+        card.classList.add('playing');
+        setTimeout(() => card.classList.remove('playing'), 700);
+      };
+
+      card.addEventListener('click', playCardVoice);
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          playCardVoice();
+        }
+      });
+
+      const audioBtn = card.querySelector('.btn-card-audio');
+      if (audioBtn) audioBtn.addEventListener('click', playCardVoice);
+
+      grid.appendChild(card);
+    });
+
+    // Xử lý nút xem thêm
+    if (paginationWrap) {
+      if (end < this.explorerFilteredWords.length) {
+        paginationWrap.style.display = 'flex';
+      } else {
+        paginationWrap.style.display = 'none';
+      }
+    }
+  }
+
+  highlightPhoneticPinyin(pinyin, type, code) {
+    if (!pinyin || !code) return pinyin;
+    // Highlight nhẹ nhàng âm được chọn trong chuỗi pinyin
+    try {
+      const cleanCode = code.toLowerCase().replace(/[^a-zü]/g, '');
+      if (type === 'initial') {
+        const regex = new RegExp(`(^|\\s)(${cleanCode})`, 'gi');
+        return pinyin.replace(regex, '$1<span class="highlight-phonetic">$2</span>');
+      } else {
+        // Tách các từ và highlight phần vần
+        return pinyin;
+      }
+    } catch (e) {
+      return pinyin;
+    }
+  }
+
+  setupExplorerEventListeners() {
+    // Nút quay lại bảng ngữ âm
+    const btnBack = document.getElementById('btnBackToChart');
+    const bcBack = document.getElementById('bcToChart');
+    if (btnBack) btnBack.addEventListener('click', () => this.switchMode('chart'));
+    if (bcBack) bcBack.addEventListener('click', () => this.switchMode('chart'));
+
+    // Nút phát âm mẫu trên Hero Card
+    const btnHeroSpeak = document.getElementById('btnExplorerSpeakSample');
+    if (btnHeroSpeak) {
+      btnHeroSpeak.addEventListener('click', () => {
+        if (this.explorerSampleHanzi) {
+          this.speakChinese(this.explorerSampleHanzi);
+        } else {
+          this.speakChinese(this.explorerCode);
+        }
+      });
+    }
+
+    // Nút xem thêm (+40 từ)
+    const btnLoadMore = document.getElementById('btnExplorerLoadMore');
+    if (btnLoadMore) {
+      btnLoadMore.addEventListener('click', () => {
+        this.explorerPage++;
+        this.renderExplorerWordsList(true);
+      });
+    }
+
+    // Input tìm kiếm realtime
+    const inputSearch = document.getElementById('inputExplorerSearch');
+    const btnClear = document.getElementById('btnClearExplorerSearch');
+    if (inputSearch) {
+      let debounceTimer = null;
+      inputSearch.addEventListener('input', (e) => {
+        this.explorerSearchTerm = e.target.value;
+        if (btnClear) btnClear.style.display = this.explorerSearchTerm ? 'block' : 'none';
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          this.filterExplorerWords();
+          this.renderExplorerWordsList(false);
+        }, 180);
+      });
+    }
+
+    if (btnClear) {
+      btnClear.addEventListener('click', () => {
+        if (inputSearch) inputSearch.value = '';
+        this.explorerSearchTerm = '';
+        btnClear.style.display = 'none';
+        this.filterExplorerWords();
+        this.renderExplorerWordsList(false);
+      });
+    }
+
+    // Bộ lọc HSK
+    const selectHsk = document.getElementById('selectExplorerHsk');
+    if (selectHsk) {
+      selectHsk.addEventListener('change', (e) => {
+        this.explorerHskFilter = e.target.value;
+        this.filterExplorerWords();
+        this.renderExplorerWordsList(false);
+      });
+    }
+
+    // Bộ lọc Thanh điệu
+    const selectTone = document.getElementById('selectExplorerTone');
+    if (selectTone) {
+      selectTone.addEventListener('change', (e) => {
+        this.explorerToneFilter = e.target.value;
+        this.filterExplorerWords();
+        this.renderExplorerWordsList(false);
+      });
+    }
+
+    // Nút reset bộ lọc khi không tìm thấy kết quả
+    const btnResetFilter = document.getElementById('btnResetExplorerFilter');
+    if (btnResetFilter) {
+      btnResetFilter.addEventListener('click', () => {
+        if (inputSearch) inputSearch.value = '';
+        if (btnClear) btnClear.style.display = 'none';
+        if (selectHsk) selectHsk.value = 'all';
+        if (selectTone) selectTone.value = 'all';
+        this.explorerSearchTerm = '';
+        this.explorerHskFilter = 'all';
+        this.explorerToneFilter = 'all';
+        this.filterExplorerWords();
+        this.renderExplorerWordsList(false);
+      });
     }
   }
 
@@ -832,13 +1397,16 @@ class ToneMasterGame {
     // Check initial tab from URL params or hash (e.g. #speaking, ?tab=speaking, ?mode=speaking)
     try {
       const urlParams = new URLSearchParams(window.location.search);
-      const tabParam = urlParams.get('tab') || urlParams.get('mode') || window.location.hash.replace('#', '');
-      if (tabParam === 'speaking') {
-        setTimeout(() => this.switchMode('speaking'), 50);
-      } else if (tabParam === 'chart' || tabParam === 'phonetics') {
-        setTimeout(() => this.switchMode('chart'), 50);
-      } else if (tabParam === 'rules' || tabParam === 'sandhi') {
-        setTimeout(() => this.switchMode('rules'), 50);
+      const hasInitialOrFinal = urlParams.has('initial') || urlParams.has('init') || urlParams.has('final');
+      if (!hasInitialOrFinal) {
+        const tabParam = urlParams.get('tab') || urlParams.get('mode') || window.location.hash.replace('#', '');
+        if (tabParam === 'speaking') {
+          setTimeout(() => this.switchMode('speaking'), 50);
+        } else if (tabParam === 'chart' || tabParam === 'phonetics') {
+          setTimeout(() => this.switchMode('chart'), 50);
+        } else if (tabParam === 'rules' || tabParam === 'sandhi') {
+          setTimeout(() => this.switchMode('rules'), 50);
+        }
       }
     } catch (e) {}
 

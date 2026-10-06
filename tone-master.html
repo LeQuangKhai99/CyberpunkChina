@@ -281,6 +281,108 @@
     </section>
 
     <!-- ====================================================================
+         SECTION 2.5: TRA CỨU TỪ VỰNG THEO THANH MẪU & VẬN MẪU (WORD EXPLORER)
+         ==================================================================== -->
+    <section class="tm-section-view" id="viewWordsExplorer" style="display: none;">
+      
+      <!-- Top Action Bar with Back & Breadcrumb -->
+      <div class="explorer-nav-bar">
+        <button type="button" class="btn-explorer-back" id="btnBackToChart" title="Quay lại Bảng Thanh Mẫu & Vận Mẫu">
+          ⬅️ <span>QUAY LẠI BẢNG NGỮ ÂM</span>
+        </button>
+        <div class="explorer-breadcrumbs">
+          <a href="index.html" class="bc-link">🏠 Menu</a>
+          <span class="bc-sep">/</span>
+          <span class="bc-link" id="bcToChart" style="cursor: pointer;">🎙️ Bảng Ngữ Âm</span>
+          <span class="bc-sep">/</span>
+          <span id="explorerBreadcrumbType">Thanh Mẫu</span>
+          <span class="bc-sep">/</span>
+          <strong id="explorerBreadcrumbCurrent" class="bc-current">[ b ]</strong>
+        </div>
+      </div>
+
+      <!-- Hero Header Card with Articulation info & Audio -->
+      <div class="explorer-hero-card">
+        <div class="hero-left-content">
+          <div class="hero-phonetic-badge" id="explorerPhoneticBadge">b</div>
+          <div class="hero-phonetic-info">
+            <div class="hero-type-row">
+              <span class="hero-type-tag" id="explorerTypeTag">🔡 THANH MẪU (PHỤ ÂM ĐẦU)</span>
+              <span class="hero-group-badge" id="explorerGroupBadge">Âm Hai Môi</span>
+            </div>
+            <h2 class="hero-title" id="explorerTitle">Từ Vựng Bắt Đầu Bằng Âm [ b ]</h2>
+            <p class="hero-desc" id="explorerDesc">Hai môi khép chặt, không bật luồng khí mạnh (như "p" nhẹ tiếng Việt).</p>
+          </div>
+        </div>
+        <div class="hero-actions">
+          <button type="button" class="btn-hero-speak" id="btnExplorerSpeakSample" title="Nghe phát âm chuẩn của âm này">
+            🔊 <span>Nghe Âm Mẫu</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Switcher Pills for all 21 initials or 36 finals -->
+      <div class="explorer-quick-nav-wrap">
+        <span class="quick-nav-title" id="explorerQuickNavTitle">Chuyển nhanh sang âm khác:</span>
+        <div class="explorer-quick-nav-pills" id="explorerQuickNavPills">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Explorer Filter Toolbar -->
+      <div class="explorer-toolbar">
+        <div class="explorer-search-wrap">
+          <span class="search-ico">🔍</span>
+          <input type="text" id="inputExplorerSearch" class="explorer-search-input" placeholder="Tìm theo chữ Hán, Pinyin hoặc nghĩa tiếng Việt...">
+          <button type="button" id="btnClearExplorerSearch" class="btn-clear-search" style="display: none;">✕</button>
+        </div>
+
+        <div class="explorer-filters">
+          <div class="filter-chip-group">
+            <label for="selectExplorerHsk">Cấp độ:</label>
+            <select id="selectExplorerHsk" class="cyber-select explorer-select">
+              <option value="all">🌈 Tất cả HSK</option>
+              <option value="1">🌱 HSK 1</option>
+              <option value="2">🌿 HSK 2</option>
+              <option value="3">⭐ HSK 3</option>
+              <option value="4">🚀 HSK 4</option>
+              <option value="5">🔥 HSK 5</option>
+              <option value="6">👑 HSK 6</option>
+            </select>
+          </div>
+
+          <div class="filter-chip-group">
+            <label for="selectExplorerTone">Thanh điệu:</label>
+            <select id="selectExplorerTone" class="cyber-select explorer-select">
+              <option value="all">🎵 Tất cả thanh</option>
+              <option value="1">Thanh 1 (Ngang - ¯)</option>
+              <option value="2">Thanh 2 (Sắc - ´)</option>
+              <option value="3">Thanh 3 (Hỏi - ˇ)</option>
+              <option value="4">Thanh 4 (Rơi - `)</option>
+            </select>
+          </div>
+
+          <div class="explorer-results-count">
+            <span id="explorerResultsCountBadge">Đang tải...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Word Cards Grid -->
+      <div class="explorer-words-grid" id="explorerWordsGrid">
+        <!-- Populated dynamically with high quality word cards -->
+      </div>
+
+      <!-- Load More / Pagination footer -->
+      <div class="explorer-pagination-wrap" id="explorerPaginationWrap" style="display: none;">
+        <button type="button" class="btn-load-more" id="btnExplorerLoadMore">
+          <span>Xem thêm từ vựng (+40 từ) ⏬</span>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ====================================================================
          SECTION 3: BÍ KÍP BIẾN ĐIỆU & QUY TẮC THANH ĐIỆU (TONE RULES)
          ==================================================================== -->
     <section class="tm-section-view" id="viewRulesSection" style="display: none;">
