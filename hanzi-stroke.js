@@ -221,9 +221,26 @@
         this.updateStatsUI();
       });
 
-      // Check URL parameters for specific character or word: ?char=... or ?word=...
+      // Check URL parameters for specific character, word, or Roadmap Lesson (?hsk=...&deck=...)
       const urlParams = new URLSearchParams(window.location.search);
       const requestedChar = urlParams.get('char') || urlParams.get('word');
+      const hskParam = urlParams.get('hsk');
+      const deckParam = urlParams.get('deck');
+
+      if (hskParam !== null) {
+        this.currentFilterLevel = hskParam === '0' ? '1' : hskParam;
+        this.lessonDeck = deckParam !== null ? parseInt(deckParam, 10) : null;
+        if (this.dom.hskChips) {
+          this.dom.hskChips.querySelectorAll('.hs-hsk-chip').forEach(b => {
+            b.classList.toggle('active', b.dataset.level === this.currentFilterLevel);
+          });
+        }
+        this.filterAndRenderWordList();
+        if (this.filteredWords.length > 0 && !requestedChar) {
+          this.loadWord(this.filteredWords[0]);
+          return;
+        }
+      }
 
       if (requestedChar) {
         const found = this.allWords.find(w => w.hanzi === requestedChar || w.hanzi.includes(requestedChar));
@@ -345,6 +362,7 @@
         this.dom.hskChips.querySelectorAll('.hs-hsk-chip').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         this.currentFilterLevel = btn.dataset.level;
+        this.lessonDeck = null; // Clear deck slice filter when user manually clicks a level tab
         this.filterAndRenderWordList();
       });
 
@@ -469,6 +487,11 @@
       if (this.currentFilterLevel !== 'all') {
         const lvl = parseInt(this.currentFilterLevel, 10);
         list = list.filter(w => (w.level || w.hsk || 1) === lvl);
+        if (this.lessonDeck !== null && this.lessonDeck !== undefined && !isNaN(this.lessonDeck) && !this.searchQuery) {
+          const start = this.lessonDeck * 25;
+          const sliced = list.slice(start, start + 25);
+          if (sliced.length > 0) list = sliced;
+        }
       }
 
       // Filter by Search Query
@@ -604,6 +627,27 @@
         this.updateCharSwitcherUI();
       } else {
         this.dom.charSwitcherWrap.style.display = 'none';
+      }
+
+      // Contextual Example Sentence Box
+      const sentBox = document.getElementById('hsSentenceContextBox');
+      if (sentBox && window.PinyinRoadmap) {
+        const ex = window.PinyinRoadmap.getExampleSentence(w);
+        sentBox.style.display = 'flex';
+        sentBox.innerHTML = `
+          <div class="rm-sentence-lines">
+            <div class="rm-sentence-zh">💬 Ví dụ: ${ex.zh}</div>
+            <div class="rm-sentence-py">${ex.py}</div>
+            <div class="rm-sentence-vn">🇻🇳 ${ex.vn}</div>
+          </div>
+          <button type="button" class="rm-sentence-speak-btn" id="hsSpeakSentenceBtn" title="Nghe phát âm cả câu">
+            🔊 Nghe câu
+          </button>
+        `;
+        const spkBtn = document.getElementById('hsSpeakSentenceBtn');
+        if (spkBtn) {
+          spkBtn.addEventListener('click', () => this.audio.speak(ex.zh));
+        }
       }
     }
 
@@ -967,6 +1011,19 @@
       localStorage.setItem('hs_correct_strokes', this.stats.correctStrokes.toString());
       localStorage.setItem('hs_total_attempts', this.stats.totalAttempts.toString());
       localStorage.setItem('hs_current_streak', this.stats.streak.toString());
+
+      try {
+        const char = this.getCurrentChar();
+        const list = JSON.parse(localStorage.getItem('hs_completed_list') || '[]');
+        if (char && !list.includes(char)) {
+          list.push(char);
+          localStorage.setItem('hs_completed_list', JSON.stringify(list));
+        }
+      } catch (e) {}
+
+      if (window.PinyinRoadmap) {
+        window.PinyinRoadmap.recordActivity('stroke', 1);
+      }
 
       if (window.PinyinAuth && typeof window.PinyinAuth.triggerDebouncedSync === 'function') {
         window.PinyinAuth.triggerDebouncedSync();

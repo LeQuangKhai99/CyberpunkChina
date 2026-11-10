@@ -57,6 +57,21 @@ class PinyinDefenderGame {
   init() {
     this.setupCanvases();
     this.setupEventListeners();
+
+    // Check URL parameters from Learning Roadmap (?hsk=...&deck=...)
+    const urlParams = new URLSearchParams(window.location.search);
+    const hskParam = urlParams.get('hsk');
+    const deckParam = urlParams.get('deck');
+    if (hskParam !== null) {
+      const normalizedHsk = hskParam === '0' ? '1' : hskParam;
+      this.hskLevel = normalizedHsk;
+      const hskSelect = document.getElementById('hskSelect');
+      if (hskSelect && Array.from(hskSelect.options).some(o => o.value === normalizedHsk)) {
+        hskSelect.value = normalizedHsk;
+      }
+    }
+    this.lessonDeck = deckParam !== null ? parseInt(deckParam, 10) : null;
+
     this.prepareWordPool();
     this.initBgParticles();
     this.startRenderLoops();
@@ -71,7 +86,14 @@ class PinyinDefenderGame {
       this.wordPool = rawList;
     } else {
       const lvl = parseInt(this.hskLevel, 10);
-      this.wordPool = rawList.filter(w => w.level === lvl);
+      const levelList = rawList.filter(w => w.level === lvl);
+      if (this.lessonDeck !== null && this.lessonDeck !== undefined && !isNaN(this.lessonDeck)) {
+        const start = this.lessonDeck * 25;
+        const deckWords = levelList.slice(start, start + 25);
+        this.wordPool = deckWords.length > 0 ? deckWords : levelList;
+      } else {
+        this.wordPool = levelList;
+      }
     }
 
     if (this.wordPool.length === 0) {
@@ -180,6 +202,7 @@ class PinyinDefenderGame {
     const hskSelect = document.getElementById('hskSelect');
     hskSelect.addEventListener('change', (e) => {
       this.hskLevel = e.target.value;
+      this.lessonDeck = null; // Clear single-lesson filter when user switches HSK manually
       this.prepareWordPool();
       this.focusInput();
     });
@@ -662,6 +685,10 @@ class PinyinDefenderGame {
     this.kills++;
     this.streak++;
     this.totalTypedWords++;
+
+    if (window.PinyinRoadmap) {
+      window.PinyinRoadmap.recordActivity('arcade', 1);
+    }
 
     if (this.streak >= 15) this.combo = 5;
     else if (this.streak >= 10) this.combo = 4;

@@ -299,6 +299,29 @@ class ToneMasterGame {
     this.setupEventListeners();
     this.setupExplorerEventListeners();
     this.renderPhoneticsLab();
+
+    // Check URL params from Learning Roadmap (?hsk=...&deck=...&mode=...)
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const hskParam = urlParams.get('hsk');
+      const deckParam = urlParams.get('deck');
+      const modeParam = urlParams.get('mode');
+
+      if (hskParam !== null) {
+        const normalizedHsk = hskParam === '0' ? '1' : hskParam;
+        this.hskLevel = normalizedHsk;
+        const hskSelect = document.getElementById('tmHskSelect');
+        if (hskSelect && Array.from(hskSelect.options).some(o => o.value === normalizedHsk)) {
+          hskSelect.value = normalizedHsk;
+        }
+      }
+      this.lessonDeck = deckParam !== null ? parseInt(deckParam, 10) : null;
+
+      if (modeParam && ['game', 'chart', 'rules', 'speaking'].includes(modeParam)) {
+        setTimeout(() => this.switchMode(modeParam), 40);
+      }
+    } catch (e) {}
+
     this.loadNewQuestion();
     this.speakingEngine = new SpeakingPracticeEngine(this);
 
@@ -476,8 +499,18 @@ class ToneMasterGame {
     let pool = this.rawWords.filter(w => w.hanzi && w.hanzi.length === 1 && w.pinyin);
     if (this.hskLevel !== 'all') {
       const lvl = parseInt(this.hskLevel, 10);
-      const filtered = pool.filter(w => w.level === lvl);
-      if (filtered.length > 0) pool = filtered;
+      if (this.lessonDeck !== null && !isNaN(this.lessonDeck) && window.PinyinRoadmap) {
+        const deckWords = window.PinyinRoadmap.getLessonWords(lvl, this.lessonDeck).filter(w => w.pinyin);
+        if (deckWords.length > 0) {
+          pool = deckWords;
+        } else {
+          const filtered = pool.filter(w => w.level === lvl);
+          if (filtered.length > 0) pool = filtered;
+        }
+      } else {
+        const filtered = pool.filter(w => w.level === lvl);
+        if (filtered.length > 0) pool = filtered;
+      }
     }
     if (pool.length === 0) pool = this.rawWords.filter(w => w.pinyin);
 
@@ -630,6 +663,10 @@ class ToneMasterGame {
       this.streakDisplay.textContent = this.streak;
       this.accuracyDisplay.textContent = `${Math.round((this.totalCorrect / this.totalAnswered) * 100)}%`;
 
+      if (window.PinyinRoadmap) {
+        window.PinyinRoadmap.recordActivity('tone', 1);
+      }
+
       const curHigh = parseInt(localStorage.getItem('tone_master_score') || '0', 10);
       if (this.score > curHigh) {
         localStorage.setItem('tone_master_score', this.score.toString());
@@ -727,6 +764,9 @@ class ToneMasterGame {
           if (e.target.closest('.btn-tile-explore')) return;
           const speakChar = tile.dataset.speak;
           this.speakChinese(speakChar);
+          if (window.PinyinRoadmap) {
+            window.PinyinRoadmap.recordActivity('tone', 1);
+          }
           tile.classList.add('tile-speaking');
           setTimeout(() => tile.classList.remove('tile-speaking'), 350);
         });

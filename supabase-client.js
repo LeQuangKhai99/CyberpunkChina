@@ -444,6 +444,27 @@
       mergeMaxInt('tone_master_score', remote.tone_master_score);
       mergeMaxInt('puzzle_score', remote.puzzle_score);
 
+      // Hợp nhất dữ liệu Lộ trình học tập, Nhiệm vụ hàng ngày & SRS trong extra_data
+      try {
+        const localExtra = JSON.parse(localStorage.getItem('pinyin_pop_extra_data') || '{}');
+        const remoteExtra = remote.extra_data || {};
+        const mergedSteps = { ...(remoteExtra.completedSteps || {}), ...(localExtra.completedSteps || {}) };
+        Object.keys(mergedSteps).forEach(k => {
+          const rArr = (remoteExtra.completedSteps && remoteExtra.completedSteps[k]) || [];
+          const lArr = (localExtra.completedSteps && localExtra.completedSteps[k]) || [];
+          mergedSteps[k] = Array.from(new Set([...rArr, ...lArr])).sort();
+        });
+
+        const mergedExtra = {
+          ...remoteExtra,
+          ...localExtra,
+          xp: Math.max(localExtra.xp || 0, remoteExtra.xp || 0),
+          completedSteps: mergedSteps,
+          srsMeta: { ...(remoteExtra.srsMeta || {}), ...(localExtra.srsMeta || {}) }
+        };
+        localStorage.setItem('pinyin_pop_extra_data', JSON.stringify(mergedExtra));
+      } catch (e) {}
+
       window.dispatchEvent(new CustomEvent('cloud-progress-updated', {
         detail: {
           syncedAt: new Date().toISOString()

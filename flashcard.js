@@ -69,6 +69,19 @@ class ChineseFlashcardApp {
   init() {
     this.setupBackgroundCanvas();
     this.setupEventListeners();
+
+    // Check URL parameters from Learning Roadmap (?hsk=...&deck=...)
+    const urlParams = new URLSearchParams(window.location.search);
+    const hskParam = urlParams.get('hsk');
+    const deckParam = urlParams.get('deck');
+    if (hskParam) {
+      const normalizedHsk = hskParam === '0' ? '1' : hskParam;
+      if (this.hskFilter && Array.from(this.hskFilter.options).some(o => o.value === normalizedHsk)) {
+        this.hskFilter.value = normalizedHsk;
+      }
+    }
+    this.initialDeckParam = deckParam;
+
     this.applyHskFilter();
     this.renderCard();
     this.updateStats();
@@ -184,6 +197,14 @@ class ChineseFlashcardApp {
       this.deckSelect.appendChild(opt);
     }
 
+    if (this.initialDeckParam !== null && this.initialDeckParam !== undefined) {
+      const targetDeck = String(this.initialDeckParam);
+      if (Array.from(this.deckSelect.options).some(o => o.value === targetDeck)) {
+        this.deckSelect.value = targetDeck;
+      }
+      this.initialDeckParam = null;
+    }
+
     this.loadDeckWords();
   }
 
@@ -238,6 +259,30 @@ class ChineseFlashcardApp {
     this.cardBackMeaningVn.textContent = word.meaning_vn || word.meaning || 'Chưa cập nhật nghĩa';
     this.cardBackMeaningEn.textContent = word.meaning || '';
     this.cardBackHsk.textContent = `HSK ${word.level}`;
+
+    // Contextual Example Sentence (from Roadmap Engine)
+    const sentWrap = document.getElementById('cardBackSentenceWrap');
+    if (sentWrap && window.PinyinRoadmap) {
+      const ex = window.PinyinRoadmap.getExampleSentence(word);
+      sentWrap.style.display = 'flex';
+      sentWrap.innerHTML = `
+        <div class="rm-sentence-lines">
+          <div class="rm-sentence-zh">💬 ${ex.zh}</div>
+          <div class="rm-sentence-py">${ex.py}</div>
+          <div class="rm-sentence-vn">${ex.vn}</div>
+        </div>
+        <button type="button" class="rm-sentence-speak-btn" id="fcSpeakSentenceBtn" title="Nghe phát âm cả câu ví dụ">
+          🔊 Câu
+        </button>
+      `;
+      const spkBtn = document.getElementById('fcSpeakSentenceBtn');
+      if (spkBtn) {
+        spkBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.speakChinese(ex.zh);
+        });
+      }
+    }
 
     // Telemetry
     this.currentCardIdxEl.textContent = this.currentIndex + 1;
@@ -304,6 +349,9 @@ class ChineseFlashcardApp {
     this.masteredSet.delete(word.id);
     this.saveToStorage('pinyin_pop_review', this.reviewSet);
     this.saveToStorage('pinyin_pop_mastered', this.masteredSet);
+    if (window.PinyinRoadmap) {
+      window.PinyinRoadmap.recordActivity('flashcard', 1, { wordId: word.id, isEasy: false });
+    }
     this.updateStats();
     this.nextCard();
   }
@@ -315,6 +363,9 @@ class ChineseFlashcardApp {
     this.reviewSet.delete(word.id);
     this.saveToStorage('pinyin_pop_mastered', this.masteredSet);
     this.saveToStorage('pinyin_pop_review', this.reviewSet);
+    if (window.PinyinRoadmap) {
+      window.PinyinRoadmap.recordActivity('flashcard', 1, { wordId: word.id, isEasy: true });
+    }
     this.updateStats();
     this.nextCard();
   }
@@ -398,10 +449,16 @@ class ChineseFlashcardApp {
           btn.classList.add('correct');
           this.masteredSet.add(q.correct.id);
           this.reviewSet.delete(q.correct.id);
+          if (window.PinyinRoadmap) {
+            window.PinyinRoadmap.recordActivity('flashcard', 1, { wordId: q.correct.id, isEasy: true });
+          }
           document.getElementById('quizFeedbackMsg').textContent = 'Chính xác tuyệt vời! 🎉';
         } else {
           btn.classList.add('wrong');
           this.reviewSet.add(q.correct.id);
+          if (window.PinyinRoadmap) {
+            window.PinyinRoadmap.recordActivity('flashcard', 0, { wordId: q.correct.id, isEasy: false });
+          }
           document.getElementById('quizFeedbackMsg').textContent = `Chưa đúng rồi! Đáp án là: ${q.correct.pinyin} (${q.correct.meaning_vn || q.correct.meaning})`;
           // Highlight correct one
           Array.from(grid.children).forEach(b => {

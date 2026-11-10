@@ -222,6 +222,32 @@ class HanziPuzzleGame {
   init() {
     this.setupBackgroundCanvas();
     this.setupEventListeners();
+
+    // Check URL parameters from Learning Roadmap (?hsk=...&deck=...&mode=...)
+    const urlParams = new URLSearchParams(window.location.search);
+    const hskParam = urlParams.get('hsk');
+    const deckParam = urlParams.get('deck');
+    const modeParam = urlParams.get('mode');
+
+    if (hskParam !== null) {
+      const normalizedHsk = hskParam === '0' ? '1' : hskParam;
+      this.hskLevel = normalizedHsk;
+      if (this.hskSelect && Array.from(this.hskSelect.options).some(o => o.value === normalizedHsk)) {
+        this.hskSelect.value = normalizedHsk;
+      }
+    }
+    this.lessonDeck = deckParam !== null ? parseInt(deckParam, 10) : null;
+
+    if (modeParam === 'compounds' || (hskParam && hskParam !== '0' && modeParam !== 'radicals')) {
+      this.mode = 'compounds';
+      const btnRad = document.getElementById('modeRadicalsBtn');
+      const btnComp = document.getElementById('modeCompoundsBtn');
+      if (btnRad && btnComp) {
+        btnComp.classList.add('active');
+        btnRad.classList.remove('active');
+      }
+    }
+
     this.loadNewQuestion();
   }
 
@@ -352,7 +378,18 @@ class HanziPuzzleGame {
     let pool = this.rawWords.filter(w => w.hanzi && w.hanzi.length >= 2 && w.hanzi.length <= 4);
     if (this.hskLevel !== 'all') {
       const lvl = parseInt(this.hskLevel, 10);
-      pool = pool.filter(w => w.level === lvl);
+      if (this.lessonDeck !== null && !isNaN(this.lessonDeck)) {
+        const levelAll = this.rawWords.filter(w => w.level === lvl);
+        const start = this.lessonDeck * 25;
+        const deckSlice = levelAll.slice(start, start + 25).filter(w => w.hanzi && w.hanzi.length >= 2 && w.hanzi.length <= 4);
+        if (deckSlice.length > 0) {
+          pool = deckSlice;
+        } else {
+          pool = pool.filter(w => w.level === lvl);
+        }
+      } else {
+        pool = pool.filter(w => w.level === lvl);
+      }
     }
     if (pool.length === 0) pool = this.rawWords.filter(w => w.hanzi && w.hanzi.length >= 2);
 
@@ -543,6 +580,10 @@ class HanziPuzzleGame {
     this.scoreDisplay.textContent = this.score;
     this.streakDisplay.textContent = this.streak;
     this.solvedDisplay.textContent = this.solvedCount;
+
+    if (window.PinyinRoadmap) {
+      window.PinyinRoadmap.recordActivity('puzzle', 1);
+    }
 
     const curHigh = parseInt(localStorage.getItem('puzzle_score') || '0', 10);
     if (this.score > curHigh) {
