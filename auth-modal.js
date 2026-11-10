@@ -1,6 +1,6 @@
 // =========================================================================
-// PINYIN POP! - AUTH MODAL & USER NAVIGATION CONTROLLER
-// Quản lý Modal Đăng Nhập, Đăng Ký, Trạng Thái Đồng Bộ và Cấu Hình
+// PINYIN POP! - AUTH MODAL & FREE DATABASE / SYNC CONTROLLER
+// Quản lý Modal Đăng Nhập, Đăng Ký, Mã Đồng Bộ Đa Thiết Bị & Database Miễn Phí
 // =========================================================================
 
 (function() {
@@ -29,19 +29,14 @@
       this.bindEvents();
       this.updateState();
 
-      // Lắng nghe sự kiện từ Cloud Sync Engine
       window.addEventListener('cloud-sync-status', () => this.updateState());
       window.addEventListener('cloud-progress-updated', () => this.updateProfileStats());
     }
 
-    /**
-     * Tìm vị trí thích hợp trên Navbar để chèn nút Đăng Nhập / Profile
-     */
     mountAuthChip() {
       let mountContainer = document.getElementById('authChipMount');
 
       if (!mountContainer) {
-        // Tìm các container hành động có sẵn trên từng trang
         const possibleSelectors = [
           '#authChipMount',
           '.hud-right-actions',
@@ -66,12 +61,11 @@
       this.chipBtn.className = 'pp-auth-chip-btn';
       this.chipBtn.id = 'ppAuthChipBtn';
       this.chipBtn.type = 'button';
-      this.chipBtn.title = 'Đăng nhập để đồng bộ tiến độ học giữa Máy tính & Điện thoại';
+      this.chipBtn.title = 'Tài khoản & Đồng bộ Database Miễn Phí';
 
       if (mountContainer) {
         mountContainer.appendChild(this.chipBtn);
       } else {
-        // Fallback: Nút nổi góc phải trên cùng
         this.chipBtn.classList.add('pp-auth-chip-floating');
         document.body.appendChild(this.chipBtn);
       }
@@ -85,9 +79,6 @@
       });
     }
 
-    /**
-     * Khởi tạo giao diện Modal vào cuối body
-     */
     injectModalHtml() {
       if (document.getElementById('ppAuthBackdrop')) return;
 
@@ -98,15 +89,16 @@
 
             <!-- Header -->
             <div class="pp-auth-header">
-              <div class="pp-auth-emblem">☁️</div>
-              <h3 class="pp-auth-title" id="ppModalTitle">PINYIN POP CLOUD</h3>
-              <p class="pp-auth-subtitle" id="ppModalSub">Đồng bộ tiến độ học tập giữa Máy tính & Điện thoại</p>
+              <div class="pp-auth-emblem">🗄️</div>
+              <h3 class="pp-auth-title" id="ppModalTitle">PINYIN POP FREE DB</h3>
+              <p class="pp-auth-subtitle" id="ppModalSub">Hệ thống lưu trữ Miễn Phí 100% (IndexedDB + Firebase / Google Sheets)</p>
             </div>
 
             <!-- Tab Switcher -->
             <div class="pp-auth-tabs" id="ppAuthTabs">
               <button type="button" class="pp-auth-tab active" data-tab="login">Đăng Nhập</button>
               <button type="button" class="pp-auth-tab" data-tab="register">Đăng Ký</button>
+              <button type="button" class="pp-auth-tab" data-tab="dbbackup">📦 Sao Lưu / DB</button>
             </div>
 
             <!-- Body Contents -->
@@ -137,9 +129,12 @@
                     <span>🚀 Đăng Nhập & Đồng Bộ</span>
                   </button>
 
-                  <div style="margin-top: 12px; text-align: center;">
+                  <div style="margin-top: 10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                    <button type="button" id="btnQuickFillAdmin" style="background:#fef3c7;border:1px solid #fde68a;color:#b45309;font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;cursor:pointer;">
+                      👑 Điền nhanh Admin mẫu
+                    </button>
                     <button type="button" id="btnForgotPwd" style="background:none;border:none;color:#3b82f6;font-size:11px;font-weight:700;cursor:pointer;">
-                      Quên mật khẩu?
+                      Đặt lại mật khẩu?
                     </button>
                   </div>
                 </form>
@@ -204,8 +199,8 @@
 
                   <!-- Trạng thái đồng bộ -->
                   <div class="pp-sync-status-row">
-                    <span>🟢 Trạng thái Cloud:</span>
-                    <span id="lblCloudSyncText">Đã đồng bộ</span>
+                    <span>🟢 Engine lưu trữ:</span>
+                    <span id="lblCloudSyncText" style="font-weight:800;color:#059669;">IndexedDB Free DB</span>
                   </div>
 
                   <!-- Các nút thao tác -->
@@ -216,11 +211,52 @@
                     <button type="button" class="pp-btn-submit btn-emerald" id="btnSyncNowManual">
                       <span>🔄 Đồng Bộ Ngay Lập Tức</span>
                     </button>
+                    <button type="button" class="pp-btn-secondary" id="btnOpenDbBackupFromProfile" style="background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;font-size:12px;padding:8px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;width:100%;font-weight:700;">
+                      <span>📦 Mã Chuyển Thiết Bị & Cấu Hình Cloud Miễn Phí</span>
+                    </button>
                     <button type="button" class="pp-btn-secondary" id="btnResetMyProgress" style="background:#fff1f2;border:1px solid #fecdd3;color:#e11d48;font-size:12px;padding:8px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;width:100%;">
                       <span>🧹 Đặt Lại Tiến Độ Về 0</span>
                     </button>
                     <button type="button" class="pp-btn-secondary pp-btn-danger" id="btnLogout">
                       <span>🚪 Đăng Xuất Tài Khoản</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- PANE 4: MÃ ĐỒNG BỘ THIẾT BỊ & CẤU HÌNH DATABASE MIỄN PHÍ -->
+              <div class="pp-auth-pane" id="paneDbBackup">
+                <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin-bottom:12px;">
+                  <div style="font-size:12px;font-weight:800;color:#0f172a;margin-bottom:4px;">📲 Chuyển Tiến Độ Giữa Máy Tính & Điện Thoại (100% Miễn Phí)</div>
+                  <div style="font-size:11px;color:#475569;margin-bottom:8px;">Sao chép mã đồng bộ bên dưới và dán sang thiết bị khác để mang theo toàn bộ từ vựng, chữ viết và điểm số:</div>
+                  <textarea id="txtSyncCodeBox" rows="3" style="width:100%;font-size:11px;font-family:monospace;padding:8px;border-radius:8px;border:1px solid #cbd5e1;resize:none;background:#fff;color:#0f172a;" placeholder="Bấm 'Tạo Mã Sao Lưu' hoặc dán mã từ máy khác vào đây..."></textarea>
+                  <div style="display:flex;gap:8px;margin-top:8px;">
+                    <button type="button" id="btnExportSyncCode" class="pp-btn-submit btn-blue" style="padding:8px 10px;font-size:12px;flex:1;">
+                      <span>📋 Tạo & Copy Mã</span>
+                    </button>
+                    <button type="button" id="btnImportSyncCode" class="pp-btn-submit btn-emerald" style="padding:8px 10px;font-size:12px;flex:1;">
+                      <span>📥 Nạp Mã Vào Máy</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:12px;">
+                  <div style="font-size:12px;font-weight:800;color:#166534;margin-bottom:6px;">☁️ Kết Nối Cloud Miễn Phí Vĩnh Viễn (Tùy chọn nâng cao)</div>
+                  <div style="font-size:11px;color:#15803d;margin-bottom:8px;">Mặc định hệ thống đã tự lưu vào <strong>IndexedDB</strong> trên trình duyệt. Nếu muốn tự động đồng bộ qua mạng mà không dùng Supabase, bạn có thể dán URL <strong>Firebase Realtime DB</strong> hoặc <strong>Google Sheets Web App</strong> (xem file <code>google_sheets_backend.gs</code>):</div>
+                  <div class="pp-form-group" style="margin-bottom:8px;">
+                    <label class="pp-form-label" style="font-size:11px;">🔥 Firebase Realtime DB URL (Gói Spark Miễn phí):</label>
+                    <input type="text" id="cfgFirebaseUrl" class="pp-input" style="padding:7px 10px;font-size:11px;" placeholder="https://ten-du-an-default-rtdb.firebaseio.com">
+                  </div>
+                  <div class="pp-form-group" style="margin-bottom:10px;">
+                    <label class="pp-form-label" style="font-size:11px;">📊 Google Sheets Web App URL (15GB Google Drive Miễn phí):</label>
+                    <input type="text" id="cfgGoogleSheetsUrl" class="pp-input" style="padding:7px 10px;font-size:11px;" placeholder="https://script.google.com/macros/s/.../exec">
+                  </div>
+                  <div style="display:flex;gap:8px;">
+                    <button type="button" id="btnSaveFreeCloudCfg" class="pp-btn-submit" style="padding:8px 12px;font-size:12px;flex:1;">
+                      <span>💾 Lưu Cấu Hình Database</span>
+                    </button>
+                    <button type="button" id="btnBackFromDbBackup" class="pp-btn-secondary" style="padding:8px 12px;font-size:12px;">
+                      <span>Quay lại</span>
                     </button>
                   </div>
                 </div>
@@ -240,7 +276,6 @@
     }
 
     bindEvents() {
-      // Đóng modal khi bấm nút X hoặc bấm ra ngoài backdrop
       const closeBtn = document.getElementById('ppAuthCloseBtn');
       if (closeBtn) closeBtn.addEventListener('click', () => this.closeModal());
 
@@ -250,14 +285,12 @@
         });
       }
 
-      // Phím ESC để đóng
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && this.backdrop && this.backdrop.classList.contains('active')) {
           this.closeModal();
         }
       });
 
-      // Tab switcher
       const tabBtns = document.querySelectorAll('.pp-auth-tab');
       tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -266,7 +299,6 @@
         });
       });
 
-      // Show / Hide Password toggle
       document.querySelectorAll('.pp-input-toggle-pwd').forEach(btn => {
         btn.addEventListener('click', () => {
           const targetId = btn.getAttribute('data-target');
@@ -278,7 +310,17 @@
         });
       });
 
-      // Submit Login
+      const btnQuickAdmin = document.getElementById('btnQuickFillAdmin');
+      if (btnQuickAdmin) {
+        btnQuickAdmin.addEventListener('click', () => {
+          const em = document.getElementById('loginEmail');
+          const pw = document.getElementById('loginPassword');
+          if (em) em.value = 'admin@pinyinpop.com';
+          if (pw) pw.value = 'admin123';
+          this.showAlert('👑 Đã điền tài khoản Quản Trị Viên mẫu (admin@pinyinpop.com / admin123). Bấm Đăng Nhập để vào ngay!', 'info');
+        });
+      }
+
       const formLogin = document.getElementById('formLogin');
       if (formLogin) {
         formLogin.addEventListener('submit', async (e) => {
@@ -287,7 +329,6 @@
         });
       }
 
-      // Submit Register
       const formRegister = document.getElementById('formRegister');
       if (formRegister) {
         formRegister.addEventListener('submit', async (e) => {
@@ -296,7 +337,6 @@
         });
       }
 
-      // Forgot Password
       const btnForgotPwd = document.getElementById('btnForgotPwd');
       if (btnForgotPwd) {
         btnForgotPwd.addEventListener('click', async () => {
@@ -304,7 +344,6 @@
         });
       }
 
-      // Manual Sync Now
       const btnSyncNow = document.getElementById('btnSyncNowManual');
       if (btnSyncNow) {
         btnSyncNow.addEventListener('click', async () => {
@@ -313,9 +352,9 @@
           if (window.PinyinAuth) {
             const ok = await window.PinyinAuth.syncBidirectional();
             if (ok) {
-              this.showAlert('✅ Đồng bộ dữ liệu 2 chiều thành công!', 'success');
+              this.showAlert('✅ Đồng bộ dữ liệu vào Free Database thành công!', 'success');
             } else {
-              this.showAlert('❌ Không thể đồng bộ. Vui lòng kiểm tra kết nối mạng.', 'error');
+              this.showAlert('❌ Không thể đồng bộ. Vui lòng thử lại.', 'error');
             }
           }
           btnSyncNow.disabled = false;
@@ -324,11 +363,88 @@
         });
       }
 
-      // Reset my progress
+      const btnOpenDbBackup = document.getElementById('btnOpenDbBackupFromProfile');
+      if (btnOpenDbBackup) {
+        btnOpenDbBackup.addEventListener('click', () => {
+          this.switchTab('dbbackup');
+        });
+      }
+
+      const btnBackFromDbBackup = document.getElementById('btnBackFromDbBackup');
+      if (btnBackFromDbBackup) {
+        btnBackFromDbBackup.addEventListener('click', () => {
+          if (window.PinyinAuth && window.PinyinAuth.isLoggedIn()) {
+            this.switchTab('profile');
+          } else {
+            this.switchTab('login');
+          }
+        });
+      }
+
+      const btnExportSync = document.getElementById('btnExportSyncCode');
+      if (btnExportSync) {
+        btnExportSync.addEventListener('click', () => {
+          if (!window.PinyinAuth) return;
+          const code = window.PinyinAuth.exportSyncCode();
+          const box = document.getElementById('txtSyncCodeBox');
+          if (box) {
+            box.value = code;
+            box.select();
+          }
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(code).catch(() => {});
+          }
+          this.showAlert('✅ Đã tạo & sao chép Mã Đồng Bộ! Bạn có thể gửi mã này sang Điện thoại/Máy tính khác để nạp.', 'success');
+        });
+      }
+
+      const btnImportSync = document.getElementById('btnImportSyncCode');
+      if (btnImportSync) {
+        btnImportSync.addEventListener('click', async () => {
+          const box = document.getElementById('txtSyncCodeBox');
+          const raw = box ? box.value.trim() : '';
+          if (!raw) {
+            this.showAlert('⚠️ Vui lòng dán Mã Đồng Bộ (bắt đầu bằng PP2:...) vào ô bên trên trước.', 'error');
+            return;
+          }
+          try {
+            await window.PinyinAuth.importSyncCode(raw);
+            this.showAlert('🎉 Khôi phục & hợp nhất tiến độ học tập thành công!', 'success');
+            this.updateProfileStats();
+          } catch (e) {
+            this.showAlert('❌ Mã đồng bộ không hợp lệ: ' + e.message, 'error');
+          }
+        });
+      }
+
+      const btnSaveFreeCloudCfg = document.getElementById('btnSaveFreeCloudCfg');
+      if (btnSaveFreeCloudCfg) {
+        btnSaveFreeCloudCfg.addEventListener('click', async () => {
+          const fbUrl = (document.getElementById('cfgFirebaseUrl')?.value || '').trim();
+          const gsUrl = (document.getElementById('cfgGoogleSheetsUrl')?.value || '').trim();
+          if (gsUrl && (gsUrl.includes('/edit') || gsUrl.includes('/home/projects/') || !gsUrl.includes('/macros/s/'))) {
+            this.showAlert('⚠️ Link bạn dán đang là link trình sửa code (<code>/edit</code>). Hãy bấm nút <strong>Deploy (Triển khai) ➔ New deployment ➔ Web app</strong> ở góc phải trên cùng của Apps Script để lấy link có đuôi <code>.../exec</code> nhé!', 'error');
+            return;
+          }
+          if (window.PinyinAuth) {
+            window.PinyinAuth.saveCustomDbConfig({
+              provider: fbUrl ? 'firebase' : (gsUrl ? 'googlesheets' : 'indexeddb'),
+              firebaseDatabaseUrl: fbUrl,
+              googleSheetsWebAppUrl: gsUrl
+            });
+            if (window.PinyinAuth.isLoggedIn()) {
+              await window.PinyinAuth.syncBidirectional();
+            }
+            this.showAlert('✅ Đã lưu cấu hình Database Miễn Phí (' + window.PinyinAuth.getProviderName() + ')!', 'success');
+            this.updateProfileStats();
+          }
+        });
+      }
+
       const btnResetProg = document.getElementById('btnResetMyProgress');
       if (btnResetProg) {
         btnResetProg.addEventListener('click', async () => {
-          if (!confirm('⚠️ Bạn có chắc chắn muốn đặt lại toàn bộ tiến độ học (từ đã thuộc, chữ đã viết, kỷ lục điểm) của tài khoản này về 0 không? Thao tác này sẽ làm sạch cả trên Cloud và trên máy!')) {
+          if (!confirm('⚠️ Bạn có chắc chắn muốn đặt lại toàn bộ tiến độ học (từ đã thuộc, chữ đã viết, kỷ lục điểm) của tài khoản này về 0 không?')) {
             return;
           }
           btnResetProg.disabled = true;
@@ -347,7 +463,6 @@
         });
       }
 
-      // Logout
       const btnLogout = document.getElementById('btnLogout');
       if (btnLogout) {
         btnLogout.addEventListener('click', async () => {
@@ -364,7 +479,7 @@
       if (!this.backdrop) return;
       this.clearAlert();
 
-      if (window.PinyinAuth && window.PinyinAuth.isLoggedIn()) {
+      if (window.PinyinAuth && window.PinyinAuth.isLoggedIn() && tab !== 'dbbackup') {
         this.switchTab('profile');
       } else {
         this.switchTab(tab);
@@ -388,41 +503,31 @@
       const subEl = document.getElementById('ppModalSub');
 
       if (tabName === 'profile') {
-        // Khi đã đăng nhập: ẨN HOÀN TOÀN thanh tab đăng nhập/đăng ký
         if (tabsWrap) tabsWrap.style.display = 'none';
         if (titleEl) titleEl.textContent = 'HỒ SƠ HỌC VIÊN';
-        if (subEl) subEl.textContent = 'Tiến độ học tập & Đồng bộ đám mây';
+        if (subEl) subEl.textContent = window.PinyinAuth ? window.PinyinAuth.getProviderName() : 'Tiến độ học tập & Đồng bộ';
       } else {
-        // Khi chưa đăng nhập: Hiển thị tab Đăng Nhập / Đăng Ký
         if (tabsWrap) tabsWrap.style.display = 'flex';
-        if (titleEl) titleEl.textContent = 'PINYIN POP CLOUD';
-        if (subEl) subEl.textContent = 'Đồng bộ tiến độ học tập giữa Máy tính & Điện thoại';
+        if (titleEl) titleEl.textContent = 'PINYIN POP FREE DB';
+        if (subEl) subEl.textContent = 'Lưu trữ 100% Miễn phí (IndexedDB + Firebase / Google Sheets)';
       }
 
-      // Xóa triệt để các phần tử cấu hình cũ nếu còn lưu trong cache trình duyệt
-      const oldCfgTab = document.querySelector('[data-tab="config"]');
-      if (oldCfgTab) oldCfgTab.remove();
-      const oldCfgPane = document.getElementById('paneConfig');
-      if (oldCfgPane) oldCfgPane.remove();
-
-      // Cập nhật tab buttons
       const tabBtns = document.querySelectorAll('.pp-auth-tab');
       tabBtns.forEach(btn => {
         btn.classList.toggle('active', btn.getAttribute('data-tab') === tabName);
       });
 
-      // Ẩn tất cả panes
-      const panes = ['paneLogin', 'paneRegister', 'paneProfile'];
+      const panes = ['paneLogin', 'paneRegister', 'paneProfile', 'paneDbBackup'];
       panes.forEach(p => {
         const el = document.getElementById(p);
         if (el) el.classList.remove('active');
       });
 
-      // Hiển thị pane tương ứng
       const targetPane = {
         'login': 'paneLogin',
         'register': 'paneRegister',
-        'profile': 'paneProfile'
+        'profile': 'paneProfile',
+        'dbbackup': 'paneDbBackup'
       }[tabName] || 'paneLogin';
 
       const targetEl = document.getElementById(targetPane);
@@ -430,6 +535,16 @@
 
       if (tabName === 'profile') {
         this.updateProfileStats();
+      } else if (tabName === 'dbbackup' && window.PinyinAuth) {
+        const cfg = window.PinyinAuth.getConfig();
+        const fbInput = document.getElementById('cfgFirebaseUrl');
+        const gsInput = document.getElementById('cfgGoogleSheetsUrl');
+        if (fbInput) fbInput.value = cfg.firebaseDatabaseUrl || '';
+        if (gsInput) gsInput.value = cfg.googleSheetsWebAppUrl || '';
+        const box = document.getElementById('txtSyncCodeBox');
+        if (box && !box.value) {
+          box.value = window.PinyinAuth.exportSyncCode();
+        }
       }
     }
 
@@ -457,32 +572,25 @@
         return;
       }
 
-      if (!window.PinyinAuth || !window.PinyinAuth.isConfigured()) {
-        this.showAlert('⚠️ Chưa cấu hình kết nối Supabase trong supabase-config.js.', 'error');
-        return;
-      }
-
       btn.disabled = true;
       btn.innerHTML = '<span>⏳ Đang đăng nhập...</span>';
 
-      const { data, error } = await window.PinyinAuth.signIn(email, pwd);
+      const { error } = await window.PinyinAuth.signIn(email, pwd);
 
       btn.disabled = false;
       btn.innerHTML = '<span>🚀 Đăng Nhập & Đồng Bộ</span>';
 
       if (error) {
         let msg = error.message;
-        if (msg.includes('Email not confirmed') || msg.includes('email_not_confirmed')) {
-          msg = 'Email chưa được kích hoạt. <br>👉 <strong>Cách sửa ngay trong 5 giây:</strong> Vào Supabase ➔ <em>Authentication</em> ➔ <em>Users</em> ➔ Nhấp dấu <strong>[...]</strong> bên cạnh email này ➔ chọn <strong>"Confirm user"</strong>.';
-        } else if (msg.includes('Invalid login credentials')) {
-          msg = 'Email hoặc mật khẩu không chính xác. Vui lòng kiểm tra lại.';
+        if (msg.includes('Invalid login credentials')) {
+          msg = 'Email hoặc mật khẩu không chính xác. (Gợi ý: Bạn có thể đăng ký tài khoản mới hoặc bấm nút "👑 Điền nhanh Admin mẫu")';
         }
         this.showAlert(`❌ Đăng nhập thất bại: ${msg}`, 'error');
       } else {
-        this.showAlert('🎉 Đăng nhập thành công! Đang đồng bộ tiến độ...', 'success');
+        this.showAlert('🎉 Đăng nhập thành công! Đã nạp tiến độ từ Free Database.', 'success');
         setTimeout(() => {
           this.closeModal();
-        }, 1200);
+        }, 1000);
       }
     }
 
@@ -497,15 +605,10 @@
         return;
       }
 
-      if (!window.PinyinAuth || !window.PinyinAuth.isConfigured()) {
-        this.showAlert('⚠️ Chưa cấu hình kết nối Supabase trong supabase-config.js.', 'error');
-        return;
-      }
-
       btn.disabled = true;
       btn.innerHTML = '<span>⏳ Đang tạo tài khoản...</span>';
 
-      const { data, error } = await window.PinyinAuth.signUp(email, pwd, name);
+      const { error } = await window.PinyinAuth.signUp(email, pwd, name);
 
       btn.disabled = false;
       btn.innerHTML = '<span>✨ Tạo Tài Khoản Miễn Phí</span>';
@@ -516,29 +619,26 @@
           msg = 'Email này đã được đăng ký trước đó. Bạn hãy chuyển sang tab Đăng Nhập.';
         }
         this.showAlert(`❌ Đăng ký thất bại: ${msg}`, 'error');
-      } else if (data && data.user && !data.session) {
-        // Dự án đang bật chế độ bắt buộc Confirm Email
-        this.showAlert('🎉 Tạo tài khoản thành công! <br>⚠️ Dự án đang bật bắt buộc xác thực email: Hãy vào Supabase ➔ <em>Authentication</em> ➔ <em>Users</em> ➔ Nhấp <strong>[...]</strong> ➔ chọn <strong>"Confirm user"</strong> để kích hoạt tài khoản ngay!', 'info');
       } else {
-        this.showAlert('🎉 Đăng ký thành công! Tiến độ hiện tại đã được sao lưu lên Cloud.', 'success');
+        this.showAlert('🎉 Đăng ký thành công! Tiến độ đã được lưu vào Free Database.', 'success');
         setTimeout(() => {
           this.closeModal();
-        }, 1500);
+        }, 1200);
       }
     }
 
     async handleForgotPassword() {
       const email = document.getElementById('loginEmail')?.value;
       if (!email) {
-        this.showAlert('Vui lòng nhập email vào ô trên rồi bấm Quên mật khẩu.', 'error');
+        this.showAlert('Vui lòng nhập email vào ô trên rồi bấm Đặt lại mật khẩu.', 'error');
         return;
       }
 
-      const { error } = await window.PinyinAuth.resetPassword(email);
+      const { data, error } = await window.PinyinAuth.resetPassword(email, '123456');
       if (error) {
-        this.showAlert(`Không thể gửi email đặt lại: ${error.message}`, 'error');
+        this.showAlert(`❌ ${error.message}`, 'error');
       } else {
-        this.showAlert('✉️ Đã gửi link đặt lại mật khẩu về hòm thư của bạn!', 'success');
+        this.showAlert(`✅ Mật khẩu của tài khoản <strong>${email}</strong> đã được đặt lại về mặc định: <code>${data.resetTo}</code>`, 'success');
       }
     }
 
@@ -546,7 +646,6 @@
       if (!this.chipBtn) return;
       const isLogged = window.PinyinAuth && window.PinyinAuth.isLoggedIn();
       const isSyncing = window.PinyinAuth && window.PinyinAuth.isSyncing;
-      const isConfigured = window.PinyinAuth && window.PinyinAuth.isConfigured();
       const isAdmin = window.PinyinAuth && window.PinyinAuth.isAdmin();
 
       if (isLogged) {
@@ -558,14 +657,14 @@
         this.chipBtn.innerHTML = `
           <div class="pp-auth-chip-avatar">${initial}</div>
           <span class="pp-auth-chip-text">${name}${adminTag}</span>
-          <span class="pp-auth-status-dot ${isSyncing ? 'syncing' : 'synced'}" title="${isSyncing ? 'Đang đồng bộ...' : 'Đã đồng bộ Cloud'}"></span>
+          <span class="pp-auth-status-dot ${isSyncing ? 'syncing' : 'synced'}" title="${isSyncing ? 'Đang đồng bộ...' : 'Đã lưu vào Free Database'}"></span>
         `;
       } else {
         this.chipBtn.className = 'pp-auth-chip-btn';
         this.chipBtn.innerHTML = `
-          <span>☁️</span>
+          <span>🗄️</span>
           <span class="pp-auth-chip-text">Đăng Nhập</span>
-          <span class="pp-auth-status-dot ${isConfigured ? 'guest' : ''}" title="Khách (Bấm để đăng nhập và đồng bộ)"></span>
+          <span class="pp-auth-status-dot guest" title="Khách (Bấm để đăng nhập / sao lưu miễn phí)"></span>
         `;
       }
     }
@@ -588,7 +687,6 @@
       if (avatarEl) avatarEl.textContent = displayName ? displayName.charAt(0).toUpperCase() : '👤';
       if (btnAdmin) btnAdmin.style.display = isAdmin ? 'flex' : 'none';
 
-      // Đọc thống kê
       const getSetCount = (key) => {
         try {
           const val = JSON.parse(localStorage.getItem(key) || '[]');
@@ -614,13 +712,13 @@
 
       const lastSyncEl = document.getElementById('lblCloudSyncText');
       if (lastSyncEl) {
+        const provider = window.PinyinAuth.getProviderName();
         const last = window.PinyinAuth.lastSyncTime;
-        lastSyncEl.textContent = last ? `Đã đồng bộ (${last.toLocaleTimeString()})` : 'Sẵn sàng đồng bộ';
+        lastSyncEl.textContent = last ? `${provider} (${last.toLocaleTimeString()})` : provider;
       }
     }
   }
 
-  // Khởi tạo Controller
   window.PinyinAuthModal = new AuthModalController();
 
 })();

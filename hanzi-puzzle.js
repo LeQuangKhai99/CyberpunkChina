@@ -178,9 +178,138 @@ function getRadicalInfo(char) {
   };
 }
 
+const GRAMMAR_SENTENCES = [
+  // HSK 1
+  {
+    level: 1,
+    hanzi: '我喜欢喝中国茶',
+    pinyin: 'Wǒ xǐhuan hē Zhōngguó chá',
+    meaning: 'Tôi thích uống trà Trung Quốc',
+    words: ['我', '喜欢', '喝', '中国茶'],
+    tags: ['Chủ ngữ (Tôi)', 'Động từ (Thích)', 'Động từ (Uống)', 'Tân ngữ (Trà TQ)'],
+    distractors: ['吃', '苹果'],
+    etymology: '📐 Ngữ pháp HSK 1 (S + V1 + V2 + O): Chủ ngữ (我) + Động từ tâm lý (喜欢) + Động từ hành động (喝) + Cụm danh từ (中国茶).'
+  },
+  {
+    level: 1,
+    hanzi: '他是我的汉语老师',
+    pinyin: 'Tā shì wǒ de Hànyǔ lǎoshī',
+    meaning: 'Thầy ấy là giáo viên tiếng Trung của tôi',
+    words: ['他', '是', '我的', '汉语老师'],
+    tags: ['Chủ ngữ (Anh ấy)', 'Động từ (Là)', 'Định ngữ (Của tôi)', 'Danh từ (GV Tiếng Trung)'],
+    distractors: ['学生', '去'],
+    etymology: '📐 Ngữ pháp HSK 1 (Câu chữ 是 & Định ngữ 的): S + 是 + Định ngữ (我的) + Trung tâm ngữ (汉语老师).'
+  },
+  {
+    level: 1,
+    hanzi: '我明天去北京看朋友',
+    pinyin: 'Wǒ míngtiān qù Běijīng kàn péngyou',
+    meaning: 'Ngày mai tôi đi Bắc Kinh thăm bạn bè',
+    words: ['我', '明天', '去北京', '看朋友'],
+    tags: ['Chủ ngữ (Tôi)', 'Trạng ngữ TG (Ngày mai)', 'V1 + Nơi chốn (Đi BK)', 'V2 + Mục đích (Thăm bạn)'],
+    distractors: ['昨天', '买书'],
+    etymology: '📐 Ngữ pháp HSK 1 (Câu liên động chỉ mục đích): Chủ ngữ + Thời gian (明天) + 去 + Địa điểm (北京) + Động từ mục đích (看朋友).'
+  },
+  // HSK 2
+  {
+    level: 2,
+    hanzi: '今天比昨天冷得多',
+    pinyin: 'Jīntiān bǐ zuótiān lěng de duō',
+    meaning: 'Hôm nay lạnh hơn hôm qua rất nhiều',
+    words: ['今天', '比', '昨天', '冷得多'],
+    tags: ['A (Hôm nay)', 'Giới từ so sánh (Hơn)', 'B (Hôm qua)', 'Tính từ + Mức độ (Lạnh hơn nhiều)'],
+    distractors: ['没有', '热'],
+    etymology: '📐 Ngữ pháp HSK 2 (Câu so sánh chữ 比): A + 比 + B + Tính từ + 得多 (nhiều).'
+  },
+  {
+    level: 2,
+    hanzi: '因为下雨所以我没去',
+    pinyin: 'Yīnwèi xiàyǔ suǒyǐ wǒ méi qù',
+    meaning: 'Bởi vì trời mưa cho nên tôi đã không đi',
+    words: ['因为', '下雨', '所以', '我没去'],
+    tags: ['Liên từ (Bởi vì)', 'Nguyên nhân (Trời mưa)', 'Liên từ (Cho nên)', 'Kết quả (Tôi không đi)'],
+    distractors: ['虽然', '但是'],
+    etymology: '📐 Ngữ pháp HSK 2 (Cặp liên từ Nguyên nhân - Kết quả): 因为 (Bởi vì...) + 所以 (Cho nên...).'
+  },
+  {
+    level: 2,
+    hanzi: '我已经找到工作了',
+    pinyin: 'Wǒ yǐjīng zhǎodào gōngzuò le',
+    meaning: 'Tôi đã tìm được công việc rồi',
+    words: ['我', '已经', '找到', '工作了'],
+    tags: ['Chủ ngữ (Tôi)', 'Phó từ (Đã)', 'Động từ + Bổ ngữ KQ (Tìm thấy)', 'Tân ngữ + 了 (Công việc rồi)'],
+    distractors: ['正在', '还没'],
+    etymology: '📐 Ngữ pháp HSK 2 (Cấu trúc 已经...了): Diễn tả hành động đã hoàn thành (已经 + V + Bổ ngữ kết quả + 了).'
+  },
+  // HSK 3
+  {
+    level: 3,
+    hanzi: '请把桌上的书给我',
+    pinyin: 'Qǐng bǎ zhuō shàng de shū gěi wǒ',
+    meaning: 'Xin hãy đưa quyển sách trên bàn cho tôi',
+    words: ['请把', '桌上的书', '给', '我'],
+    tags: ['Giới từ tác động (Hãy đem)', 'Tân ngữ xác định (Sách trên bàn)', 'Động từ (Đưa cho)', 'Kết quả (Tôi)'],
+    distractors: ['被', '拿走'],
+    etymology: '📐 Ngữ pháp HSK 3 (Câu chữ 把): S + 把 + Tân ngữ xác định + Động từ + Thành phần khác (đích đến/kết quả).'
+  },
+  {
+    level: 3,
+    hanzi: '虽然工作很忙但是我很快乐',
+    pinyin: 'Suīrán gōngzuò hěn máng dànshì wǒ hěn kuàilè',
+    meaning: 'Tuy công việc rất bận nhưng tôi rất vui vẻ',
+    words: ['虽然', '工作很忙', '但是', '我很快乐'],
+    tags: ['Liên từ (Tuy rằng)', 'Mệnh đề 1 (Việc rất bận)', 'Liên từ (Nhưng mà)', 'Mệnh đề 2 (Tôi rất vui)'],
+    distractors: ['如果', '只要'],
+    etymology: '📐 Ngữ pháp HSK 3 (Cặp liên từ nhượng bộ): 虽然 (Tuy...) + 但是 (Nhưng...).'
+  },
+  // HSK 4
+  {
+    level: 4,
+    hanzi: '不管多么困难我们都要坚持',
+    pinyin: 'Bùguǎn duōme kùnnan wǒmen dōu yào jiānchí',
+    meaning: 'Bất kể khó khăn thế nào chúng ta đều phải kiên trì',
+    words: ['不管', '多么困难', '我们', '都要坚持'],
+    tags: ['Liên từ (Bất kể)', 'Điều kiện (Khó khăn thế nào)', 'Chủ ngữ (Chúng ta)', 'Đều phải kiên trì (都 + V)'],
+    distractors: ['不仅', '而且'],
+    etymology: '📐 Ngữ pháp HSK 4 (Cấu trúc 不管...都...): Bất kể điều kiện thay đổi ra sao, kết quả phía sau đều không đổi.'
+  },
+  {
+    level: 4,
+    hanzi: '他不仅聪明而且非常努力',
+    pinyin: 'Tā bùjǐn cōngming érqiě fēicháng nǔlì',
+    meaning: 'Anh ấy không những thông minh mà còn vô cùng nỗ lực',
+    words: ['他', '不仅聪明', '而且', '非常努力'],
+    tags: ['Chủ ngữ (Anh ấy)', 'Không những (不仅...)', 'Mà còn (而且)', 'Vế tăng tiến (Rất nỗ lực)'],
+    distractors: ['或者', '尽管'],
+    etymology: '📐 Ngữ pháp HSK 4 (Quan hệ tăng tiến): 不仅 (Không những...) + 而且 (Mà còn...).'
+  },
+  // HSK 5
+  {
+    level: 5,
+    hanzi: '与其浪费时间不如立刻行动',
+    pinyin: 'Yǔqí làngfèi shíjiān bùrú lìkè xíngdòng',
+    meaning: 'Thà lập tức hành động còn hơn lãng phí thời gian',
+    words: ['与其', '浪费时间', '不如', '立刻行动'],
+    tags: ['Liên từ chọn lựa (Thay vì)', 'Phương án A (Lãng phí TG)', 'Còn hơn là (不如)', 'Phương án B tối ưu (Hành động ngay)'],
+    distractors: ['宁可', '否则'],
+    etymology: '📐 Ngữ pháp HSK 5 (Cấu trúc so sánh lựa chọn 与其 A 不如 B): Thay vì chọn A thì chọn B tốt hơn.'
+  },
+  // HSK 6
+  {
+    level: 6,
+    hanzi: '唯有不断创新才能保持领先',
+    pinyin: 'Wéiyǒu bùduàn chuàngxīn cáinéng bǎochí lǐngxiān',
+    meaning: 'Chỉ có không ngừng sáng tạo mới có thể giữ vững vị thế dẫn đầu',
+    words: ['唯有', '不断创新', '才能', '保持领先'],
+    tags: ['Liên từ điều kiện (Chỉ có)', 'Điều kiện cần (Không ngừng sáng tạo)', 'Mới có thể (才能)', 'Kết quả (Giữ vững dẫn đầu)'],
+    distractors: ['即便', '尚且'],
+    etymology: '📐 Ngữ pháp HSK 6 (Cấu trúc điều kiện duy nhất trang trọng): 唯有 (Chỉ có...) + 才/才能 (Mới có thể...).'
+  }
+];
+
 class HanziPuzzleGame {
   constructor() {
-    this.mode = 'radicals'; // 'radicals' or 'compounds'
+    this.mode = 'radicals'; // 'radicals' | 'compounds' | 'sentences'
     this.hskLevel = 'all';
     this.rawWords = window.CHINESE_WORDS_5000 || [];
 
@@ -238,14 +367,24 @@ class HanziPuzzleGame {
     }
     this.lessonDeck = deckParam !== null ? parseInt(deckParam, 10) : null;
 
-    if (modeParam === 'compounds' || (hskParam && hskParam !== '0' && modeParam !== 'radicals')) {
+    if (modeParam === 'sentences') {
+      this.mode = 'sentences';
+      const btnRad = document.getElementById('modeRadicalsBtn');
+      const btnComp = document.getElementById('modeCompoundsBtn');
+      const btnSent = document.getElementById('modeSentencesBtn');
+      if (btnRad) btnRad.classList.remove('active');
+      if (btnComp) btnComp.classList.remove('active');
+      if (btnSent) btnSent.classList.add('active');
+    } else if (modeParam === 'compounds' || (hskParam && hskParam !== '0' && modeParam !== 'radicals')) {
       this.mode = 'compounds';
       const btnRad = document.getElementById('modeRadicalsBtn');
       const btnComp = document.getElementById('modeCompoundsBtn');
+      const btnSent = document.getElementById('modeSentencesBtn');
       if (btnRad && btnComp) {
         btnComp.classList.add('active');
         btnRad.classList.remove('active');
       }
+      if (btnSent) btnSent.classList.remove('active');
     }
 
     this.loadNewQuestion();
@@ -329,11 +468,57 @@ class HanziPuzzleGame {
 
     if (this.mode === 'radicals') {
       this.generateRadicalQuestion();
+    } else if (this.mode === 'sentences') {
+      this.generateSentenceQuestion();
     } else {
       this.generateCompoundQuestion();
     }
 
     this.renderGameBoard();
+  }
+
+  generateSentenceQuestion() {
+    let pool = [...GRAMMAR_SENTENCES];
+
+    // Bổ sung câu ngữ cảnh từ bài học hiện tại nếu có
+    if (this.hskLevel !== 'all') {
+      const lvl = parseInt(this.hskLevel, 10);
+      const filtered = pool.filter(q => q.level === lvl);
+      if (filtered.length > 0) pool = filtered;
+    }
+
+    const q = pool[Math.floor(Math.random() * pool.length)];
+    this.currentQuestion = {
+      hanzi: q.hanzi,
+      pinyin: q.pinyin,
+      level: q.level,
+      meaning: q.meaning,
+      words: q.words,
+      tags: q.tags || [],
+      etymology: q.etymology
+    };
+    this.expectedPieces = [...q.words];
+
+    const distractors = (q.distractors || ['不', '吗']).map(d => ({
+      char: d,
+      tag: 'Từ gây nhiễu',
+      fullName: 'Từ gây nhiễu ngữ pháp'
+    }));
+
+    const correctItems = q.words.map((w, idx) => ({
+      char: w,
+      tag: (q.tags && q.tags[idx]) ? q.tags[idx] : `Vị trí ${idx + 1}`,
+      fullName: (q.tags && q.tags[idx]) ? q.tags[idx] : `Thành phần câu ${idx + 1}`
+    }));
+
+    const combined = [...correctItems, ...distractors].sort(() => 0.5 - Math.random());
+    this.trayPieces = combined.map((item, idx) => ({
+      id: `s_${idx}_${item.char}`,
+      char: item.char,
+      tag: item.tag,
+      fullName: item.fullName
+    }));
+    this.slottedPieces = new Array(this.expectedPieces.length).fill(null);
   }
 
   generateRadicalQuestion() {
@@ -433,7 +618,9 @@ class HanziPuzzleGame {
     this.targetMeaning.textContent = q.meaning;
     this.targetPinyin.textContent = q.pinyin;
     this.targetHsk.textContent = `HSK ${q.level}`;
-    this.targetModeTag.textContent = this.mode === 'radicals' ? '🧩 CHIẾT TỰ HÌNH TƯỢNG' : '🔗 GHÉP TỪ HSK';
+    this.targetModeTag.textContent = this.mode === 'radicals'
+      ? '🧩 CHIẾT TỰ HÌNH TƯỢNG'
+      : (this.mode === 'sentences' ? '📝 GHÉP CÂU NGỮ PHÁP HSK' : '🔗 GHÉP TỪ HSK');
 
     // Render Drop Target Slots
     this.slotsContainer.innerHTML = '';
@@ -614,6 +801,14 @@ class HanziPuzzleGame {
         }).join('<span class="formula-plus">+</span>');
 
         formulaItems.innerHTML = `${chipsHtml} <span class="formula-equal">➔</span> <div class="formula-chip formula-result"><span class="f-char">${this.currentQuestion.hanzi}</span><span class="f-name">${this.currentQuestion.meaning}</span></div>`;
+      } else if (this.mode === 'sentences') {
+        const words = this.currentQuestion.words || this.expectedPieces;
+        const tags = this.currentQuestion.tags || [];
+        const chipsHtml = words.map((w, idx) => {
+          return `<div class="formula-chip"><span class="f-char">${w}</span><span class="f-name">${tags[idx] || `Thành phần ${idx + 1}`}</span></div>`;
+        }).join('<span class="formula-plus">+</span>');
+
+        formulaItems.innerHTML = `${chipsHtml} <span class="formula-equal">➔</span> <div class="formula-chip formula-result"><span class="f-char">${this.currentQuestion.hanzi}</span><span class="f-name">${this.currentQuestion.meaning}</span></div>`;
       } else {
         const chars = Array.from(this.currentQuestion.hanzi);
         const chipsHtml = chars.map(c => {
@@ -660,26 +855,35 @@ class HanziPuzzleGame {
     // Mode Switchers
     const btnRadicals = document.getElementById('modeRadicalsBtn');
     const btnCompounds = document.getElementById('modeCompoundsBtn');
+    const btnSentences = document.getElementById('modeSentencesBtn');
 
-    btnRadicals.addEventListener('click', () => {
-      if (this.mode === 'radicals') return;
-      this.mode = 'radicals';
-      btnRadicals.classList.add('active');
-      btnCompounds.classList.remove('active');
+    const activateModeBtn = (modeName) => {
+      this.mode = modeName;
+      if (btnRadicals) btnRadicals.classList.toggle('active', modeName === 'radicals');
+      if (btnCompounds) btnCompounds.classList.toggle('active', modeName === 'compounds');
+      if (btnSentences) btnSentences.classList.toggle('active', modeName === 'sentences');
       this.streak = 0;
       this.streakDisplay.textContent = '0';
       this.loadNewQuestion();
-    });
+    };
 
-    btnCompounds.addEventListener('click', () => {
-      if (this.mode === 'compounds') return;
-      this.mode = 'compounds';
-      btnCompounds.classList.add('active');
-      btnRadicals.classList.remove('active');
-      this.streak = 0;
-      this.streakDisplay.textContent = '0';
-      this.loadNewQuestion();
-    });
+    if (btnRadicals) {
+      btnRadicals.addEventListener('click', () => {
+        if (this.mode !== 'radicals') activateModeBtn('radicals');
+      });
+    }
+
+    if (btnCompounds) {
+      btnCompounds.addEventListener('click', () => {
+        if (this.mode !== 'compounds') activateModeBtn('compounds');
+      });
+    }
+
+    if (btnSentences) {
+      btnSentences.addEventListener('click', () => {
+        if (this.mode !== 'sentences') activateModeBtn('sentences');
+      });
+    }
 
     // Level Filter
     this.hskSelect.addEventListener('change', () => {

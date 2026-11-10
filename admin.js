@@ -1,6 +1,7 @@
 // =========================================================================
 // PINYIN POP! - ADMIN DASHBOARD & USER MANAGEMENT CONTROLLER
-// Quản lý học viên, báo cáo thống kê KPI và phân quyền Supabase
+// Quản lý học viên, báo cáo thống kê KPI trên Hệ thống Database Miễn Phí 100%
+// (IndexedDB + Google Firebase Realtime DB + Google Sheets Cloud)
 // =========================================================================
 
 (function() {
@@ -8,15 +9,14 @@
 
   class AdminDashboardApp {
     constructor() {
-      this.supabase = null;
       this.currentUser = null;
-      this.usersData = []; // Mảng kết hợp giữa profiles & user_progress
+      this.usersData = [];
       this.selectedUser = null;
       this.activeTab = 'tabDashboard';
       this.searchTerm = '';
       this.roleFilter = 'all';
       this.sortBy = 'newest';
-      
+
       this.init();
     }
 
@@ -27,7 +27,9 @@
       this.bindTableFilters();
       this.bindUserModal();
 
-      // Kiểm tra trạng thái xác thực và phân quyền
+      if (window.PinyinAuth) {
+        await window.PinyinAuth.restoreFreeSession();
+      }
       await this.checkAuthAndRole();
     }
 
@@ -46,36 +48,32 @@
        SECURITY & AUTH GUARD
        ===================================================================== */
     async checkAuthAndRole() {
-      const config = window.SUPABASE_CONFIG || {};
-      if (!config.url || !config.anonKey || !window.supabase) {
-        this.showGuardError('Chưa cấu hình Supabase URL & Anon Key trong supabase-config.js!');
+      if (!window.PinyinAuth) {
+        this.showGuardError('Không tìm thấy PinyinAuth Database Engine!');
         return;
       }
 
-      this.supabase = window.supabase.createClient(config.url, config.anonKey);
-
-      const { data: { session } } = await this.supabase.auth.getSession();
-      if (!session || !session.user) {
-        this.showGuardLogin('Vui lòng đăng nhập tài khoản Admin để truy cập hệ thống.');
+      if (!window.PinyinAuth.isLoggedIn()) {
+        const em = document.getElementById('adminEmail');
+        const pw = document.getElementById('adminPassword');
+        if (em && !em.value) em.value = 'admin@pinyinpop.com';
+        if (pw && !pw.value) pw.value = 'admin123';
+        this.showGuardLogin('Vui lòng đăng nhập tài khoản Admin (Mặc định có sẵn: admin@pinyinpop.com / Mật khẩu: admin123).');
         return;
       }
 
-      this.currentUser = session.user;
+      this.currentUser = window.PinyinAuth.getUser();
+      const role = await window.PinyinAuth.checkUserRole();
 
-      // Kiểm tra quyền role trong bảng profiles
-      const { data: profile, error } = await this.supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', this.currentUser.id)
-        .maybeSingle();
-
-      if (error || !profile || profile.role !== 'admin') {
+      if (role !== 'admin') {
         this.showGuardError('⛔ TỪ CHỐI TRUY CẬP: Tài khoản của bạn (' + this.currentUser.email + ') là Học Viên thường, không có quyền Quản Trị Viên (Admin).');
         return;
       }
 
-      // Đã xác thực quyền Admin hợp lệ
-      this.unlockAdminPanel(profile);
+      this.unlockAdminPanel({
+        email: this.currentUser.email,
+        display_name: window.PinyinAuth.getUserDisplayName()
+      });
     }
 
     showGuardLogin(msg) {
@@ -92,7 +90,7 @@
       document.getElementById('guardIcon').textContent = '⛔';
       document.getElementById('guardTitle').textContent = 'KHÔNG CÓ QUYỀN TRUY CẬP';
       document.getElementById('guardDesc').innerHTML = msg;
-      document.getElementById('adminLoginForm').style.display = 'none';
+      document.getElementById('adminLoginForm').style.display = 'block';
     }
 
     unlockAdminPanel(adminProfile) {
@@ -107,7 +105,6 @@
         avatarEl.textContent = name.charAt(0).toUpperCase();
       }
 
-      // Tải dữ liệu toàn bộ hệ thống
       this.loadAllSystemData();
     }
 
@@ -127,20 +124,14 @@
         submitBtn.innerHTML = '<span>⏳ Đang kiểm tra quyền...</span>';
 
         try {
-          const { data, error } = await this.supabase.auth.signInWithPassword({
-            email,
-            password: pwd
-          });
-
+          const { error } = await window.PinyinAuth.signIn(email, pwd);
           if (error) throw error;
           await this.checkAuthAndRole();
         } catch (err) {
           alertEl.className = 'admin-guard-alert error';
-          let m = err.message;
-          if (m.includes('Email not confirmed')) {
-            m = 'Email chưa được kích hoạt. Hãy vào Supabase ➔ Authentication ➔ Users ➔ Bấm dấu [...] cạnh email chọn "Confirm user".';
-          } else if (m.includes('Invalid login credentials')) {
-            m = 'Email hoặc mật khẩu không chính xác.';
+          let m = err.message || 'Đăng nhập thất bại';
+          if (m.includes('Invalid login credentials')) {
+            m = 'Email hoặc mật khẩu không chính xác. (Gợi ý Admin mặc định: admin@pinyinpop.com / admin123)';
           }
           alertEl.innerHTML = `❌ ${m}`;
           alertEl.style.display = 'block';
@@ -150,16 +141,14 @@
         }
       });
 
-      // Nút logout
       const btnLogout = document.getElementById('btnAdminLogout');
       if (btnLogout) {
         btnLogout.addEventListener('click', async () => {
-          if (this.supabase) await this.supabase.auth.signOut();
+          if (window.PinyinAuth) await window.PinyinAuth.signOut();
           window.location.reload();
         });
       }
 
-      // Nút làm mới dữ liệu
       const btnRefresh = document.getElementById('btnRefreshData');
       if (btnRefresh) {
         btnRefresh.addEventListener('click', () => {
@@ -177,66 +166,16 @@
        DATA LOADING & MERGING
        ===================================================================== */
     async loadAllSystemData() {
-      if (!this.supabase) return;
+      if (!window.PinyinAuth) return;
 
       try {
-        // 1. Tải tất cả hồ sơ người dùng
-        const { data: profiles, error: pErr } = await this.supabase
-          .from('profiles')
-          .select('*')
-          .order('created_at', { ascending: false });
+        this.usersData = await window.PinyinAuth.getAllUsersWithProgress();
 
-        if (pErr) throw pErr;
-
-        // 2. Tải tất cả tiến độ học tập
-        const { data: progressList, error: progErr } = await this.supabase
-          .from('user_progress')
-          .select('*');
-
-        if (progErr) throw progErr;
-
-        // Tạo map tiến độ theo user_id
-        const progressMap = new Map();
-        (progressList || []).forEach(prog => {
-          progressMap.set(prog.user_id, prog);
-        });
-
-        // Hợp nhất dữ liệu học viên
-        this.usersData = (profiles || []).map(p => {
-          const prog = progressMap.get(p.id) || {};
-          return {
-            id: p.id,
-            email: p.email || 'N/A',
-            display_name: p.display_name || p.email.split('@')[0],
-            role: p.role || 'user',
-            created_at: p.created_at,
-            updated_at: p.updated_at,
-            // Tiến độ Flashcard
-            mastered: Array.isArray(prog.flashcard_mastered) ? prog.flashcard_mastered : [],
-            review: Array.isArray(prog.flashcard_review) ? prog.flashcard_review : [],
-            favs: Array.isArray(prog.flashcard_favs) ? prog.flashcard_favs : [],
-            // Tiến độ Viết chữ
-            stroke_completed: prog.stroke_completed_count || 0,
-            stroke_correct: prog.stroke_correct_count || 0,
-            stroke_total: prog.stroke_total_attempts || 0,
-            stroke_streak: prog.stroke_streak || 0,
-            stroke_chars: Array.isArray(prog.stroke_completed_chars) ? prog.stroke_completed_chars : [],
-            // Kỷ lục game
-            highscore_pop: prog.pinyin_pop_highscore || 0,
-            score_tone: prog.tone_master_score || 0,
-            score_puzzle: prog.puzzle_score || 0,
-            last_synced: prog.updated_at || p.updated_at
-          };
-        });
-
-        // Cập nhật số đếm trên tab
         const usersCountEl = document.getElementById('tabUsersCount');
         if (usersCountEl) usersCountEl.textContent = this.usersData.length;
 
-        // Render Dashboard KPI & Table
         this.renderDashboardAnalytics();
         this.renderUsersTable();
-
       } catch (err) {
         console.error('Lỗi tải dữ liệu Admin:', err);
         alert('Không thể tải dữ liệu: ' + err.message);
@@ -266,7 +205,6 @@
         }
       });
 
-      // KPI Elements
       document.getElementById('kpiTotalUsers').textContent = totalUsers.toLocaleString();
       document.getElementById('kpiTotalMastered').textContent = totalMasteredWords.toLocaleString();
       document.getElementById('kpiTotalStrokes').textContent = totalStrokes.toLocaleString();
@@ -274,12 +212,11 @@
       document.getElementById('kpiHighScoreHolder').textContent = `Kỷ lục: ${highestScoreUser}`;
       document.getElementById('kpiMaxStreak').textContent = `${maxStreak} 🔥`;
 
-      // Phân bổ tỷ lệ hoạt động
       const totalActions = totalMasteredWords + totalStrokes + (highestScore > 0 ? 100 : 10);
       const pctFlashcard = Math.round((totalMasteredWords / (totalActions || 1)) * 100);
       const pctStroke = Math.round((totalStrokes / (totalActions || 1)) * 100);
       const pctArcade = Math.max(10, 100 - pctFlashcard - pctStroke);
-      const pctTone = 15;
+      const pctTone = 18;
 
       document.getElementById('barPctFlashcard').textContent = `${pctFlashcard}%`;
       document.getElementById('barFillFlashcard').style.width = `${pctFlashcard}%`;
@@ -293,7 +230,6 @@
       document.getElementById('barPctTone').textContent = `${pctTone}%`;
       document.getElementById('barFillTone').style.width = `${pctTone}%`;
 
-      // Render Leaderboard (Top 5 học viên chăm chỉ)
       this.renderLeaderboard();
     }
 
@@ -346,12 +282,11 @@
         return matchSearch && matchRole;
       });
 
-      // Sắp xếp
       filtered.sort((a, b) => {
         if (this.sortBy === 'mastered') return b.mastered.length - a.mastered.length;
         if (this.sortBy === 'strokes') return b.stroke_completed - a.stroke_completed;
         if (this.sortBy === 'highscore') return b.highscore_pop - a.highscore_pop;
-        return new Date(b.created_at) - new Date(a.created_at); // 'newest'
+        return new Date(b.created_at) - new Date(a.created_at);
       });
 
       if (filtered.length === 0) {
@@ -409,7 +344,6 @@
         `;
       }).join('');
 
-      // Gắn sự kiện xem chi tiết
       tbody.querySelectorAll('.btn-view-user').forEach(btn => {
         btn.addEventListener('click', () => {
           const userId = btn.getAttribute('data-id');
@@ -484,11 +418,10 @@
       roleEl.textContent = user.role.toUpperCase();
 
       const accuracy = user.stroke_total > 0
-        ? Math.round((user.stroke_correct / user.stroke_total) * 100)
+        ? Math.round((u => u.stroke_correct / u.stroke_total)(user) * 100)
         : 100;
       accEl.textContent = `${accuracy}%`;
 
-      // Hiển thị danh sách từ đã thuộc
       countEl.textContent = user.mastered.length;
       if (user.mastered.length > 0) {
         cloudEl.innerHTML = user.mastered.map(w => `<span class="word-tag-chip">${w}</span>`).join('');
@@ -516,7 +449,6 @@
         });
       }
 
-      // Đổi vai trò Admin / User
       if (toggleRoleBtn) {
         toggleRoleBtn.addEventListener('click', async () => {
           if (!this.selectedUser) return;
@@ -528,13 +460,7 @@
           toggleRoleBtn.textContent = '⏳ Đang lưu...';
 
           try {
-            const { error } = await this.supabase
-              .from('profiles')
-              .update({ role: newRole })
-              .eq('id', this.selectedUser.id);
-
-            if (error) throw error;
-
+            await window.PinyinAuth.updateUserRole(this.selectedUser.id, newRole);
             this.selectedUser.role = newRole;
             document.getElementById('modalCurrentRole').textContent = newRole.toUpperCase();
             alert(`✅ Đã chuyển vai trò thành công sang: ${newRole.toUpperCase()}`);
@@ -548,7 +474,6 @@
         });
       }
 
-      // Xóa sạch tiến độ học tập của học viên
       const resetProgressBtn = document.getElementById('btnResetUserProgressAction');
       if (resetProgressBtn) {
         resetProgressBtn.addEventListener('click', async () => {
@@ -560,30 +485,7 @@
           resetProgressBtn.textContent = '⏳ Đang xóa...';
 
           try {
-            const emptyProg = {
-              user_id: this.selectedUser.id,
-              flashcard_mastered: [],
-              flashcard_review: [],
-              flashcard_favs: [],
-              stroke_completed_count: 0,
-              stroke_correct_count: 0,
-              stroke_total_attempts: 0,
-              stroke_streak: 0,
-              stroke_completed_chars: [],
-              pinyin_pop_highscore: 0,
-              tone_master_score: 0,
-              puzzle_score: 0,
-              extra_data: {},
-              updated_at: new Date().toISOString()
-            };
-
-            const { error } = await this.supabase
-              .from('user_progress')
-              .upsert(emptyProg, { onConflict: 'user_id' });
-
-            if (error) throw error;
-
-            // Cập nhật dữ liệu local của admin
+            const emptyProg = await window.PinyinAuth.adminResetUserProgress(this.selectedUser.id);
             this.selectedUser.mastered = [];
             this.selectedUser.stroke_completed = 0;
             this.selectedUser.stroke_correct = 0;
@@ -591,7 +493,6 @@
             this.selectedUser.highscore_pop = 0;
             this.selectedUser.last_synced = emptyProg.updated_at;
 
-            // Cập nhật lại UI modal
             document.getElementById('modalStatMastered').textContent = '0';
             document.getElementById('modalStatStrokes').textContent = '0';
             document.getElementById('modalStatAccuracy').textContent = '100%';
@@ -636,7 +537,6 @@
     }
   }
 
-  // Khởi tạo ứng dụng Admin khi DOM sẵn sàng
   document.addEventListener('DOMContentLoaded', () => {
     window.AdminApp = new AdminDashboardApp();
   });

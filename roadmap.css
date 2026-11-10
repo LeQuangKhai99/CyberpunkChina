@@ -979,6 +979,233 @@
   background: #eef2ff;
 }
 
+/* 7. ADVANCED PRACTICE LABS (ROLEPLAY, HSK MOCK EXAM, SENTENCE BUILDER) & LIVE LEADERBOARD */
+.rm-advanced-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 18px;
+}
+
+.rm-practice-labs-card,
+.rm-leaderboard-card {
+  background: rgba(255, 255, 255, 0.96);
+  border: 3px solid #ffffff;
+  border-radius: 26px;
+  padding: 20px 22px;
+  box-shadow: 0 14px 32px rgba(99, 102, 241, 0.13);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.rm-labs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rm-lab-box {
+  background: linear-gradient(135deg, #f8fafc, #eff6ff);
+  border: 2px solid #dbeafe;
+  border-radius: 18px;
+  padding: 13px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+
+.rm-lab-box:hover {
+  border-color: #93c5fd;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(59, 130, 246, 0.12);
+}
+
+.rm-lab-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rm-lab-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+}
+
+.rm-lab-title {
+  font-family: var(--font-brand, 'Lexend', sans-serif);
+  font-size: 14px;
+  font-weight: 800;
+  color: #1e1b4b;
+}
+
+.rm-lab-desc {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #475569;
+  margin-top: 2px;
+}
+
+.rm-lab-btn {
+  padding: 9px 15px;
+  border-radius: 999px;
+  border: none;
+  font-family: var(--font-brand, 'Lexend', sans-serif);
+  font-size: 12px;
+  font-weight: 800;
+  color: #ffffff;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 6px 14px rgba(79, 70, 229, 0.28);
+  transition: transform 0.15s ease;
+}
+
+.rm-lab-btn:hover {
+  transform: scale(1.04);
+}
+
+/* Leaderboard Tabs & Rows */
+.rm-lb-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.rm-lb-tab {
+  padding: 5px 11px;
+  border-radius: 999px;
+  border: 1.5px solid #e2e8f0;
+  background: #f8fafc;
+  font-size: 11px;
+  font-weight: 800;
+  color: #475569;
+  cursor: pointer;
+}
+
+.rm-lb-tab.active {
+  background: #1e1b4b;
+  color: #ffffff;
+  border-color: #1e1b4b;
+}
+
+.rm-lb-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rm-lb-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 14px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+}
+
+.rm-lb-row.rank-1 {
+  background: linear-gradient(90deg, #fef9c3, #fffbeb);
+  border-color: #fde047;
+}
+
+.rm-lb-row.rank-2 {
+  background: linear-gradient(90deg, #f1f5f9, #f8fafc);
+  border-color: #cbd5e1;
+}
+
+.rm-lb-row.rank-3 {
+  background: linear-gradient(90deg, #ffedd5, #fff7ed);
+  border-color: #fdba74;
+}
+
+.rm-lb-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rm-lb-medal {
+  font-size: 15px;
+  font-weight: 900;
+  min-width: 26px;
+  text-align: center;
+}
+
+.rm-lb-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.rm-lb-sub {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.rm-lb-val {
+  font-family: var(--font-brand, 'Lexend', sans-serif);
+  font-size: 12.5px;
+  font-weight: 900;
+  color: #db2777;
+  background: #fdf2f8;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid #fbcfe8;
+}
+
+/* Roleplay Chat UI inside Modal */
+.rm-rp-chat-box {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 14px;
+  max-height: 250px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rm-rp-bubble {
+  padding: 10px 14px;
+  border-radius: 16px;
+  max-width: 88%;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.rm-rp-bubble.npc {
+  align-self: flex-start;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #0f172a;
+}
+
+.rm-rp-bubble.user {
+  align-self: flex-end;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: #ffffff;
+}
+
+@media (max-width: 900px) {
+  .rm-advanced-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .rm-status-banner {
     padding: 16px;

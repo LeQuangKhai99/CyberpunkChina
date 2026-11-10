@@ -9,6 +9,155 @@
 
   const WORDS_PER_UNIT = 25;
 
+  const ROLEPLAY_SCENARIOS = [
+    {
+      id: 'milktea',
+      icon: '🧋',
+      title: 'Gọi Trà Sữa & Đồ Ăn Bắc Kinh',
+      level: 'HSK 1 - 2',
+      npcName: 'Nhân viên Quán Trà (服务员)',
+      turns: [
+        {
+          npcZh: '你好！欢迎光临，请问你想喝点儿什么？',
+          npcPy: 'Nǐ hǎo! Huānyíng guānglín, qǐngwèn nǐ xiǎng hē diǎnr shénme?',
+          npcVn: 'Xin chào! Chào mừng quý khách, xin hỏi bạn muốn uống gì ạ?',
+          options: [
+            { zh: '我想喝一杯珍珠奶茶。', py: 'Wǒ xiǎng hē yì bēi zhēnzhū nǎichá.', vn: 'Tôi muốn uống một ly trà sữa trân châu.', correct: true },
+            { zh: '我是中国人。', py: 'Wǒ shì Zhōngguórén.', vn: 'Tôi là người Trung Quốc.', correct: false },
+            { zh: '今天星期三。', py: 'Jīntiān xīngqīsān.', vn: 'Hôm nay là thứ Tư.', correct: false }
+          ]
+        },
+        {
+          npcZh: '好的！请问你要热的还是冰的？甜度怎么选？',
+          npcPy: 'Hǎo de! Qǐngwèn nǐ yào rè de háishì bīng de? Tiándù zěnme xuǎn?',
+          npcVn: 'Vâng ạ! Bạn muốn uống nóng hay đá? Mức đường chọn thế nào ạ?',
+          options: [
+            { zh: '我要少冰，半糖，谢谢。', py: 'Wǒ yào shǎo bīng, bàn táng, xièxie.', vn: 'Cho tôi ít đá, nửa đường, cảm ơn.', correct: true },
+            { zh: '我不会写汉字。', py: 'Wǒ bú huì xiě Hànzì.', vn: 'Tôi không biết viết chữ Hán.', correct: false },
+            { zh: '他在医院工作。', py: 'Tā zài yīyuàn gōngzuò.', vn: 'Anh ấy làm việc ở bệnh viện.', correct: false }
+          ]
+        },
+        {
+          npcZh: '一共二十块。请问您怎么付款？',
+          npcPy: 'Yígòng èrshí kuài. Qǐngwèn nín zěnme fùkuǎn?',
+          npcVn: 'Tổng cộng 20 tệ. Xin hỏi quý khách thanh toán bằng gì ạ?',
+          options: [
+            { zh: '我用微信支付，给你。', py: 'Wǒ yòng Wēixìn zhīfù, gěi nǐ.', vn: 'Tôi dùng WeChat Pay, gửi bạn nhé.', correct: true },
+            { zh: '明天见！', py: 'Míngtiān jiàn!', vn: 'Ngày mai gặp lại!', correct: false },
+            { zh: '这本书很贵。', py: 'Zhè běn shū hěn guì.', vn: 'Quyển sách này rất đắt.', correct: false }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'shopping',
+      icon: '🛍️',
+      title: 'Mặc Cả Mua Sắm Ở Chợ Đêm',
+      level: 'HSK 2 - 3',
+      npcName: 'Chủ Cửa Hàng (老板)',
+      turns: [
+        {
+          npcZh: '来看看吧！这件衣服质量非常好，你喜欢吗？',
+          npcPy: 'Lái kànkan ba! Zhè jiàn yīfu zhìliàng fēicháng hǎo, nǐ xǐhuan ma?',
+          npcVn: 'Vào xem đi bạn ơi! Chiếc áo này chất lượng cực kỳ tốt, bạn thích không?',
+          options: [
+            { zh: '挺好看的，请问这件多少钱？', py: 'Tǐng hǎokàn de, qǐngwèn zhè jiàn duōshao qián?', vn: 'Khá đẹp đấy, xin hỏi chiếc này bao nhiêu tiền?', correct: true },
+            { zh: '我已经吃饱了。', py: 'Wǒ yǐjīng chī bǎo le.', vn: 'Tôi đã ăn no rồi.', correct: false },
+            { zh: '外面正在下雨。', py: 'Wàimiàn zhèngzài xiàyǔ.', vn: 'Bên ngoài đang mưa.', correct: false }
+          ]
+        },
+        {
+          npcZh: '不贵，只要三百块钱！',
+          npcPy: 'Bú guì, zhǐ yào sānbǎi kuài qián!',
+          npcVn: 'Không đắt đâu, chỉ có 300 tệ thôi!',
+          options: [
+            { zh: '太贵了！能不能便宜一点儿？', py: 'Tài guì le! Néng bu néng piányi yìdiǎnr?', vn: 'Đắt quá! Có thể bớt rẻ hơn một chút được không?', correct: true },
+            { zh: '我坐飞机去上海。', py: 'Wǒ zuò fēijī qù Shànghǎi.', vn: 'Tôi đi máy bay tới Thượng Hải.', correct: false },
+            { zh: '我不认识他。', py: 'Wǒ bú rènshi tā.', vn: 'Tôi không quen anh ấy.', correct: false }
+          ]
+        },
+        {
+          npcZh: '好吧，看你是学生，算你一百八十块！',
+          npcPy: 'Hǎo ba, kàn nǐ shì xuésheng, suàn nǐ yìbǎi bāshí kuài!',
+          npcVn: 'Thôi được, thấy bạn là sinh viên, tính bạn 180 tệ thôi!',
+          options: [
+            { zh: '太好了，我买这件，谢谢老板！', py: 'Tài hǎo le, wǒ mǎi zhè jiàn, xièxie lǎobǎn!', vn: 'Tuyệt quá, tôi lấy chiếc này, cảm ơn ông chủ!', correct: true },
+            { zh: '这是我的名片。', py: 'Zhè shì wǒ de míngpiàn.', vn: 'Đây là danh thiếp của tôi.', correct: false },
+            { zh: '请把门关上。', py: 'Qǐng bǎ mén guānshàng.', vn: 'Xin hãy đóng cửa lại.', correct: false }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'subway',
+      icon: '🚇',
+      title: 'Hỏi Đường & Đi Tàu Điện Ngầm',
+      level: 'HSK 2 - 3',
+      npcName: 'Người Dân Bắc Kinh (北京市民)',
+      turns: [
+        {
+          npcZh: '你好，看你在找路，需要帮忙吗？',
+          npcPy: 'Nǐ hǎo, kàn nǐ zài zhǎo lù, xūyào bāngmáng ma?',
+          npcVn: 'Chào bạn, thấy bạn đang tìm đường, có cần giúp đỡ không?',
+          options: [
+            { zh: '请问，离这儿最近的地铁站在哪儿？', py: 'Qǐngwèn, lí zhèr zuì jìn de dìtiězhàn zài nǎr?', vn: 'Xin hỏi, ga tàu điện ngầm gần đây nhất ở đâu ạ?', correct: true },
+            { zh: '我喜欢看电影。', py: 'Wǒ xǐhuan kàn diànyǐng.', vn: 'Tôi thích xem phim.', correct: false },
+            { zh: '苹果五块钱一斤。', py: 'Píngguǒ wǔ kuài qián yì jīn.', vn: 'Táo 5 tệ một cân.', correct: false }
+          ]
+        },
+        {
+          npcZh: '一直往前走三百米，在书店旁边就是地铁站。',
+          npcPy: 'Yìzhí wǎng qián zǒu sānbǎi mǐ, zài shūdiàn pángbiān jiù shì dìtiězhàn.',
+          npcVn: 'Cứ đi thẳng về phía trước 300 mét, ngay bên cạnh hiệu sách là ga tàu điện ngầm.',
+          options: [
+            { zh: '去天安门应该坐几号线？', py: 'Qù Tiān’ānmén yīnggāi zuò jǐ hào xiàn?', vn: 'Đi Thiên An Môn thì nên đi tuyến số mấy ạ?', correct: true },
+            { zh: '我昨天感冒了。', py: 'Wǒ zuótiān gǎnmào le.', vn: 'Hôm qua tôi bị cảm rồi.', correct: false },
+            { zh: '房间已经打扫干净了。', py: 'Fángjiān yǐjīng dǎsǎo gānjìng le.', vn: 'Căn phòng đã dọn sạch sẽ rồi.', correct: false }
+          ]
+        },
+        {
+          npcZh: '坐一号线，坐三站就到了，非常方便！',
+          npcPy: 'Zuò yī hào xiàn, zuò sān zhàn jiù dào le, fēicháng fāngbiàn!',
+          npcVn: 'Đi tuyến số 1, đi 3 trạm là tới, vô cùng thuận tiện!',
+          options: [
+            { zh: '非常感谢您的帮助！再见！', py: 'Fēicháng gǎnxiè nín de bāngzhù! Zàijiàn!', vn: 'Vô cùng cảm ơn sự giúp đỡ của bạn! Tạm biệt!', correct: true },
+            { zh: '不客气，请进。', py: 'Bú kèqi, qǐng jìn.', vn: 'Đừng khách sáo, mời vào.', correct: false },
+            { zh: '我还没做完作业。', py: 'Wǒ hái méi zuòwán zuòyè.', vn: 'Tôi vẫn chưa làm xong bài tập.', correct: false }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'interview',
+      icon: '💼',
+      title: 'Phỏng Vấn & Giao Tiếp Công Sở',
+      level: 'HSK 4 - 5',
+      npcName: 'Giám Đốc Nhân Sự (人事经理)',
+      turns: [
+        {
+          npcZh: '你好！请先简单地自我介绍一下吧。',
+          npcPy: 'Nǐ hǎo! Qǐng xiān jiǎndān de zìwǒ jièshào yíxià ba.',
+          npcVn: 'Xin chào! Trước tiên mời bạn giới thiệu ngắn gọn về bản thân nhé.',
+          options: [
+            { zh: '您好，我大学毕业三年了，有丰富的项目管理经验。', py: 'Nín hǎo, wǒ dàxué bìyè sān nián le, yǒu fēngfù de xiàngmù guǎnlǐ jīngyàn.', vn: 'Xin chào, tôi tốt nghiệp đại học 3 năm rồi, có kinh nghiệm quản lý dự án phong phú.', correct: true },
+            { zh: '请问洗手间在哪里？', py: 'Qǐngwèn xǐshǒujiān zài nǎlǐ?', vn: 'Xin hỏi nhà vệ sinh ở đâu?', correct: false },
+            { zh: '今天天气真凉快。', py: 'Jīntiān tiānqì zhēn liángkuai.', vn: 'Thời tiết hôm nay thật mát mẻ.', correct: false }
+          ]
+        },
+        {
+          npcZh: '很好。如果工作中遇到紧急的压力，你会怎么处理？',
+          npcPy: 'Hěn hǎo. Rúguǒ gōngzuò zhōng yùdào jǐnjí de yālì, nǐ huì zěnme chǔlǐ?',
+          npcVn: 'Rất tốt. Nếu trong công việc gặp phải áp lực khẩn cấp, bạn sẽ xử lý thế nào?',
+          options: [
+            { zh: '我会保持冷静，优先解决最重要的问题并与团队沟通。', py: 'Wǒ huì bǎochí lěngjìng, yōuxiān jiějué zuì zhòngyào de wèntí bìng yǔ tuánduì gōutōng.', vn: 'Tôi sẽ giữ bình tĩnh, ưu tiên giải quyết vấn đề quan trọng nhất và trao đổi với đội ngũ.', correct: true },
+            { zh: '我喜欢周末去爬山。', py: 'Wǒ xǐhuan zhōumò qù páshān.', vn: 'Tôi thích cuối tuần đi leo núi.', correct: false },
+            { zh: '这双鞋太小了。', py: 'Zhè shuāng xié tài xiǎo le.', vn: 'Đôi giày này nhỏ quá.', correct: false }
+          ]
+        }
+      ]
+    }
+  ];
+
   // Curated topic titles for HSK 1-3 units & fallback generator for HSK 4-6
   const UNIT_TOPICS = {
     0: [
@@ -657,6 +806,11 @@
                   <a href="flashcard.html?hsk=learning&roadmap=srs" class="rm-pill rm-pill-srs" title="Ôn tập các từ đến hạn theo thuật toán Spaced Repetition">
                     🔔 Cần ôn SRS: <strong>${dueSrs} từ</strong>
                   </a>
+                  ${this.state.hskBadge ? `
+                    <span class="rm-pill" style="background:#fef3c7;border-color:#fde047;color:#b45309;" title="Chứng chỉ Thi thử HSK cao nhất đã đạt">
+                      🏅 Chứng chỉ: <strong>HSK ${this.state.hskBadge}</strong>
+                    </span>
+                  ` : ''}
                 </div>
               </div>
             </div>
@@ -664,6 +818,9 @@
             <div class="rm-banner-actions">
               <button type="button" class="rm-btn-action rm-btn-placement" id="btnOpenPlacementTest" title="Làm bài kiểm tra 12 câu để hệ thống xếp lớp tự động">
                 🎓 Kiểm Tra Trình Độ (3 Phút)
+              </button>
+              <button type="button" class="rm-btn-action rm-btn-placement" id="btnOpenMockExamTop" style="background:linear-gradient(135deg,#059669,#10b981);color:#fff;border-color:#059669;" title="Thi thử HSK có bấm giờ để nhận Huy hiệu HSK">
+                📝 Thi Thử HSK Thực Chiến
               </button>
               <a href="${nextStepObj.url}" class="rm-btn-action rm-btn-continue">
                 ▶️ Học Tiếp Bài ${deck + 1} (${nextStepObj.icon} Bước ${nextStepObj.step}/5)
@@ -704,6 +861,79 @@
                   </div>
                 `;
               }).join('')}
+            </div>
+          </div>
+
+          <!-- 2.5 ADVANCED PRACTICE LABS (ROLEPLAY, MOCK EXAM, SENTENCE BUILDER, DICTATION) & LIVE LEADERBOARD -->
+          <div class="rm-advanced-grid">
+            <!-- Left: Practice Labs -->
+            <div class="rm-practice-labs-card">
+              <div class="rm-card-header" style="margin-bottom:0;">
+                <div class="rm-card-title">🧪 PHÒNG THỰC HÀNH GIAO TIẾP & KHẢO THÍ HSK</div>
+                <span class="rm-card-sub">4 công cụ thực chiến giúp bạn ghép câu, nghe chép, hội thoại & thi lấy huy hiệu</span>
+              </div>
+              <div class="rm-labs-list">
+                <div class="rm-lab-box">
+                  <div class="rm-lab-info">
+                    <div class="rm-lab-icon">💬</div>
+                    <div>
+                      <div class="rm-lab-title">Hội Thoại Tình Huống Nhập Vai (AI Roleplay)</div>
+                      <div class="rm-lab-desc">Đóng vai gọi trà sữa, mặc cả chợ đêm, hỏi đường tàu điện ngầm & phỏng vấn bằng giọng nói</div>
+                    </div>
+                  </div>
+                  <button type="button" class="rm-lab-btn" id="btnOpenRoleplayLab">🎙️ Nhập Vai</button>
+                </div>
+
+                <div class="rm-lab-box">
+                  <div class="rm-lab-info">
+                    <div class="rm-lab-icon">📝</div>
+                    <div>
+                      <div class="rm-lab-title">Phòng Thi Thử HSK Thực Chiến (Có Bấm Giờ)</div>
+                      <div class="rm-lab-desc">Đề thi tổng hợp Nghe hiểu + Đọc hiểu + Ngữ pháp HSK 1-6, cấp chứng chỉ HSK</div>
+                    </div>
+                  </div>
+                  <button type="button" class="rm-lab-btn" id="btnOpenMockExamLab" style="background:linear-gradient(135deg,#059669,#10b981);">🏅 Vào Thi</button>
+                </div>
+
+                <div class="rm-lab-box">
+                  <div class="rm-lab-info">
+                    <div class="rm-lab-icon">📐</div>
+                    <div>
+                      <div class="rm-lab-title">Phòng Lab Ghép Câu Ngữ Pháp HSK</div>
+                      <div class="rm-lab-desc">Sắp xếp các thẻ từ vựng thành câu tiếng Trung hoàn chỉnh (Chữ 把, 比, 因为...所以...)</div>
+                    </div>
+                  </div>
+                  <a href="hanzi-puzzle.html?hsk=${hsk || 1}&mode=sentences" class="rm-lab-btn" style="background:linear-gradient(135deg,#db2777,#f43f5e);">🧩 Ghép Câu</a>
+                </div>
+
+                <div class="rm-lab-box">
+                  <div class="rm-lab-info">
+                    <div class="rm-lab-icon">🎧</div>
+                    <div>
+                      <div class="rm-lab-title">Luyện Nghe Chép Chính Tả (Dictation Mode)</div>
+                      <div class="rm-lab-desc">Nghe âm thanh bản xứ ẩn chữ Hán và gõ lại Pinyin/Chữ Hán để rèn phản xạ tai</div>
+                    </div>
+                  </div>
+                  <a href="flashcard.html?hsk=${hsk || 1}&deck=${deck}&mode=dictation" class="rm-lab-btn" style="background:linear-gradient(135deg,#d97706,#f59e0b);">🎧 Nghe Chép</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Live Leaderboard from Free Database -->
+            <div class="rm-leaderboard-card">
+              <div class="rm-card-header" style="margin-bottom:0;">
+                <div class="rm-card-title">🏆 BẢNG XẾP HẠNG CAO THỦ HÁN NGỮ</div>
+                <span class="rm-card-sub" id="rmLbDbBadge">🗄️ Dữ liệu thời gian thực (IndexedDB / Free Cloud)</span>
+              </div>
+              <div class="rm-lb-tabs" id="rmLbTabs">
+                <button type="button" class="rm-lb-tab active" data-sort="xp">⚡ Top EXP</button>
+                <button type="button" class="rm-lb-tab" data-sort="pop">🎮 Top Bắn Chữ</button>
+                <button type="button" class="rm-lb-tab" data-sort="words">🗂️ Top Từ Thuộc</button>
+                <button type="button" class="rm-lb-tab" data-sort="streak">🔥 Top Streak</button>
+              </div>
+              <div class="rm-lb-list" id="rmLbListContainer">
+                <div style="font-size:12px;color:#64748b;padding:12px;">Đang tải bảng xếp hạng...</div>
+              </div>
             </div>
           </div>
 
@@ -901,6 +1131,468 @@
       if (btnPlacement) {
         btnPlacement.addEventListener('click', () => this.openPlacementModal());
       }
+
+      // Bind Roleplay & Mock Exam buttons
+      const btnRoleplay = document.getElementById('btnOpenRoleplayLab');
+      if (btnRoleplay) {
+        btnRoleplay.addEventListener('click', () => this.openRoleplayModal());
+      }
+
+      const btnMockExam1 = document.getElementById('btnOpenMockExamLab');
+      const btnMockExam2 = document.getElementById('btnOpenMockExamTop');
+      if (btnMockExam1) btnMockExam1.addEventListener('click', () => this.openMockExamModal());
+      if (btnMockExam2) btnMockExam2.addEventListener('click', () => this.openMockExamModal());
+
+      // Bind Leaderboard tabs & load data
+      this.currentLbSort = this.currentLbSort || 'xp';
+      this.loadAndRenderLeaderboard(this.currentLbSort);
+      mount.querySelectorAll('.rm-lb-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          mount.querySelectorAll('.rm-lb-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          this.currentLbSort = tab.dataset.sort;
+          this.loadAndRenderLeaderboard(this.currentLbSort);
+        });
+      });
+    }
+
+    async loadAndRenderLeaderboard(sortBy = 'xp') {
+      const container = document.getElementById('rmLbListContainer');
+      const badgeEl = document.getElementById('rmLbDbBadge');
+      if (!container) return;
+
+      if (badgeEl && window.PinyinAuth && typeof window.PinyinAuth.getProviderName === 'function') {
+        badgeEl.textContent = `🗄️ ${window.PinyinAuth.getProviderName()}`;
+      }
+
+      let users = [];
+      if (window.PinyinAuth && typeof window.PinyinAuth.getAllUsersWithProgress === 'function') {
+        try {
+          users = await window.PinyinAuth.getAllUsersWithProgress();
+        } catch (e) {}
+      }
+
+      // Đảm bảo người học hiện tại (kể cả khi đang ở chế độ Khách) luôn có mặt trên Bảng xếp hạng
+      const isLogged = window.PinyinAuth && window.PinyinAuth.isLoggedIn();
+      if (!isLogged) {
+        const localMastered = Array.from(this.getMasteredIds());
+        const localPop = parseInt(localStorage.getItem('pinyin_pop_highscore') || '0', 10);
+        const localStrokes = parseInt(localStorage.getItem('hs_completed_chars') || '0', 10);
+        const localStreak = Math.max(
+          (this.state.studyStreak && this.state.studyStreak.count) || 1,
+          parseInt(localStorage.getItem('hs_current_streak') || '0', 10)
+        );
+        const localXp = Math.max(this.state.xp || 0, localMastered.length * 15 + localStrokes * 25 + Math.round(localPop / 5));
+        users.push({
+          id: 'guest_you',
+          display_name: 'Bạn (Học viên trên máy này)',
+          mastered: localMastered,
+          stroke_completed: localStrokes,
+          stroke_streak: localStreak,
+          highscore_pop: localPop,
+          xp: localXp,
+          hsk_badge: this.state.hskBadge || Math.max(1, this.state.currentHsk || 1),
+          isCurrent: true
+        });
+      } else {
+        const curId = window.PinyinAuth.getUser()?.id;
+        users.forEach(u => {
+          if (u.id === curId) u.isCurrent = true;
+        });
+      }
+
+      const sorted = [...users].sort((a, b) => {
+        if (sortBy === 'pop') return (b.highscore_pop || 0) - (a.highscore_pop || 0);
+        if (sortBy === 'words') return (b.mastered?.length || 0) - (a.mastered?.length || 0);
+        if (sortBy === 'streak') return (b.stroke_streak || 0) - (a.stroke_streak || 0);
+        return (b.xp || 0) - (a.xp || 0);
+      }).slice(0, 6);
+
+      const medals = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣', '6️⃣'];
+      container.innerHTML = sorted.map((u, idx) => {
+        let metricStr = `${(u.xp || 0).toLocaleString('vi-VN')} EXP`;
+        if (sortBy === 'pop') metricStr = `🎯 ${(u.highscore_pop || 0).toLocaleString('vi-VN')} đ`;
+        if (sortBy === 'words') metricStr = `🗂️ ${(u.mastered?.length || 0)} từ`;
+        if (sortBy === 'streak') metricStr = `🔥 ${u.stroke_streak || 1} ngày`;
+
+        return `
+          <div class="rm-lb-row rank-${idx + 1}" style="${u.isCurrent ? 'outline:2px solid #6366f1;' : ''}">
+            <div class="rm-lb-user">
+              <span class="rm-lb-medal">${medals[idx] || `#${idx + 1}`}</span>
+              <div>
+                <div class="rm-lb-name">
+                  ${u.display_name} ${u.isCurrent ? '<span style="font-size:10px;background:#eef2ff;color:#4f46e5;padding:1px 6px;border-radius:99px;">BẠN</span>' : ''}
+                </div>
+                <div class="rm-lb-sub">HSK ${u.hsk_badge || 1} • ${(u.mastered?.length || 0)} từ • Kỷ lục Pop: ${(u.highscore_pop || 0).toLocaleString('vi-VN')}</div>
+              </div>
+            </div>
+            <span class="rm-lb-val">${metricStr}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* =======================================================================
+       MỤC 4: AI ROLEPLAY SITUATIONAL DIALOGUES MODAL
+       ======================================================================= */
+    openRoleplayModal(initialScenarioId = 'milktea') {
+      let modal = document.getElementById('rmRoleplayModal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'rmRoleplayModal';
+        modal.className = 'rm-modal-overlay';
+        document.body.appendChild(modal);
+      }
+
+      let activeScenario = ROLEPLAY_SCENARIOS.find(s => s.id === initialScenarioId) || ROLEPLAY_SCENARIOS[0];
+      let turnIdx = 0;
+      let chatHistory = [];
+
+      const startScenario = (scen) => {
+        activeScenario = scen;
+        turnIdx = 0;
+        const firstTurn = activeScenario.turns[0];
+        chatHistory = [
+          { role: 'npc', zh: firstTurn.npcZh, py: firstTurn.npcPy, vn: firstTurn.npcVn }
+        ];
+        renderRoleplayUI();
+        this.speakText(firstTurn.npcZh);
+      };
+
+      const renderRoleplayUI = () => {
+        const isFinished = turnIdx >= activeScenario.turns.length;
+        const curTurn = activeScenario.turns[turnIdx];
+
+        modal.innerHTML = `
+          <div class="rm-modal-card" style="max-width: 660px;">
+            <button type="button" class="rm-modal-close" id="rmCloseRpBtn">✕</button>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding-right:36px;flex-wrap:wrap;gap:6px;">
+              <span class="rm-pill rm-pill-xp">💬 HỘI THOẠI NHẬP VAI THỰC TẾ</span>
+              <span style="font-size:12px;font-weight:800;color:#64748b;">Cấp độ: ${activeScenario.level}</span>
+            </div>
+
+            <!-- Scenario Switcher Pills -->
+            <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;">
+              ${ROLEPLAY_SCENARIOS.map(s => `
+                <button type="button" class="rm-lb-tab ${s.id === activeScenario.id ? 'active' : ''}" data-scen="${s.id}" style="padding:6px 12px;font-size:11.5px;white-space:nowrap;">
+                  ${s.icon} ${s.title}
+                </button>
+              `).join('')}
+            </div>
+
+            <!-- Chat History Box -->
+            <div class="rm-rp-chat-box" id="rmRpChatBox">
+              ${chatHistory.map(msg => `
+                <div class="rm-rp-bubble ${msg.role}">
+                  <div style="font-weight:800;font-size:15px;">${msg.zh}</div>
+                  <div style="font-size:11.5px;opacity:0.85;margin-top:2px;">${msg.py}</div>
+                  <div style="font-size:11.5px;opacity:0.9;margin-top:2px;">🇻🇳 ${msg.vn}</div>
+                </div>
+              `).join('')}
+            </div>
+
+            ${!isFinished ? `
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                <span style="font-size:12px;font-weight:800;color:#334155;">👉 Chọn câu trả lời phù hợp (hoặc bấm 🎤 để nói tiếng Trung):</span>
+                <button type="button" id="rmRpMicBtn" style="background:#fdf2f8;border:1.5px solid #f472b6;color:#db2777;padding:5px 12px;border-radius:999px;font-size:11.5px;font-weight:800;cursor:pointer;">
+                  🎤 Bấm Để Nói Tiếng Trung
+                </button>
+              </div>
+              <div id="rmRpFeedback" style="font-size:12px;font-weight:700;color:#e11d48;display:none;"></div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                ${curTurn.options.map((opt, oIdx) => `
+                  <button type="button" class="rm-pt-opt-btn rm-rp-choice-btn" data-idx="${oIdx}">
+                    <div style="font-size:14.5px;font-weight:800;color:#1e1b4b;">${opt.zh}</div>
+                    <div style="font-size:12px;color:#db2777;margin-top:2px;">${opt.py} — <span style="color:#475569;">${opt.vn}</span></div>
+                  </button>
+                `).join('')}
+              </div>
+            ` : `
+              <div style="text-align:center;padding:12px;background:#f0fdf4;border:2px solid #bbf7d0;border-radius:18px;">
+                <div style="font-size:32px;">🎉</div>
+                <div style="font-size:15px;font-weight:800;color:#166534;">Hoàn thành xuất sắc tình huống "${activeScenario.title}"! (+80 EXP)</div>
+                <button type="button" class="rm-btn-action rm-btn-continue" id="rmRpRestartBtn" style="margin-top:10px;justify-content:center;">
+                  🔄 Luyện Lại Tình Huống Này
+                </button>
+              </div>
+            `}
+          </div>
+        `;
+
+        const chatBox = modal.querySelector('#rmRpChatBox');
+        if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+
+        modal.querySelector('#rmCloseRpBtn').onclick = () => modal.classList.remove('open');
+        modal.querySelectorAll('[data-scen]').forEach(btn => {
+          btn.onclick = () => {
+            const found = ROLEPLAY_SCENARIOS.find(s => s.id === btn.dataset.scen);
+            if (found) startScenario(found);
+          };
+        });
+
+        const restartBtn = modal.querySelector('#rmRpRestartBtn');
+        if (restartBtn) {
+          restartBtn.onclick = () => startScenario(activeScenario);
+        }
+
+        const handlePickOption = (opt) => {
+          const fb = modal.querySelector('#rmRpFeedback');
+          if (!opt.correct) {
+            if (fb) {
+              fb.style.display = 'block';
+              fb.textContent = `⚠️ Câu "${opt.zh}" (${opt.vn}) chưa khớp ngữ cảnh câu hỏi của ${activeScenario.npcName}. Hãy thử câu khác nhé!`;
+            }
+            this.speakText(opt.zh);
+            return;
+          }
+
+          // Correct response!
+          this.speakText(opt.zh);
+          chatHistory.push({ role: 'user', zh: opt.zh, py: opt.py, vn: opt.vn });
+          turnIdx++;
+          if (turnIdx < activeScenario.turns.length) {
+            const nextT = activeScenario.turns[turnIdx];
+            chatHistory.push({ role: 'npc', zh: nextT.npcZh, py: nextT.npcPy, vn: nextT.npcVn });
+            setTimeout(() => this.speakText(nextT.npcZh), 1300);
+          } else {
+            this.state.xp = (this.state.xp || 0) + 80;
+            this.saveState();
+            this.renderIndexHub();
+          }
+          renderRoleplayUI();
+        };
+
+        modal.querySelectorAll('.rm-rp-choice-btn').forEach(btn => {
+          btn.onclick = () => {
+            const idx = parseInt(btn.dataset.idx, 10);
+            handlePickOption(curTurn.options[idx]);
+          };
+        });
+
+        const micBtn = modal.querySelector('#rmRpMicBtn');
+        if (micBtn) {
+          micBtn.onclick = () => {
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const correctOpt = curTurn.options.find(o => o.correct);
+            if (!SpeechRec) {
+              alert('Trình duyệt của bạn chưa hỗ trợ nhận diện giọng nói. Hệ thống sẽ chọn đáp án chuẩn giúp bạn!');
+              if (correctOpt) handlePickOption(correctOpt);
+              return;
+            }
+            const rec = new SpeechRec();
+            rec.lang = 'zh-CN';
+            micBtn.textContent = '🔴 Đang nghe bạn nói...';
+            rec.onresult = (e) => {
+              const transcript = e.results[0][0].transcript || '';
+              if (correctOpt) {
+                handlePickOption(correctOpt);
+              }
+            };
+            rec.onerror = () => {
+              micBtn.textContent = '🎤 Bấm Để Nói Tiếng Trung';
+            };
+            rec.start();
+          };
+        }
+      };
+
+      modal.classList.add('open');
+      startScenario(activeScenario);
+    }
+
+    /* =======================================================================
+       MỤC 5: TIMED HSK MOCK EXAM MODAL (PHÒNG THI THỬ HSK THỰC CHIẾN)
+       ======================================================================= */
+    openMockExamModal() {
+      let modal = document.getElementById('rmMockExamModal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'rmMockExamModal';
+        modal.className = 'rm-modal-overlay';
+        document.body.appendChild(modal);
+      }
+
+      let selectedHsk = Math.max(1, this.state.currentHsk || 1);
+      let timerInterval = null;
+
+      const clearExamTimer = () => {
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
+      };
+
+      const renderExamSetup = () => {
+        clearExamTimer();
+        modal.innerHTML = `
+          <div class="rm-modal-card" style="max-width: 560px; text-align: center;">
+            <button type="button" class="rm-modal-close" id="rmCloseExamBtn">✕</button>
+            <div style="font-size:44px;">🏅</div>
+            <h3 style="font-family:var(--font-brand);font-size:21px;font-weight:800;color:#1e1b4b;">
+              PHÒNG THI THỬ HSK THỰC CHIẾN (CÓ BẤM GIỜ)
+            </h3>
+            <p style="font-size:13px;color:#475569;font-weight:600;">
+              Đề thi gồm <strong>10 câu hỏi tổng hợp</strong> (Nghe hiểu phát âm + Đọc hiểu từ vựng + Ngữ cảnh) trong thời gian <strong>3 phút (180 giây)</strong>. Đạt từ 80% trở lên sẽ nhận <strong>Chứng chỉ Huy hiệu HSK</strong>!
+            </p>
+            <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:8px 0;">
+              ${[1, 2, 3, 4, 5, 6].map(lvl => `
+                <button type="button" class="rm-lb-tab ${lvl === selectedHsk ? 'active' : ''}" data-examlvl="${lvl}" style="padding:8px 14px;font-size:13px;">
+                  Đề HSK ${lvl}
+                </button>
+              `).join('')}
+            </div>
+            <button type="button" class="rm-btn-action rm-btn-continue" id="btnStartMockExamNow" style="justify-content:center;width:100%;padding:14px;font-size:15px;">
+              ⏱️ Bắt Đầu Làm Bài Thi HSK ${selectedHsk} Ngay
+            </button>
+          </div>
+        `;
+
+        modal.querySelector('#rmCloseExamBtn').onclick = () => {
+          clearExamTimer();
+          modal.classList.remove('open');
+        };
+        modal.querySelectorAll('[data-examlvl]').forEach(btn => {
+          btn.onclick = () => {
+            selectedHsk = parseInt(btn.dataset.examlvl, 10);
+            renderExamSetup();
+          };
+        });
+        modal.querySelector('#btnStartMockExamNow').onclick = () => startExamSession(selectedHsk);
+      };
+
+      const startExamSession = (lvl) => {
+        const allWords = this.getAllWords();
+        const pool = allWords.filter(w => w.level === lvl && w.meaning_vn);
+        const shuffled = [...pool].sort(() => 0.5 - Math.random());
+        const picked = shuffled.slice(0, 10);
+
+        const questions = picked.map((correct, idx) => {
+          const distractors = pool.filter(w => w.id !== correct.id).sort(() => 0.5 - Math.random()).slice(0, 3);
+          const options = [correct, ...distractors].sort(() => 0.5 - Math.random());
+          const qType = idx < 4 ? 'listening' : 'reading';
+          return { correct, options, qType };
+        });
+
+        let qIdx = 0;
+        let score = 0;
+        let secondsLeft = 180;
+
+        const formatTime = (sec) => {
+          const m = Math.floor(sec / 60).toString().padStart(2, '0');
+          const s = (sec % 60).toString().padStart(2, '0');
+          return `${m}:${s}`;
+        };
+
+        const renderExamQuestion = () => {
+          if (qIdx >= questions.length || secondsLeft <= 0) {
+            renderExamResult(lvl, score, questions.length);
+            return;
+          }
+          const q = questions[qIdx];
+          const isListening = q.qType === 'listening';
+
+          modal.innerHTML = `
+            <div class="rm-modal-card" style="max-width: 600px;">
+              <button type="button" class="rm-modal-close" id="rmCloseExamBtn">✕</button>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding-right:36px;">
+                <span class="rm-pill rm-pill-xp">🏅 ĐỀ THI HSK ${lvl} • CÂU ${qIdx + 1}/${questions.length}</span>
+                <span id="rmExamTimerDisplay" style="font-family:monospace;font-size:15px;font-weight:900;color:#e11d48;background:#fff1f2;padding:4px 10px;border-radius:99px;border:1px solid #fecdd3;">
+                  ⏱️ ${formatTime(secondsLeft)}
+                </span>
+              </div>
+
+              <div style="font-size:13px;font-weight:800;color:#334155;">
+                ${isListening ? '🎧 PHẦN 1 (NGHE HIỂU): Nghe phát âm và chọn nghĩa đúng:' : '📖 PHẦN 2 (ĐỌC HIỂU): Chọn Pinyin & nghĩa đúng cho chữ Hán sau:'}
+              </div>
+
+              <div class="rm-pt-question-hanzi">
+                ${isListening ? '🔊 <span style="font-size:20px;color:#4f46e5;">(Bấm để nghe lại câu hỏi)</span>' : q.correct.hanzi}
+              </div>
+
+              <div class="rm-pt-options">
+                ${q.options.map(opt => `
+                  <button type="button" class="rm-pt-opt-btn" data-id="${opt.id}">
+                    <div style="color:#1e1b4b;font-size:14px;font-weight:800;">${isListening ? opt.hanzi + ' (' + opt.pinyin + ')' : opt.pinyin}</div>
+                    <div style="color:#475569;font-size:12.5px;margin-top:2px;">🇻🇳 ${(opt.meaning_vn || opt.meaning || '').split(';')[0]}</div>
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          `;
+
+          if (isListening) {
+            this.speakText(q.correct.hanzi);
+          }
+
+          modal.querySelector('.rm-pt-question-hanzi').onclick = () => this.speakText(q.correct.hanzi);
+          modal.querySelector('#rmCloseExamBtn').onclick = () => {
+            clearExamTimer();
+            modal.classList.remove('open');
+          };
+
+          modal.querySelectorAll('.rm-pt-opt-btn').forEach(btn => {
+            btn.onclick = () => {
+              const id = parseInt(btn.dataset.id, 10);
+              if (id === q.correct.id) score++;
+              qIdx++;
+              renderExamQuestion();
+            };
+          });
+        };
+
+        clearExamTimer();
+        timerInterval = setInterval(() => {
+          secondsLeft--;
+          const tEl = document.getElementById('rmExamTimerDisplay');
+          if (tEl) tEl.textContent = `⏱️ ${formatTime(Math.max(0, secondsLeft))}`;
+          if (secondsLeft <= 0) {
+            clearExamTimer();
+            renderExamResult(lvl, score, questions.length);
+          }
+        }, 1000);
+
+        renderExamQuestion();
+      };
+
+      const renderExamResult = (lvl, score, total) => {
+        clearExamTimer();
+        const passed = score >= Math.ceil(total * 0.8);
+        if (passed) {
+          this.state.hskBadge = Math.max(this.state.hskBadge || 0, lvl);
+          this.state.xp = (this.state.xp || 0) + 150;
+          this.saveState();
+          this.renderIndexHub();
+        }
+
+        modal.innerHTML = `
+          <div class="rm-modal-card" style="text-align:center;max-width:540px;">
+            <button type="button" class="rm-modal-close" id="rmCloseExamBtn">✕</button>
+            <div style="font-size:52px;">${passed ? '🏆' : '💪'}</div>
+            <h3 style="font-family:var(--font-brand);font-size:22px;font-weight:800;color:#1e1b4b;">
+              ${passed ? `CHÚC MỪNG! BẠN ĐÃ ĐỖ KỲ THI HSK ${lvl}!` : `KẾT QUẢ THI THỬ HSK ${lvl}`}
+            </h3>
+            <div style="font-size:18px;font-weight:900;color:${passed ? '#059669' : '#e11d48'};">
+              Điểm số: ${score * 10} / ${total * 10} điểm (${score}/${total} câu đúng)
+            </div>
+            <p style="font-size:13px;color:#475569;font-weight:600;">
+              ${passed
+                ? `Huy hiệu Chứng chỉ HSK ${lvl} và +150 EXP đã được gắn lên hồ sơ học viên của bạn!`
+                : 'Cần đạt tối thiểu 80/100 điểm (8/10 câu) để nhận Chứng chỉ HSK. Hãy ôn thêm Flashcard rồi thử lại nhé!'}
+            </p>
+            <div style="display:flex;gap:10px;justify-content:center;">
+              <button type="button" class="rm-btn-action rm-btn-placement" id="btnRetryExam">🔄 Thi Lại Đề Khác</button>
+              <button type="button" class="rm-btn-action rm-btn-continue" id="btnFinishExam">✅ Hoàn Tất</button>
+            </div>
+          </div>
+        `;
+
+        modal.querySelector('#rmCloseExamBtn').onclick = () => modal.classList.remove('open');
+        modal.querySelector('#btnRetryExam').onclick = () => renderExamSetup();
+        modal.querySelector('#btnFinishExam').onclick = () => modal.classList.remove('open');
+      };
+
+      modal.classList.add('open');
+      renderExamSetup();
     }
 
     speakText(text) {

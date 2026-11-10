@@ -47,6 +47,9 @@
         <button class="fc-tab-btn" id="tabQuizMode" title="Chế độ trắc nghiệm kiểm tra nhanh">
           🎯 <span class="tab-label">TRẮC NGHIỆM</span>
         </button>
+        <button class="fc-tab-btn" id="tabDictationMode" title="Chế độ Nghe Chép Chính Tả Pinyin & Chữ Hán">
+          🎧 <span class="tab-label">NGHE CHÉP</span>
+        </button>
         <button class="fc-tab-btn" id="tabListMode" title="Xem danh sách toàn bộ từ vựng">
           📜 <span class="tab-label">TỪ ĐIỂN TỔNG HỢP</span>
         </button>
@@ -257,6 +260,46 @@
         <div class="quiz-feedback-box" id="quizFeedbackBox" style="display: none;">
           <div class="feedback-msg" id="quizFeedbackMsg">Chính xác! 🎉</div>
           <button class="cyber-launch-btn quiz-next-btn" id="quizNextBtn">CÂU TIẾP THEO ➡️</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- MAIN VIEW 2.5: Listening Dictation Mode (Nghe Chép Chính Tả) -->
+    <main class="fc-main-view" id="dictationView" style="display: none;">
+      <div class="fc-quiz-card" style="max-width: 680px;">
+        <div class="quiz-header">
+          <span class="quiz-badge" id="dictHskBadge">HSK 1</span>
+          <span class="quiz-score-indicator">CÂU <strong id="dictCurrentQ">1</strong> / 10 • ĐÚNG: <strong id="dictCorrectCount" style="color:#10b981;">0</strong></span>
+        </div>
+
+        <div class="quiz-question-box" style="padding: 22px 18px;">
+          <div class="quiz-prompt">🎧 Bấm loa để nghe phát âm tiếng Trung, sau đó gõ <strong>Pinyin</strong> (không dấu hoặc có dấu) hoặc <strong>Chữ Hán</strong>:</div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:14px;margin:16px 0;">
+            <button type="button" class="cyber-launch-btn" id="dictSpeakNormalBtn" style="padding:12px 22px;font-size:15px;border-radius:999px;">
+              🔊 NGHE TỐC ĐỘ CHUẨN
+            </button>
+            <button type="button" class="fc-action-btn" id="dictSpeakSlowBtn" style="padding:12px 18px;border-radius:999px;font-weight:800;">
+              🐢 NGHE CHẬM (0.6x)
+            </button>
+          </div>
+          <div id="dictMaskedHanzi" style="font-size:38px;font-weight:900;color:#6366f1;letter-spacing:6px;margin:8px 0;">❓ ❓</div>
+          <div id="dictHintMeaning" style="font-size:14px;font-weight:700;color:#475569;">🇻🇳 Nghĩa gợi ý: <span id="dictMeaningText">...</span></div>
+        </div>
+
+        <form id="dictForm" style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;">
+          <input type="text" id="dictInputBox" placeholder="Nhập Pinyin (VD: ni hao / nǐ hǎo) hoặc Chữ Hán (你好)..." autocomplete="off" style="flex:1;min-width:220px;padding:14px 16px;border-radius:14px;border:2px solid #cbd5e1;font-size:16px;font-weight:700;color:#0f172a;outline:none;">
+          <button type="submit" class="cyber-launch-btn" id="dictSubmitBtn" style="padding:14px 24px;width:auto;">
+            ✅ KIỂM TRA
+          </button>
+          <button type="button" class="fc-action-btn" id="dictRevealHintBtn" style="padding:14px 16px;font-weight:800;">
+            💡 GỢI Ý CHỮ ĐẦU
+          </button>
+        </form>
+
+        <div class="quiz-feedback-box" id="dictFeedbackBox" style="display: none; margin-top: 16px; flex-direction: column; gap: 10px;">
+          <div class="feedback-msg" id="dictFeedbackMsg" style="font-size:16px;">Chính xác! 🎉</div>
+          <div id="dictAnswerDetail" style="font-size:14px;color:#334155;font-weight:600;"></div>
+          <button type="button" class="cyber-launch-btn quiz-next-btn" id="dictNextBtn">TỪ TIẾP THEO ➡️</button>
         </div>
       </div>
     </main>

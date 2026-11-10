@@ -55,9 +55,11 @@ class ChineseFlashcardApp {
     // Views
     this.flashcardView = document.getElementById('flashcardView');
     this.quizView = document.getElementById('quizView');
+    this.dictationView = document.getElementById('dictationView');
     this.listView = document.getElementById('listView');
     this.tabFlashcard = document.getElementById('tabFlashcardMode');
     this.tabQuiz = document.getElementById('tabQuizMode');
+    this.tabDictation = document.getElementById('tabDictationMode');
     this.tabList = document.getElementById('tabListMode');
 
     // Background Canvas
@@ -85,6 +87,13 @@ class ChineseFlashcardApp {
     this.applyHskFilter();
     this.renderCard();
     this.updateStats();
+
+    const modeParam = urlParams.get('mode');
+    if (modeParam === 'dictation') {
+      this.switchView('dictation');
+    } else if (modeParam === 'quiz') {
+      this.switchView('quiz');
+    }
 
     // Listen for cross-device cloud progress synchronization
     window.addEventListener('cloud-progress-updated', () => {
@@ -129,13 +138,13 @@ class ChineseFlashcardApp {
     }
   }
 
-  speakChinese(text) {
+  speakChinese(text, customRate = 0.85) {
     if (!('speechSynthesis' in window) || !text) return;
     try {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'zh-CN';
-      utterance.rate = 0.85;
+      utterance.rate = customRate;
       utterance.pitch = 1.0;
       if (this.chineseVoice) utterance.voice = this.chineseVoice;
       window.speechSynthesis.speak(utterance);
@@ -517,19 +526,140 @@ class ChineseFlashcardApp {
   }
 
   /* ========================================================================
+     LISTENING DICTATION MODE (NGHE CHÉP CHÍNH TẢ PINYIN & CHỮ HÁN)
+     ======================================================================== */
+  initDictation() {
+    this.dictIndex = 0;
+    this.dictCorrect = 0;
+    const pool = this.deckWords.length >= 4 ? this.deckWords : this.filteredWords;
+    const shuffled = [...pool].sort(() => 0.5 - Math.random());
+    this.dictWords = shuffled.slice(0, Math.min(10, shuffled.length));
+    this.renderDictationQuestion();
+  }
+
+  normalizePinyinInput(str) {
+    return String(str || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/ü/g, 'v')
+      .replace(/[^a-z0-9\u4e00-\u9fff]/g, '');
+  }
+
+  renderDictationQuestion() {
+    if (!this.dictWords || this.dictIndex >= this.dictWords.length) {
+      alert(`🎉 Hoàn thành bài Nghe Chép Chính Tả! Bạn đúng ${this.dictCorrect} / ${this.dictWords ? this.dictWords.length : 10} từ.`);
+      this.switchView('flashcard');
+      return;
+    }
+
+    const w = this.dictWords[this.dictIndex];
+    this.currentDictWord = w;
+    this.dictAnswered = false;
+
+    const qEl = document.getElementById('dictCurrentQ');
+    const cEl = document.getElementById('dictCorrectCount');
+    const badgeEl = document.getElementById('dictHskBadge');
+    const maskEl = document.getElementById('dictMaskedHanzi');
+    const meanEl = document.getElementById('dictMeaningText');
+    const inputEl = document.getElementById('dictInputBox');
+    const fbBox = document.getElementById('dictFeedbackBox');
+
+    if (qEl) qEl.textContent = this.dictIndex + 1;
+    if (cEl) cEl.textContent = this.dictCorrect;
+    if (badgeEl) badgeEl.textContent = `HSK ${w.level}`;
+    if (maskEl) maskEl.textContent = Array.from(w.hanzi).map(() => '❓').join(' ');
+    if (meanEl) meanEl.textContent = w.meaning_vn || w.meaning || '';
+    if (fbBox) fbBox.style.display = 'none';
+    if (inputEl) {
+      inputEl.value = '';
+      inputEl.disabled = false;
+      setTimeout(() => inputEl.focus(), 80);
+    }
+
+    // Tự động đọc từ khi vào câu mới
+    setTimeout(() => this.speakChinese(w.hanzi, 0.85), 200);
+  }
+
+  checkDictationAnswer() {
+    if (this.dictAnswered || !this.currentDictWord) return;
+    const inputEl = document.getElementById('dictInputBox');
+    const rawVal = inputEl ? inputEl.value.trim() : '';
+    if (!rawVal) return;
+
+    const w = this.currentDictWord;
+    const userNorm = this.normalizePinyinInput(rawVal);
+    const targetClean = this.normalizePinyinInput(w.clean || w.pinyin);
+    const targetPinyin = this.normalizePinyinInput(w.pinyin);
+    const isExactHanzi = rawVal === w.hanzi;
+    const isPinyinMatch = userNorm && (userNorm === targetClean || userNorm === targetPinyin);
+
+    this.dictAnswered = true;
+    if (inputEl) inputEl.disabled = true;
+
+    const maskEl = document.getElementById('dictMaskedHanzi');
+    const fbBox = document.getElementById('dictFeedbackBox');
+    const fbMsg = document.getElementById('dictFeedbackMsg');
+    const fbDetail = document.getElementById('dictAnswerDetail');
+
+    if (maskEl) maskEl.textContent = `${w.hanzi} (${w.pinyin})`;
+
+    if (isExactHanzi || isPinyinMatch) {
+      this.dictCorrect++;
+      const cEl = document.getElementById('dictCorrectCount');
+      if (cEl) cEl.textContent = this.dictCorrect;
+      this.masteredSet.add(w.id);
+      this.reviewSet.delete(w.id);
+      if (window.PinyinRoadmap) {
+        window.PinyinRoadmap.recordActivity('flashcard', 1, { wordId: w.id, isEasy: true });
+      }
+      if (fbMsg) {
+        fbMsg.style.color = '#059669';
+        fbMsg.textContent = '🎉 Chính xác tuyệt đối! Tai nghe của bạn rất nhạy!';
+      }
+    } else {
+      this.reviewSet.add(w.id);
+      if (window.PinyinRoadmap) {
+        window.PinyinRoadmap.recordActivity('flashcard', 0, { wordId: w.id, isEasy: false });
+      }
+      if (fbMsg) {
+        fbMsg.style.color = '#e11d48';
+        fbMsg.textContent = `❌ Chưa khớp! Bạn gõ "${rawVal}"`;
+      }
+    }
+
+    const ex = window.PinyinRoadmap ? window.PinyinRoadmap.getContextualSentence(w) : null;
+    if (fbDetail) {
+      fbDetail.innerHTML = `Đáp án chuẩn: <strong style="color:#4f46e5;font-size:16px;">${w.hanzi}</strong> • Pinyin: <strong>${w.pinyin}</strong> (${w.clean}) • Nghĩa: <strong>${w.meaning_vn || w.meaning}</strong>` +
+        (ex ? `<br><span style="font-size:12px;color:#64748b;">💬 Ví dụ: ${ex.zh} (${ex.py}) — ${ex.vi}</span>` : '');
+    }
+
+    this.speakChinese(w.hanzi, 0.85);
+    this.saveToStorage('pinyin_pop_mastered', this.masteredSet);
+    this.saveToStorage('pinyin_pop_review', this.reviewSet);
+    this.updateStats();
+
+    if (fbBox) fbBox.style.display = 'flex';
+  }
+
+  /* ========================================================================
      VIEW SWITCHING
      ======================================================================== */
   switchView(mode) {
     this.tabFlashcard.classList.toggle('active', mode === 'flashcard');
     this.tabQuiz.classList.toggle('active', mode === 'quiz');
+    if (this.tabDictation) this.tabDictation.classList.toggle('active', mode === 'dictation');
     this.tabList.classList.toggle('active', mode === 'list');
 
     this.flashcardView.style.display = mode === 'flashcard' ? 'flex' : 'none';
     this.quizView.style.display = mode === 'quiz' ? 'flex' : 'none';
+    if (this.dictationView) this.dictationView.style.display = mode === 'dictation' ? 'flex' : 'none';
     this.listView.style.display = mode === 'list' ? 'flex' : 'none';
 
     if (mode === 'quiz') {
       this.initQuiz();
+    } else if (mode === 'dictation') {
+      this.initDictation();
     } else if (mode === 'list') {
       this.renderVocabularyGrid();
     }
@@ -600,7 +730,64 @@ class ChineseFlashcardApp {
     // View Switch Tabs
     this.tabFlashcard.addEventListener('click', () => this.switchView('flashcard'));
     this.tabQuiz.addEventListener('click', () => this.switchView('quiz'));
+    if (this.tabDictation) {
+      this.tabDictation.addEventListener('click', () => this.switchView('dictation'));
+    }
     this.tabList.addEventListener('click', () => this.switchView('list'));
+
+    // Dictation Controls
+    const dictForm = document.getElementById('dictForm');
+    if (dictForm) {
+      dictForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (this.dictAnswered) {
+          this.dictIndex++;
+          this.renderDictationQuestion();
+        } else {
+          this.checkDictationAnswer();
+        }
+      });
+    }
+
+    const dictNormalBtn = document.getElementById('dictSpeakNormalBtn');
+    if (dictNormalBtn) {
+      dictNormalBtn.addEventListener('click', () => {
+        if (this.currentDictWord) this.speakChinese(this.currentDictWord.hanzi, 0.85);
+      });
+    }
+
+    const dictSlowBtn = document.getElementById('dictSpeakSlowBtn');
+    if (dictSlowBtn) {
+      dictSlowBtn.addEventListener('click', () => {
+        if (this.currentDictWord) this.speakChinese(this.currentDictWord.hanzi, 0.55);
+      });
+    }
+
+    const dictHintBtn = document.getElementById('dictRevealHintBtn');
+    if (dictHintBtn) {
+      dictHintBtn.addEventListener('click', () => {
+        if (!this.currentDictWord) return;
+        const maskEl = document.getElementById('dictMaskedHanzi');
+        const inputEl = document.getElementById('dictInputBox');
+        const firstChar = this.currentDictWord.hanzi.charAt(0);
+        const firstPy = (this.currentDictWord.pinyin || '').split(' ')[0];
+        if (maskEl) {
+          maskEl.textContent = `${firstChar} ... (${firstPy} ...)`;
+        }
+        if (inputEl && !inputEl.value) {
+          inputEl.value = firstPy + (this.currentDictWord.hanzi.length > 1 ? ' ' : '');
+          inputEl.focus();
+        }
+      });
+    }
+
+    const dictNextBtn = document.getElementById('dictNextBtn');
+    if (dictNextBtn) {
+      dictNextBtn.addEventListener('click', () => {
+        this.dictIndex++;
+        this.renderDictationQuestion();
+      });
+    }
 
     // Quiz Next
     document.getElementById('quizNextBtn').addEventListener('click', () => {
