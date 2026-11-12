@@ -92,10 +92,19 @@
             <option value="single_tone">🎵 Phân biệt 4 Thanh Điệu (Thanh 1 - 4)</option>
             <option value="minimal_pairs">⚖️ Cặp Từ Đối Lập Thanh Điệu (Minimal Pairs)</option>
             <option value="sandhi_quiz">⚡ Thử Thách Biến Điệu (Tone Sandhi)</option>
+            <option value="initials_drill">🔡 Phân Biệt Thanh Mẫu (b/p/m, f, d/t, j/q/x, zh/ch/sh...)</option>
+            <option value="finals_drill">🔤 Phân Biệt Vận Mẫu (an/ang, en/eng, in/ing, u/ü...)</option>
           </select>
         </div>
 
-        <div class="tm-tool-item">
+        <div class="tm-tool-item" id="tmPhoneticGroupItem" style="display: none;">
+          <label for="tmPhoneticGroupSelect">🎯 PHÂN LOẠI ÂM:</label>
+          <select id="tmPhoneticGroupSelect" class="cyber-select">
+            <option value="all">Tất cả nhóm âm</option>
+          </select>
+        </div>
+
+        <div class="tm-tool-item" id="tmHskGroupItem">
           <label for="tmHskSelect">📚 CẤP ĐỘ TỪ:</label>
           <select id="tmHskSelect" class="cyber-select">
             <option value="all">Tất cả HSK (1 - 6)</option>
@@ -253,10 +262,13 @@
       <div class="chart-content-box" id="boxInitials">
         <div class="chart-intro-card">
           <span class="intro-icon">💡</span>
-          <div>
+          <div style="flex: 1;">
             <strong>Mẹo Học Thanh Mẫu (Phụ âm đầu):</strong>
             <p>Nhấp vào bất kỳ thanh mẫu nào để nghe phát âm chuẩn giọng Bắc Kinh, xem vị trí đặt lưỡi/môi và nhận biết chữ <strong>Bật hơi (khạc luồng khí mạnh)</strong> vs <strong>Không bật hơi</strong>.</p>
           </div>
+          <button type="button" class="btn-intro-challenge" id="btnLaunchInitialsDrill" title="Vào Game thử thách phân biệt Thanh Mẫu">
+            🎯 Luyện Tai Phân Biệt Thanh Mẫu ➔
+          </button>
         </div>
 
         <div class="initials-groups" id="initialsGroupsContainer">
@@ -268,10 +280,13 @@
       <div class="chart-content-box" id="boxFinals" style="display: none;">
         <div class="chart-intro-card">
           <span class="intro-icon">🎵</span>
-          <div>
+          <div style="flex: 1;">
             <strong>Luyện Âm Điệu Vận Mẫu (Nguyên âm & Vần):</strong>
             <p>Chọn bất kỳ vận mẫu nào để luyện trọn vẹn cả 4 thanh điệu (<strong>1 Ngang, 2 Sắc, 3 Hỏi, 4 Rơi</strong>). Rèn luyện khẩu hình tròn trịa, vang chuẩn ngữ điệu Trung Hoa!</p>
           </div>
+          <button type="button" class="btn-intro-challenge" id="btnLaunchFinalsDrill" title="Vào Game thử thách phân biệt Vận Mẫu">
+            🎯 Luyện Tai Phân Biệt Vận Mẫu ➔
+          </button>
         </div>
 
         <div class="finals-groups" id="finalsGroupsContainer">
@@ -707,8 +722,15 @@
         <div class="rule-card">
           <span class="rule-icon">🔢</span>
           <div>
-            <strong>Chọn thanh điệu bằng chuột hoặc phím tắt:</strong>
-            <p>Nhấn số <strong>1, 2, 3, 4</strong> trên bàn phím hoặc nhấp thẳng vào ô Thanh Điệu tương ứng để đưa ra câu trả lời.</p>
+            <strong>Chọn đáp án bằng chuột hoặc phím tắt:</strong>
+            <p>Nhấn số <strong>1, 2, 3, 4</strong> trên bàn phím hoặc nhấp thẳng vào thẻ lựa chọn tương ứng để đưa ra câu trả lời.</p>
+          </div>
+        </div>
+        <div class="rule-card">
+          <span class="rule-icon">🔤</span>
+          <div>
+            <strong>Thử thách Thanh Mẫu & Vận Mẫu:</strong>
+            <p>Chọn chế độ phân biệt <strong>Thanh Mẫu</strong> (Âm hai môi b/p/m, Âm môi răng f, Uốn lưỡi zh/ch/sh vs z/c/s...) hoặc <strong>Vận Mẫu</strong> (an/ang, in/ing, u/ü...) để luyện tai phản xạ chuẩn xác.</p>
           </div>
         </div>
         <div class="rule-card">
