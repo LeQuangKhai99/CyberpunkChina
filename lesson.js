@@ -1889,11 +1889,50 @@
       const pool = allWords.filter(w => w.level === this.deckHskLevel);
       const totalDecks = Math.ceil(pool.length / 25);
 
+      const levelMeta = {
+        1: { name: 'HSK 1 - Căn Bản Nền Tảng', icon: '🌱', class: 'deck-banner-hsk1', desc: 'Trọn bộ 150 từ vựng cơ bản đầu tiên, xây dựng nền tảng phát âm và nhận diện mặt chữ vững chắc.' },
+        2: { name: 'HSK 2 - Giao Tiếp Sơ Cấp', icon: '🌿', class: 'deck-banner-hsk2', desc: 'Trọn bộ 147 từ vựng hội thoại thân thuộc, tự tin trao đổi trong các tình huống hàng ngày.' },
+        3: { name: 'HSK 3 - Trung Cấp Thực Hành', icon: '⭐', class: 'deck-banner-hsk3', desc: 'Trọn bộ 298 từ vựng đời sống, công sở và du lịch, diễn đạt suy nghĩ mạch lạc.' },
+        4: { name: 'HSK 4 - Trung Cao Cấp', icon: '🚀', class: 'deck-banner-hsk4', desc: 'Trọn bộ 598 từ vựng diễn đạt quan điểm, thảo luận xã hội và văn hóa đa chiều.' },
+        5: { name: 'HSK 5 - Cao Cấp Chuyên Nghiệp', icon: '🔥', class: 'deck-banner-hsk5', desc: 'Trọn bộ 1.298 từ vựng báo chí, phim ảnh, đàm phán và thuyết trình chuyên sâu.' },
+        6: { name: 'HSK 6 - Tinh Thông Hán Ngữ', icon: '👑', class: 'deck-banner-hsk6', desc: 'Trọn bộ 2.509 từ vựng học thuật, văn chương, thành ngữ và luận điểm hàn lâm.' }
+      };
+
+      const meta = levelMeta[this.deckHskLevel] || levelMeta[1];
+
+      // Đếm số bài đã hoàn thành trong cấp độ này
+      let completedInLevel = 0;
+      for (let i = 0; i < totalDecks; i++) {
+        if (this.state.completedUnits[`deck_hsk${this.deckHskLevel}_${i}`]) completedInLevel++;
+      }
+      const levelPct = Math.round((completedInLevel / Math.max(1, totalDecks)) * 100);
+
+      // 1. Render Banner Cấp Độ Động & Rực Rỡ
+      const banner = document.createElement('div');
+      banner.className = `deck-level-banner ${meta.class}`;
+      banner.innerHTML = `
+        <div class="deck-banner-left">
+          <div class="deck-banner-icon-box">${meta.icon}</div>
+          <div class="deck-banner-info">
+            <h2>${meta.name} <span style="font-size:13px; font-weight:800; background:rgba(255,255,255,0.75); padding:3px 10px; border-radius:999px; color:#1e293b;">${totalDecks} Bài Học · ${pool.length} Từ</span></h2>
+            <p>${meta.desc}</p>
+          </div>
+        </div>
+        <div class="deck-banner-progress-box">
+          <span class="deck-banner-prog-label">Tiến độ: ${completedInLevel} / ${totalDecks} bài (${levelPct}%)</span>
+          <div class="deck-banner-track">
+            <div class="deck-banner-fill" style="width: ${levelPct}%;"></div>
+          </div>
+        </div>
+      `;
+      grid.appendChild(banner);
+
+      // 2. Render từng thẻ bài học HSK 3D
       for (let d = 0; d < totalDecks; d++) {
         const deckSlice = pool.slice(d * 25, (d + 1) * 25);
         const deckId = `deck_hsk${this.deckHskLevel}_${d}`;
         const isDone = !!this.state.completedUnits[deckId];
-        const previewStr = deckSlice.slice(0, 6).map(w => w.hanzi).join(' · ');
+        const numStr = String(d + 1).padStart(2, '0');
 
         // Search filter
         if (this.searchKeyword) {
@@ -1906,36 +1945,64 @@
           if (!matches && !`bài ${d + 1}`.includes(kw)) continue;
         }
 
+        const previewWords = deckSlice.slice(0, 6);
+        const remainingCount = deckSlice.length - previewWords.length;
+
         const card = document.createElement('div');
         card.className = 'hub-deck-card';
         card.innerHTML = `
-          <div class="deck-card-top">
-            <span class="deck-card-badge">🌱 HSK ${this.deckHskLevel}</span>
-            <span style="font-size: 11px; font-weight: 800; color: ${isDone ? '#059669' : '#0284c7'};">
-              ${isDone ? '✅ ĐÃ THUỘC' : `ĐỦ ${deckSlice.length} TỪ VỰNG`}
-            </span>
+          <div>
+            <!-- Header Card -->
+            <div class="deck-card-header">
+              <div class="deck-card-header-left">
+                <div class="deck-card-num-circle">${numStr}</div>
+                <div class="deck-card-title-wrap">
+                  <span class="deck-card-hsk-tag">${meta.icon} HSK ${this.deckHskLevel} · BÀI ${d + 1}</span>
+                  <h3 class="deck-card-main-title">${deckSlice[0] ? deckSlice[0].hanzi : ''} ~ ${deckSlice[deckSlice.length - 1] ? deckSlice[deckSlice.length - 1].hanzi : ''}</h3>
+                </div>
+              </div>
+              <span class="deck-card-status-badge ${isDone ? 'deck-status-done' : 'deck-status-todo'}">
+                ${isDone ? '✅ ĐÃ THUỘC' : '✨ 25 TỪ'}
+              </span>
+            </div>
+
+            <!-- Chips Showcase Preview -->
+            <div class="deck-chips-showcase" style="margin-top: 14px;" title="Danh sách từ: ${deckSlice.map(w => w.hanzi).join(', ')}">
+              ${previewWords.map(w => `
+                <div class="deck-word-mini-chip">
+                  <span>${w.hanzi}</span>
+                  <span style="font-size:11px; color:#64748b; font-family:var(--font-brand);">${w.pinyin || ''}</span>
+                </div>
+              `).join('')}
+              ${remainingCount > 0 ? `<span class="deck-word-mini-more">+${remainingCount} từ nữa</span>` : ''}
+            </div>
+
+            <!-- Info stats -->
+            <div class="deck-card-stats-row" style="margin-top: 12px;">
+              <div class="deck-stat-item">📚 <strong>${deckSlice.length}</strong> từ vựng</div>
+              <div class="deck-stat-item">⏱️ 3-5 phút</div>
+              <div class="deck-stat-item" style="color:#d97706;">⚡ +80 XP</div>
+            </div>
           </div>
-          <h3 class="deck-card-title">Bài ${d + 1}: ${deckSlice[0] ? deckSlice[0].hanzi : ''} ~ ${deckSlice[deckSlice.length - 1] ? deckSlice[deckSlice.length - 1].hanzi : ''}</h3>
-          <div class="deck-card-words-preview" title="${deckSlice.map(w => w.hanzi).join(', ')}">
-            ${previewStr}... (${deckSlice.length} từ)
-          </div>
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; gap: 8px; flex-wrap: wrap;">
-            <button type="button" class="btn-deck-preview-words" style="background:#f1f5f9; border:2px solid #cbd5e1; border-radius:12px; padding:7px 12px; font-family:var(--font-brand); font-size:12px; font-weight:800; color:#334155; cursor:pointer;">
+
+          <!-- Actions Footer -->
+          <div class="deck-card-actions">
+            <button type="button" class="btn-deck-words-detail" title="Xem bảng ${deckSlice.length} từ vựng">
               📖 XEM ${deckSlice.length} TỪ
             </button>
-            <button type="button" class="hub-unit-launch-btn btn-deck-launch" style="padding: 8px 16px; font-size: 12px;">
-              🚀 HỌC BÀI
+            <button type="button" class="btn-deck-start-lesson">
+              ${isDone ? '🔄 ÔN TẬP' : '🚀 VÀO HỌC'}
             </button>
           </div>
         `;
 
-        card.querySelector('.btn-deck-preview-words').addEventListener('click', (e) => {
+        card.querySelector('.btn-deck-words-detail').addEventListener('click', (e) => {
           e.stopPropagation();
           this.audio.playTap();
           this.showDeckWordsModal(this.deckHskLevel, d);
         });
 
-        card.querySelector('.btn-deck-launch').addEventListener('click', () => {
+        card.querySelector('.btn-deck-start-lesson').addEventListener('click', () => {
           this.audio.playTap();
           this.startHskDeckLesson(this.deckHskLevel, d);
         });
