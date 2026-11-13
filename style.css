@@ -69,7 +69,7 @@ html, body {
   text-rendering: optimizeLegibility;
 }
 
-body:not(.hs-body):not(.puzzle-body):not(.tm-body):not(.fc-body) {
+body:not(.hs-body):not(.puzzle-body):not(.tm-body):not(.fc-body):not(.duo-lesson-body):not(.duo-body):not(.portal-body) {
   width: 100vw;
   height: 100vh;
   overflow: hidden;

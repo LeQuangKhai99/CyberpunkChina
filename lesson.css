@@ -1,0 +1,1542 @@
+/* ==========================================================================
+   PINYIN POP! 🦉 DUOLINGO-STYLE LESSON EXPERIENCE
+   Modern, Playful, Premium Gamified Chinese Learning Interface
+   ========================================================================== */
+
+:root {
+  /* Duolingo Signature & Candy Pop Palette */
+  --duo-green: #58cc02;
+  --duo-green-hover: #61e002;
+  --duo-green-shadow: #58a700;
+  --duo-green-light: #d7ffb8;
+  --duo-green-text: #2b7600;
+
+  --duo-red: #ff4b4b;
+  --duo-red-hover: #ff5e5e;
+  --duo-red-shadow: #ea2b2b;
+  --duo-red-light: #ffdfe0;
+  --duo-red-text: #ea2b2b;
+
+  --duo-blue: #1cb0f6;
+  --duo-blue-hover: #3ac0ff;
+  --duo-blue-shadow: #1899d6;
+  --duo-blue-light: #ddf4ff;
+
+  --duo-yellow: #ffc800;
+  --duo-yellow-shadow: #e5a400;
+  --duo-yellow-light: #fff5cc;
+
+  --duo-purple: #ce82ff;
+  --duo-purple-shadow: #a55eea;
+  --duo-purple-light: #f5e8ff;
+
+  --duo-orange: #ff9600;
+  --duo-orange-shadow: #d87d00;
+
+  --duo-gray-bg: #f7f9fa;
+  --duo-card-border: #e5e5e5;
+  --duo-card-border-active: #84d8ff;
+  --duo-text-dark: #3c3c3c;
+  --duo-text-sub: #777777;
+  --duo-disabled: #e5e5e5;
+  --duo-disabled-shadow: #afafaf;
+  --duo-disabled-text: #afafaf;
+
+  /* Font Families */
+  --font-brand: 'Lexend', 'Nunito', 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+  --font-ui: 'Be Vietnam Pro', 'Lexend', system-ui, -apple-system, sans-serif;
+  --font-cjk: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+/* Base Reset & Layout */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  height: auto !important;
+  min-height: 100%;
+}
+
+body.duo-lesson-body,
+body.duo-body {
+  font-family: var(--font-ui);
+  background: #f0fdf4;
+  background: radial-gradient(circle at top center, #e0f2fe 0%, #f0fdf4 40%, #fefce8 100%);
+  color: var(--duo-text-dark);
+  min-height: 100vh !important;
+  height: auto !important;
+  width: 100% !important;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  user-select: none;
+  position: relative !important;
+}
+
+/* Background animated decorative canvas */
+#duoBgCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* 3D Push Button System (Iconic Duolingo Tactile Feel) */
+.duo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-brand);
+  font-size: 15px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 13px 26px;
+  border-radius: 16px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  position: relative;
+  outline: none;
+}
+
+.duo-btn:active {
+  transform: translateY(3px);
+}
+
+.duo-btn-green {
+  background: var(--duo-green);
+  color: #ffffff;
+  box-shadow: 0 4px 0 var(--duo-green-shadow);
+}
+.duo-btn-green:hover {
+  background: var(--duo-green-hover);
+}
+.duo-btn-green:active {
+  box-shadow: 0 1px 0 var(--duo-green-shadow);
+}
+
+.duo-btn-blue {
+  background: var(--duo-blue);
+  color: #ffffff;
+  box-shadow: 0 4px 0 var(--duo-blue-shadow);
+}
+.duo-btn-blue:hover {
+  background: var(--duo-blue-hover);
+}
+.duo-btn-blue:active {
+  box-shadow: 0 1px 0 var(--duo-blue-shadow);
+}
+
+.duo-btn-red {
+  background: var(--duo-red);
+  color: #ffffff;
+  box-shadow: 0 4px 0 var(--duo-red-shadow);
+}
+.duo-btn-red:hover {
+  background: var(--duo-red-hover);
+}
+.duo-btn-red:active {
+  box-shadow: 0 1px 0 var(--duo-red-shadow);
+}
+
+.duo-btn-white {
+  background: #ffffff;
+  color: var(--duo-text-dark);
+  border: 2px solid var(--duo-card-border);
+  box-shadow: 0 4px 0 var(--duo-card-border);
+}
+.duo-btn-white:hover {
+  background: #f8fafc;
+}
+.duo-btn-white:active {
+  box-shadow: 0 1px 0 var(--duo-card-border);
+}
+
+.duo-btn-disabled,
+.duo-btn:disabled {
+  background: var(--duo-disabled) !important;
+  color: var(--duo-disabled-text) !important;
+  box-shadow: 0 4px 0 var(--duo-disabled-shadow) !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
+
+/* ==========================================================================
+   VIEW 1: LESSON TREE & HUB
+   ========================================================================== */
+#lessonHubView {
+  position: relative;
+  z-index: 10;
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 18px 20px 60px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* Hub Header */
+.hub-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  padding: 12px 24px;
+  border-radius: 24px;
+  border: 3px solid #ffffff;
+  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.08);
+}
+
+.hub-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.hub-brand-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.hub-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.hub-brand-title {
+  font-family: var(--font-brand);
+  font-size: 20px;
+  font-weight: 800;
+  color: #1e1b4b;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hub-brand-sub {
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.hub-stats-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hub-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #334155;
+}
+
+.hub-stat-item.stat-streak {
+  color: #ea580c;
+  border-color: #ffedd5;
+  background: #fff7ed;
+}
+
+.hub-stat-item.stat-hearts {
+  color: #e11d48;
+  border-color: #ffe4e6;
+  background: #fff1f2;
+}
+
+.hub-stat-item.stat-xp {
+  color: #2563eb;
+  border-color: #dbeafe;
+  background: #eff6ff;
+}
+
+/* Hero Unit Banner */
+.hub-hero-banner {
+  background: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
+  border-radius: 28px;
+  padding: 28px 34px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 16px 36px rgba(16, 185, 129, 0.28), 0 4px 0 #047857;
+  position: relative;
+  overflow: hidden;
+}
+
+.hub-hero-banner::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 200px;
+  height: 200px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hub-hero-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 640px;
+  z-index: 2;
+}
+
+.hub-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(8px);
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  align-self: flex-start;
+}
+
+.hub-hero-title {
+  font-family: var(--font-brand);
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.hub-hero-desc {
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 600;
+  opacity: 0.95;
+}
+
+.hub-hero-mascot {
+  width: 120px;
+  height: 120px;
+  border-radius: 28px;
+  border: 4px solid #ffffff;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+  animation: duoBob 3s ease-in-out infinite;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+@keyframes duoBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+/* Mode Segmented Bar */
+.hub-mode-segmented {
+  display: flex;
+  background: #ffffff;
+  border: 2px solid var(--duo-card-border);
+  padding: 6px;
+  border-radius: 20px;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.hub-mode-seg-btn {
+  flex: 1;
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: none;
+  background: transparent;
+  font-family: var(--font-brand);
+  font-size: 14px;
+  font-weight: 800;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.hub-mode-seg-btn:hover {
+  background: #f8fafc;
+  color: #334155;
+}
+
+.hub-mode-seg-btn.active {
+  background: var(--duo-blue);
+  color: #ffffff;
+  box-shadow: 0 3px 0 var(--duo-blue-shadow);
+}
+
+/* Search Bar */
+.hub-search-wrap {
+  width: 100%;
+  position: relative;
+}
+
+.hub-search-input {
+  width: 100%;
+  background: #ffffff;
+  border: 2px solid var(--duo-card-border);
+  border-radius: 20px;
+  padding: 14px 20px 14px 48px;
+  font-family: var(--font-brand);
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e1b4b;
+  outline: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
+}
+
+.hub-search-input:focus {
+  border-color: var(--duo-blue);
+  box-shadow: 0 0 0 4px rgba(28, 176, 246, 0.15);
+}
+
+.hub-search-icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+/* Category Filter Tabs */
+.hub-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.hub-filter-btn {
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-family: var(--font-brand);
+  font-size: 13px;
+  font-weight: 800;
+  border: 2px solid #e2e8f0;
+  background: #ffffff;
+  color: #475569;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 0 #cbd5e1;
+}
+
+.hub-filter-btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.hub-filter-btn.active {
+  background: var(--duo-green);
+  color: #ffffff;
+  border-color: var(--duo-green);
+  box-shadow: 0 3px 0 var(--duo-green-shadow);
+}
+
+/* Units Grid */
+.hub-units-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+/* HSK 200 Deck Grid */
+.hub-deck-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.hub-deck-card {
+  background: #ffffff;
+  border: 2px solid var(--duo-card-border);
+  box-shadow: 0 4px 0 var(--duo-card-border);
+  border-radius: 20px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.hub-deck-card:hover {
+  transform: translateY(-3px);
+  border-color: #cbd5e1;
+  box-shadow: 0 7px 0 #cbd5e1;
+}
+
+.deck-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.deck-card-badge {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+.deck-card-title {
+  font-family: var(--font-brand);
+  font-size: 16px;
+  font-weight: 800;
+  color: #1e1b4b;
+}
+
+.deck-card-words-preview {
+  font-family: var(--font-cjk);
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.5;
+  background: #f8fafc;
+  padding: 8px 12px;
+  border-radius: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hub-unit-card {
+  background: #ffffff;
+  border-radius: 24px;
+  border: 2px solid var(--duo-card-border);
+  box-shadow: 0 8px 0 var(--duo-card-border);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+}
+
+.hub-unit-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 0 var(--duo-card-border);
+}
+
+.hub-unit-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.hub-unit-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  flex-shrink: 0;
+  background: #f0fdf4;
+  border: 2px solid #bbf7d0;
+}
+
+.hub-unit-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.hub-unit-level {
+  font-size: 11px;
+  font-weight: 800;
+  color: #059669;
+  text-transform: uppercase;
+}
+
+.hub-unit-title {
+  font-family: var(--font-brand);
+  font-size: 18px;
+  font-weight: 800;
+  color: #1e1b4b;
+}
+
+.hub-unit-desc {
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.45;
+  font-weight: 600;
+}
+
+.hub-unit-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.hub-skill-pill {
+  font-size: 11px;
+  font-weight: 700;
+  background: #f1f5f9;
+  color: #475569;
+  padding: 3px 10px;
+  border-radius: 8px;
+}
+
+.hub-unit-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.hub-unit-stars {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #d97706;
+}
+
+.hub-unit-launch-btn {
+  background: var(--duo-green);
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 14px;
+  font-family: var(--font-brand);
+  font-size: 13px;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--duo-green-shadow);
+  transition: all 0.1s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hub-unit-launch-btn:hover {
+  background: var(--duo-green-hover);
+}
+
+.hub-unit-launch-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--duo-green-shadow);
+}
+
+/* ==========================================================================
+   VIEW 2: ACTIVE LESSON RUNNER (DUOLINGO LEARNING CANVAS)
+   ========================================================================== */
+#lessonRunnerView {
+  position: relative;
+  z-index: 10;
+  display: none;
+  flex-direction: column;
+  min-height: 100vh;
+  height: auto;
+  width: 100%;
+  background: #ffffff;
+  overflow-y: auto !important;
+  flex: 1;
+}
+
+/* Top Progress Header */
+.runner-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  border-bottom: 2px solid var(--duo-card-border);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  z-index: 50;
+}
+
+.runner-close-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #94a3b8;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.runner-close-btn:hover {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+/* Duolingo Chunky Progress Bar */
+.runner-progress-track {
+  flex: 1;
+  height: 16px;
+  background: #e5e5e5;
+  border-radius: 999px;
+  position: relative;
+  overflow: hidden;
+}
+
+.runner-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #58cc02 0%, #7ee726 100%);
+  border-radius: 999px;
+  transition: width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+
+.runner-progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 6px;
+  right: 6px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 999px;
+}
+
+/* Live Lesson XP Box */
+.runner-xp-box {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-brand);
+  font-size: 14px;
+  font-weight: 800;
+  color: #2563eb;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  flex-shrink: 0;
+}
+
+/* Floating XP Popup on Correct Answer */
+.floating-xp-pill {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  background: linear-gradient(135deg, #f59e0b, #fbbf24);
+  color: #ffffff;
+  font-family: var(--font-brand);
+  font-size: 14px;
+  font-weight: 900;
+  padding: 4px 12px;
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.45);
+  pointer-events: none;
+  animation: floatXpUp 1.2s ease-out forwards;
+  z-index: 150;
+}
+
+@keyframes floatXpUp {
+  0% { transform: translateY(0) scale(0.8); opacity: 0; }
+  25% { transform: translateY(-12px) scale(1.15); opacity: 1; }
+  75% { transform: translateY(-26px) scale(1); opacity: 0.9; }
+  100% { transform: translateY(-42px) scale(0.9); opacity: 0; }
+}
+
+/* Hearts Counter in Runner */
+.runner-hearts-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-brand);
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--duo-red);
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--duo-red-light);
+  flex-shrink: 0;
+}
+
+.runner-heart-icon {
+  font-size: 20px;
+  animation: heartPulse 1.8s infinite ease-in-out;
+}
+
+@keyframes heartPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.heart-damage-shake {
+  animation: heartShake 0.5s ease-in-out;
+}
+
+@keyframes heartShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+/* Central Exercise Canvas */
+.runner-content-container {
+  flex: 1;
+  max-width: 680px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 30px 20px 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+}
+
+/* Prompt Banner / Title */
+.exercise-type-tag {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #059669;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  padding: 4px 12px;
+  border-radius: 999px;
+  align-self: flex-start;
+}
+
+.exercise-title {
+  font-family: var(--font-brand);
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--duo-text-dark);
+  line-height: 1.35;
+}
+
+/* Speaker Interactive Area */
+.audio-prompt-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 10px 0;
+}
+
+.btn-speaker-big {
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+  background: var(--duo-blue);
+  color: #ffffff;
+  border: none;
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 5px 0 var(--duo-blue-shadow);
+  transition: all 0.1s ease;
+  position: relative;
+}
+
+.btn-speaker-big:hover {
+  background: var(--duo-blue-hover);
+}
+
+.btn-speaker-big:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--duo-blue-shadow);
+}
+
+.btn-speaker-turtle {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 2px solid var(--duo-card-border);
+  box-shadow: 0 4px 0 var(--duo-card-border);
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.btn-speaker-turtle:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.btn-speaker-turtle:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--duo-card-border);
+}
+
+/* Chinese Text Display Box */
+.chinese-prompt-box {
+  background: #f8fafc;
+  border: 2px solid var(--duo-card-border);
+  border-radius: 20px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chinese-prompt-hanzi {
+  font-family: var(--font-cjk);
+  font-size: 36px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.25;
+}
+
+.chinese-prompt-pinyin {
+  font-family: var(--font-brand);
+  font-size: 18px;
+  font-weight: 700;
+  color: #0284c7;
+}
+
+/* ==========================================================================
+   QUESTION TYPE A: LISTEN & TYPE PINYIN
+   ========================================================================== */
+.pinyin-input-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pinyin-input-field {
+  width: 100%;
+  font-family: var(--font-brand);
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e1b4b;
+  background: #f8fafc;
+  border: 2px solid var(--duo-card-border);
+  border-radius: 18px;
+  padding: 16px 20px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.pinyin-input-field:focus {
+  background: #ffffff;
+  border-color: var(--duo-blue);
+  box-shadow: 0 0 0 4px rgba(28, 176, 246, 0.2);
+}
+
+/* Pinyin Tone Quick Accents Toolbar */
+.pinyin-tone-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.tone-accent-btn {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 2px 0 #cbd5e1;
+  color: #334155;
+  font-family: var(--font-brand);
+  font-size: 15px;
+  font-weight: 800;
+  padding: 6px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.tone-accent-btn:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.tone-accent-btn:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+/* ==========================================================================
+   QUESTION TYPE B & C: WORD BANK TILE REARRANGEMENT
+   ========================================================================== */
+/* Answer Zone (Drop slots) */
+.word-answer-zone {
+  min-height: 90px;
+  border-bottom: 2px solid #e2e8f0;
+  padding: 12px 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  align-content: flex-start;
+  transition: border-color 0.2s ease;
+}
+
+.word-answer-zone:empty::before {
+  content: 'Chạm vào các từ bên dưới để ghép câu...';
+  color: #94a3b8;
+  font-size: 15px;
+  font-weight: 600;
+  font-style: italic;
+}
+
+/* Word Bank (Source container) */
+.word-bank-zone {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  padding: 20px 0;
+  margin-top: 10px;
+  min-height: 120px;
+}
+
+/* Word Chip Tile */
+.duo-word-chip {
+  background: #ffffff;
+  border: 2px solid var(--duo-card-border);
+  box-shadow: 0 3px 0 var(--duo-card-border);
+  border-radius: 16px;
+  padding: 10px 18px;
+  font-family: var(--font-brand);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--duo-text-dark);
+  cursor: pointer;
+  transition: all 0.12s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.duo-word-chip:hover {
+  border-color: #cbd5e1;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 0 #cbd5e1;
+}
+
+.duo-word-chip:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--duo-card-border);
+}
+
+.duo-word-chip.chip-chinese {
+  font-family: var(--font-cjk);
+  font-size: 20px;
+  padding: 10px 20px;
+}
+
+/* Slot Placeholder in bank when word is moved to answer zone */
+.duo-chip-placeholder {
+  background: #f1f5f9;
+  border: 2px dashed #cbd5e1;
+  border-radius: 16px;
+  padding: 10px 18px;
+  color: transparent;
+  pointer-events: none;
+  display: inline-flex;
+}
+
+/* ==========================================================================
+   QUESTION TYPE D: MATCHING PAIRS (TAP MATCHING)
+   ========================================================================== */
+.matching-pairs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.match-pair-tile {
+  background: #ffffff;
+  border: 2px solid var(--duo-card-border);
+  box-shadow: 0 4px 0 var(--duo-card-border);
+  border-radius: 16px;
+  padding: 16px 14px;
+  font-family: var(--font-brand);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--duo-text-dark);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 64px;
+  transition: all 0.12s ease;
+}
+
+.match-pair-tile:hover {
+  border-color: var(--duo-blue-shadow);
+}
+
+.match-pair-tile.selected {
+  border-color: var(--duo-blue);
+  background: var(--duo-blue-light);
+  color: #0369a1;
+  box-shadow: 0 4px 0 var(--duo-blue-shadow);
+  transform: translateY(-2px);
+}
+
+.match-pair-tile.matched {
+  border-color: var(--duo-green);
+  background: var(--duo-green-light);
+  color: var(--duo-green-text);
+  box-shadow: 0 4px 0 var(--duo-green-shadow);
+  cursor: default;
+  opacity: 0.65;
+  transform: scale(0.96);
+}
+
+.match-pair-tile.mismatch {
+  border-color: var(--duo-red);
+  background: var(--duo-red-light);
+  color: var(--duo-red-text);
+  animation: tileShake 0.4s ease;
+}
+
+@keyframes tileShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* ==========================================================================
+   QUESTION TYPE E: MULTIPLE CHOICE OPTIONS
+   ========================================================================== */
+.choice-options-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.choice-option-card {
+  background: #ffffff;
+  border: 2px solid var(--duo-card-border);
+  box-shadow: 0 4px 0 var(--duo-card-border);
+  border-radius: 18px;
+  padding: 16px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.12s ease;
+}
+
+.choice-option-card:hover {
+  border-color: #cbd5e1;
+}
+
+.choice-option-card.selected {
+  border-color: var(--duo-blue);
+  background: var(--duo-blue-light);
+  box-shadow: 0 4px 0 var(--duo-blue-shadow);
+}
+
+.choice-option-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  border: 2px solid var(--duo-card-border);
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-brand);
+  font-size: 13px;
+  font-weight: 900;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.choice-option-card.selected .choice-option-badge {
+  border-color: var(--duo-blue);
+  background: var(--duo-blue);
+  color: #ffffff;
+}
+
+.choice-option-text {
+  font-family: var(--font-brand);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--duo-text-dark);
+  flex: 1;
+}
+
+/* ==========================================================================
+   BOTTOM ACTION BAR & DUOLINGO FEEDBACK DRAWER
+   ========================================================================== */
+.runner-bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  border-top: 2px solid var(--duo-card-border);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 100;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.runner-bottom-inner {
+  max-width: 680px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.runner-bottom-skip-btn {
+  font-family: var(--font-brand);
+  font-size: 14px;
+  font-weight: 800;
+  color: #94a3b8;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px 14px;
+  border-radius: 12px;
+  transition: color 0.15s ease;
+}
+
+.runner-bottom-skip-btn:hover {
+  color: #475569;
+}
+
+.btn-check-main {
+  min-width: 160px;
+}
+
+/* Feedback Drawer (Green = Correct, Red = Incorrect) */
+.runner-bottom-bar.feedback-correct {
+  background: var(--duo-green-light);
+  border-top-color: #86efac;
+}
+
+.runner-bottom-bar.feedback-incorrect {
+  background: var(--duo-red-light);
+  border-top-color: #fca5a5;
+}
+
+.feedback-details {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.feedback-icon-bubble {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.feedback-correct .feedback-icon-bubble {
+  background: #ffffff;
+  color: var(--duo-green);
+  border: 2px solid var(--duo-green);
+}
+
+.feedback-incorrect .feedback-icon-bubble {
+  background: #ffffff;
+  color: var(--duo-red);
+  border: 2px solid var(--duo-red);
+}
+
+.feedback-texts {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.feedback-status-title {
+  font-family: var(--font-brand);
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.feedback-correct .feedback-status-title {
+  color: var(--duo-green-text);
+}
+
+.feedback-incorrect .feedback-status-title {
+  color: var(--duo-red-text);
+}
+
+.feedback-target-answer {
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+}
+
+/* ==========================================================================
+   VIEW 3: LESSON COMPLETE CELEBRATION MODAL / SCREEN
+   ========================================================================== */
+.celebration-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.celebration-card {
+  background: #ffffff;
+  border-radius: 32px;
+  max-width: 480px;
+  width: 100%;
+  padding: 36px 30px;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  position: relative;
+  animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes popIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.celebration-mascot {
+  width: 110px;
+  height: 110px;
+  border-radius: 28px;
+  border: 4px solid #ffffff;
+  box-shadow: 0 10px 25px rgba(255, 75, 130, 0.35);
+}
+
+.celebration-title {
+  font-family: var(--font-brand);
+  font-size: 28px;
+  font-weight: 900;
+  color: #1e1b4b;
+}
+
+.celebration-subtitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  margin-top: -8px;
+}
+
+.celebration-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: 100%;
+  margin: 10px 0;
+}
+
+.celeb-stat-box {
+  background: #f8fafc;
+  border: 2px solid var(--duo-card-border);
+  border-radius: 18px;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.celeb-stat-val {
+  font-family: var(--font-brand);
+  font-size: 20px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.celeb-stat-lbl {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.celebration-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+/* Out of Hearts Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(6px);
+  z-index: 250;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-dialog {
+  background: #ffffff;
+  border-radius: 28px;
+  max-width: 440px;
+  width: 100%;
+  padding: 30px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-icon {
+  font-size: 52px;
+}
+
+.modal-title {
+  font-family: var(--font-brand);
+  font-size: 22px;
+  font-weight: 900;
+  color: #1e1b4b;
+}
+
+.modal-desc {
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+.modal-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-top: 6px;
+}
+
+/* Confetti canvas */
+#confettiCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 210;
+}
+
+/* ==========================================================================
+   RESPONSIVE OPTIMIZATIONS
+   ========================================================================== */
+@media (max-width: 768px) {
+  #lessonHubView {
+    padding: 12px 14px 40px;
+    gap: 16px;
+  }
+  .hub-hero-banner {
+    flex-direction: column-reverse;
+    text-align: center;
+    padding: 20px 16px;
+    gap: 16px;
+  }
+  .hub-hero-badge {
+    align-self: center;
+  }
+  .hub-hero-mascot {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+  }
+  .hub-hero-title {
+    font-size: 22px;
+  }
+  .hub-units-grid {
+    grid-template-columns: 1fr;
+  }
+  .runner-content-container {
+    padding: 20px 16px 140px;
+  }
+  .exercise-title {
+    font-size: 20px;
+  }
+  .chinese-prompt-hanzi {
+    font-size: 28px;
+  }
+  .runner-bottom-inner {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .feedback-details {
+    width: 100%;
+  }
+  .btn-check-main {
+    width: 100%;
+  }
+}
+

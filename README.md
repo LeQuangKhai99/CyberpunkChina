@@ -34,6 +34,19 @@ Trò chơi luyện gõ Pinyin tiếng Trung phong cách kẹo ngọt vui nhộn,
 - **Âm Thanh Game Vui Nhộn & Giọng Đọc Bản Ngữ (TTS)**:
   - Tự động phát âm chuẩn giọng Bắc Kinh (`zh-CN`) mỗi khi bắn hạ từ vựng.
   - Hiệu ứng âm thanh sinh động, vui tươi kèm nhạc nền chiptune bắt tai.
+- **Hệ Thống Bài Học Duolingo Thông Minh (`lesson.html`)**:
+  - **Phương pháp học tương tác đa giác quan chuẩn Duolingo**:
+    - 🎧 **Nghe & Gõ lại Pinyin (Listen & Type Pinyin)**: Nghe giọng đọc bản ngữ tốc độ thường (1.0x) và tốc độ rùa chậm (0.6x), hỗ trợ thanh phím tắt gõ thanh điệu Pinyin (`ā, á, ǎ, à`...) và thuật toán kiểm tra linh hoạt chấp nhận cả Pinyin có dấu lẫn không dấu.
+    - 🧱 **Sắp xếp các từ tiếng Việt (Rearrange Vietnamese Word Bank)**: Kéo/chạm các khối từ tiếng Việt sinh động để dịch câu tiếng Trung hoàn chỉnh, kèm các từ gây nhiễu thách thức tư duy phản xạ.
+    - 🇨🇳 **Sắp xếp câu tiếng Trung (Rearrange Chinese Word Bank)**: Ghép các khối chữ Hán & Pinyin thành câu chuẩn ngữ pháp tiếng Trung.
+    - 🔗 **Ghép cặp từ vựng (Tap-to-Match Pairs)**: Chạm ghép các cặp chữ Hán và nghĩa tiếng Việt tương ứng, hiệu ứng phát sáng ngọc bích khi ghép đúng.
+    - 🎯 **Trắc nghiệm tình huống & Điền từ**: 4 đáp án chọn nhanh hỗ trợ phím số 1, 2, 3, 4 trên bàn phím.
+  - **Hệ thống 5 Tim Duolingo & Thanh Tiến Độ Glossy**: Trừ tim khi làm sai, rung cảnh báo và hiển thị giải thích chi tiết đáp án chuẩn ngay trên thanh trượt dưới đáy.
+  - **28 Chủ đề bài học đời sống thực tế**: Chào hỏi, Số đếm & Thời gian, Gia đình, Ẩm thực & Trà sữa, Mua sắm & Giá cả, Nơi ở & Đồ đạc, Giao thông & Đi lại, Thời tiết & Bốn mùa, Sức khỏe & Bệnh viện, Trường học & Thi cử, Công sở & Nghề nghiệp, Sở thích & Thể thao, Công nghệ & Mạng xã hội, Thời trang & Màu sắc, Đô thị & Du lịch, Cảm xúc & Tính cách, Ngân hàng & Tài chính, Du lịch quốc tế, Nấu nướng & Hương vị, Tuyển dụng & Phỏng vấn, Môi trường & Muông thú, Văn hóa & Lễ hội, Giao tiếp xã hội, Khoa học & Đổi mới, Đàm phán thương mại, Triết lý & Thành ngữ Hán, Biện luận & Tư duy, Toàn cầu hóa & Xã hội hiện đại.
+  - **201 Bài học HSK 1 - 6 bao quát toàn bộ 5.000 từ vựng**: Chia nhỏ thành các Deck 25 từ mỗi bài (HSK 1: 6 bài, HSK 2: 6 bài, HSK 3: 12 bài, HSK 4: 24 bài, HSK 5: 52 bài, HSK 6: 101 bài) giúp người học chinh phục trọn vẹn 100% kho từ vựng.
+  - **Thanh tìm kiếm tức thì (Instant Search)**: Tìm kiếm nhanh theo chủ đề đời sống hoặc tra cứu chữ Hán, Pinyin, nghĩa tiếng Việt bất kỳ.
+  - **Chế độ Luyện tập Tự do theo cấp độ HSK 1 - 6**: Tự động sinh đề ngẫu nhiên từ kho 5.000 từ vựng `words.js`.
+  - **Hiệu ứng âm thanh Chime Web Audio API & Màn hình ăn mừng hoàn thành (Confetti Celebration)**.
 - **Hệ Thống Thẻ Ghi Nhớ Flashcard Thông Minh (`flashcard.html`)**:
   - **Thẻ 3D Flip Card tương tác mượt mà**: Lật thẻ để xem Chữ Hán, Pinyin chuẩn thanh điệu, Nghĩa tiếng Việt & tiếng Anh.
   - **Phân bài học theo Deck (25 từ/bài)**: Dễ dàng chia nhỏ 5.000 từ vựng thành các bài học nhỏ để ghi nhớ nhẹ nhàng không áp lực.

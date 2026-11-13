@@ -870,9 +870,20 @@
             <div class="rm-practice-labs-card">
               <div class="rm-card-header" style="margin-bottom:0;">
                 <div class="rm-card-title">🧪 PHÒNG THỰC HÀNH GIAO TIẾP & KHẢO THÍ HSK</div>
-                <span class="rm-card-sub">4 công cụ thực chiến giúp bạn ghép câu, nghe chép, hội thoại & thi lấy huy hiệu</span>
+                <span class="rm-card-sub">5 công cụ thực chiến giúp bạn học Duolingo, ghép câu, nghe chép, hội thoại & thi lấy huy hiệu</span>
               </div>
               <div class="rm-labs-list">
+                <div class="rm-lab-box">
+                  <div class="rm-lab-info">
+                    <div class="rm-lab-icon">🦉</div>
+                    <div>
+                      <div class="rm-lab-title">Bài Học Duolingo (Nghe Gõ & Sắp Xếp)</div>
+                      <div class="rm-lab-desc">Lộ trình bài học 8 chủ đề: nghe gõ Pinyin, sắp xếp các từ tiếng Việt, ghép cặp từ với 5 Tim</div>
+                    </div>
+                  </div>
+                  <a href="lesson.html?hsk=${hsk || 1}" class="rm-lab-btn" style="background:linear-gradient(135deg,#58cc02,#46a302);">🦉 Học Ngay</a>
+                </div>
+
                 <div class="rm-lab-box">
                   <div class="rm-lab-info">
                     <div class="rm-lab-icon">💬</div>

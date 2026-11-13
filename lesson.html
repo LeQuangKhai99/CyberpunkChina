@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PINYIN POP! 🦉 Vui Học Duolingo - Bài Học Nghe & Sắp Xếp Câu Tiếng Trung</title>
+  <meta name="description" content="Tính năng bài học phong cách Duolingo: Luyện nghe phát âm bản ngữ và gõ lại Pinyin chuẩn xác, sắp xếp các từ tiếng Việt và chữ Hán thành câu hoàn chỉnh, ghép cặp từ vựng vui nhộn.">
+  <link rel="icon" type="image/png" href="assets/logo.png">
+
+  <!-- Google Fonts: 100% Native Vietnamese & CJK (Be Vietnam Pro, Lexend, Nunito, Noto Sans SC) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=Lexend:wght@500;600;700;800;900&family=Noto+Sans+SC:wght@300;400;500;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css?v=20261005_v6">
+  <link rel="stylesheet" href="auth-modal.css?v=20261006_v3">
+  <link rel="stylesheet" href="lesson.css?v=20261113_v2">
+</head>
+<body class="theme-pinyin-pop duo-lesson-body duo-body">
+
+  <!-- Background Animated Decor Canvas -->
+  <canvas id="duoBgCanvas"></canvas>
+  <canvas id="confettiCanvas"></canvas>
+
+  <!-- ========================================================================
+       VIEW 1: LESSON HUB & CURRICULUM TREE
+       ======================================================================== -->
+  <main id="lessonHubView">
+
+    <!-- Top Navbar -->
+    <header class="hub-header">
+      <a href="index.html" class="hub-brand" title="Quay về Menu Trung Tâm">
+        <img src="assets/logo.png" alt="Pinyin Pop Mascot" class="hub-brand-logo">
+        <div class="hub-brand-text">
+          <span class="hub-brand-title">PINYIN POP! <span>✨</span></span>
+          <span class="hub-brand-sub">🦉 BÀI HỌC THEO CHỦ ĐỀ DUOLINGO</span>
+        </div>
+      </a>
+
+      <!-- Stats Pill Bar -->
+      <div class="hub-stats-bar">
+        <div class="hub-stat-item stat-streak" title="Chuỗi ngày học liên tục">
+          🔥 <span id="hubStreakCount">1</span> NGÀY
+        </div>
+        <div class="hub-stat-item stat-hearts" title="Số tim hiện có">
+          ❤️ <span id="hubHeartsCount">5</span> TIM
+        </div>
+        <div class="hub-stat-item stat-xp" title="Điểm kinh nghiệm tích lũy">
+          ⚡ <span id="hubXpCount">0</span> XP
+        </div>
+        <div id="authChipMount" style="display:inline-flex;align-items:center;"></div>
+      </div>
+    </header>
+
+    <!-- Hero Banner -->
+    <section class="hub-hero-banner">
+      <div class="hub-hero-content">
+        <div class="hub-hero-badge">🌟 PHƯƠNG PHÁP HỌC DUOLINGO 5 SAO</div>
+        <h1 class="hub-hero-title">Vui Học Tiếng Trung Mỗi Ngày!</h1>
+        <p class="hub-hero-desc">
+          Luyện nghe phát âm bản ngữ Bắc Kinh, gõ lại Pinyin chuẩn xác, sắp xếp các khối từ tiếng Việt và ghép câu chữ Hán sinh động. Mỗi bài chỉ mất 3-5 phút không gây nhàm chán!
+        </p>
+      </div>
+      <img src="assets/logo.png" alt="Pinyin Pop Owl" class="hub-hero-mascot">
+    </section>
+
+    <!-- Mode Switcher: 28 Thematic Units vs. 201 HSK Decks (Full 5,000 Words) -->
+    <div class="hub-mode-segmented">
+      <button type="button" class="hub-mode-seg-btn active" id="btnModeThemes">
+        🌟 28 CHỦ ĐỀ ĐỜI SỐNG THỰC TẾ
+      </button>
+      <button type="button" class="hub-mode-seg-btn" id="btnModeDecks">
+        📚 201 BÀI HỌC HSK 1 - 6 (5.000 TỪ)
+      </button>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="hub-search-wrap">
+      <span class="hub-search-icon">🔍</span>
+      <input type="text" id="hubSearchInput" class="hub-search-input" 
+             placeholder="Tìm kiếm chủ đề (ẩm thực, công việc, du lịch, công nghệ...) hoặc chữ Hán, Pinyin...">
+    </div>
+
+    <!-- Quick Dynamic Generator Bar (Luyện tập Tự do theo cấp độ HSK) -->
+    <section style="background:rgba(255,255,255,0.95); border:2px solid var(--duo-card-border); border-radius:24px; padding:18px 24px; box-shadow:0 4px 14px rgba(0,0,0,0.05); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;">
+      <div>
+        <div style="font-family:var(--font-brand); font-size:16px; font-weight:800; color:#1e1b4b; display:flex; align-items:center; gap:6px;">
+          ⚡ LUYỆN TẬP THỬ THÁCH THEO CẤP ĐỘ HSK (KHO 5.000 TỪ)
+        </div>
+        <div style="font-size:12px; color:#64748b; font-weight:600; margin-top:2px;">
+          Tự động sinh các câu hỏi nghe gõ Pinyin, ghép câu và trắc nghiệm từ bộ từ vựng HSK tương ứng.
+        </div>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button type="button" class="duo-btn duo-btn-white" onclick="if(window.duoLessonApp) window.duoLessonApp.startDynamicHskLesson(1);" style="padding:8px 14px; font-size:12px;">🌱 HSK 1</button>
+        <button type="button" class="duo-btn duo-btn-white" onclick="if(window.duoLessonApp) window.duoLessonApp.startDynamicHskLesson(2);" style="padding:8px 14px; font-size:12px;">🌿 HSK 2</button>
+        <button type="button" class="duo-btn duo-btn-white" onclick="if(window.duoLessonApp) window.duoLessonApp.startDynamicHskLesson(3);" style="padding:8px 14px; font-size:12px;">⭐ HSK 3</button>
+        <button type="button" class="duo-btn duo-btn-white" onclick="if(window.duoLessonApp) window.duoLessonApp.startDynamicHskLesson(4);" style="padding:8px 14px; font-size:12px;">🚀 HSK 4</button>
+        <button type="button" class="duo-btn duo-btn-white" onclick="if(window.duoLessonApp) window.duoLessonApp.startDynamicHskLesson(5);" style="padding:8px 14px; font-size:12px;">🔥 HSK 5</button>
+        <button type="button" class="duo-btn duo-btn-white" onclick="if(window.duoLessonApp) window.duoLessonApp.startDynamicHskLesson(6);" style="padding:8px 14px; font-size:12px;">👑 HSK 6</button>
+      </div>
+    </section>
+
+    <!-- Filter Category Tabs for Thematic Units -->
+    <div class="hub-filter-bar" id="themeFilterBar">
+      <button type="button" class="hub-filter-btn active" data-filter="all">🌈 TẤT CẢ 28 CHỦ ĐỀ</button>
+      <button type="button" class="hub-filter-btn" data-filter="hsk1">🌱 CĂN BẢN (HSK 1)</button>
+      <button type="button" class="hub-filter-btn" data-filter="hsk2">🌿 SƠ CẤP (HSK 2)</button>
+      <button type="button" class="hub-filter-btn" data-filter="hsk3">⭐ TRUNG CẤP (HSK 3 - 4)</button>
+      <button type="button" class="hub-filter-btn" data-filter="hsk5">🔥 CAO CẤP (HSK 5 - 6)</button>
+    </div>
+
+    <!-- Filter Category Tabs for 201 Decks -->
+    <div class="hub-filter-bar" id="deckFilterBar" style="display:none;">
+      <button type="button" class="hub-filter-btn active" data-deck-hsk="1">🌱 HSK 1 (6 Bài)</button>
+      <button type="button" class="hub-filter-btn" data-deck-hsk="2">🌿 HSK 2 (6 Bài)</button>
+      <button type="button" class="hub-filter-btn" data-deck-hsk="3">⭐ HSK 3 (12 Bài)</button>
+      <button type="button" class="hub-filter-btn" data-deck-hsk="4">🚀 HSK 4 (24 Bài)</button>
+      <button type="button" class="hub-filter-btn" data-deck-hsk="5">🔥 HSK 5 (52 Bài)</button>
+      <button type="button" class="hub-filter-btn" data-deck-hsk="6">👑 HSK 6 (101 Bài)</button>
+    </div>
+
+    <!-- Units Grid Container (Thematic 28 Units) -->
+    <section class="hub-units-grid" id="hubUnitsGrid"></section>
+
+    <!-- HSK Decks Grid Container (201 Decks) -->
+    <section class="hub-deck-grid" id="hubDeckGrid" style="display:none;"></section>
+
+  </main>
+
+  <!-- ========================================================================
+       VIEW 2: ACTIVE LESSON RUNNER CANVAS
+       ======================================================================== -->
+  <section id="lessonRunnerView">
+
+    <!-- Top Sticky Progress Header -->
+    <header class="runner-header">
+      <button type="button" class="runner-close-btn" id="btnRunnerClose" title="Dừng bài học">
+        ✕
+      </button>
+
+      <!-- Glossy Progress Bar -->
+      <div class="runner-progress-track">
+        <div class="runner-progress-fill" id="runnerProgressBar"></div>
+      </div>
+
+      <!-- Live Lesson XP Badge -->
+      <div class="runner-xp-box" id="runnerXpBox" title="XP kiếm được trong bài học này">
+        ⚡ <span id="runnerLessonXpCount">+0</span> XP
+      </div>
+
+      <!-- Hearts Status -->
+      <div class="runner-hearts-box" id="runnerHeartsBox">
+        <span class="runner-heart-icon">❤️</span>
+        <span id="runnerHeartsCount">5</span>
+      </div>
+    </header>
+
+    <!-- Central Exercise Canvas Container -->
+    <div class="runner-content-container" id="exerciseCanvas">
+      <!-- Dynamic Exercises Injected by lesson.js -->
+    </div>
+
+    <!-- Bottom Action Bar & Feedback Drawer -->
+    <footer class="runner-bottom-bar" id="runnerBottomBar">
+      <div class="runner-bottom-inner">
+        <div id="runnerFeedbackArea">
+          <!-- Injected Feedback on Check -->
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <button type="button" class="runner-bottom-skip-btn" id="btnRunnerSkip">
+            BỎ QUA CÂU NÀY
+          </button>
+          <button type="button" class="duo-btn duo-btn-green duo-btn-disabled btn-check-main" id="btnRunnerCheck" disabled>
+            KIỂM TRA
+          </button>
+        </div>
+      </div>
+    </footer>
+
+  </section>
+
+  <!-- ========================================================================
+       MODALS: CELEBRATION, QUIT CONFIRM, OUT OF HEARTS
+       ======================================================================== -->
+
+  <!-- 1. Lesson Complete Celebration Modal -->
+  <div class="celebration-overlay" id="celebrationModal">
+    <div class="celebration-card">
+      <img src="assets/logo.png" alt="Mascot Celebration" class="celebration-mascot">
+      <h2 class="celebration-title">Hoàn Thành Bài Học! 🎉</h2>
+      <p class="celebration-subtitle">Bạn đã hoàn thành xuất sắc thử thách hôm nay!</p>
+
+      <div class="celebration-stats-grid">
+        <div class="celeb-stat-box">
+          <div class="celeb-stat-val" style="color:#2563eb;" id="celebXpVal">+25</div>
+          <div class="celeb-stat-lbl">TỔNG XP</div>
+        </div>
+        <div class="celeb-stat-box">
+          <div class="celeb-stat-val" style="color:#059669;" id="celebAccVal">100%</div>
+          <div class="celeb-stat-lbl">ĐỘ CHÍNH XÁC</div>
+        </div>
+        <div class="celeb-stat-box">
+          <div class="celeb-stat-val" style="color:#d97706;" id="celebTimeVal">45s</div>
+          <div class="celeb-stat-lbl">THỜI GIAN</div>
+        </div>
+      </div>
+
+      <div class="celebration-actions">
+        <button type="button" class="duo-btn duo-btn-green" id="btnCelebContinue" style="width:100%;">
+          TIẾP TỤC HỌC TẬP ➔
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Quit Confirm Modal -->
+  <div class="modal-overlay" id="quitConfirmModal">
+    <div class="modal-dialog">
+      <div class="modal-icon">🥺</div>
+      <h3 class="modal-title">Bạn có chắc muốn rời đi?</h3>
+      <p class="modal-desc">
+        Tiến độ hiện tại của bài học sẽ không được lưu. Hãy ở lại và hoàn thành nốt nhé!
+      </p>
+      <div class="modal-btns">
+        <button type="button" class="duo-btn duo-btn-green" id="btnQuitCancel">
+          TIẾP TỤC HỌC
+        </button>
+        <button type="button" class="duo-btn duo-btn-white" id="btnQuitConfirm" style="color:#e11d48;">
+          THOÁT BÀI HỌC
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Out of Hearts Modal -->
+  <div class="modal-overlay" id="outOfHeartsModal">
+    <div class="modal-dialog">
+      <div class="modal-icon">💔</div>
+      <h3 class="modal-title">Bạn đã hết tim rồi!</h3>
+      <p class="modal-desc">
+        Đừng nản lòng nhé! Sai sót là một phần tự nhiên trong quá trình học tiếng Trung. Bạn có thể hồi phục tim ngay để tiếp tục!
+      </p>
+      <div class="modal-btns">
+        <button type="button" class="duo-btn duo-btn-green" id="btnRefillHearts">
+          ❤️ HỒI PHỤC ĐẦY TIM (MIỄN PHÍ)
+        </button>
+        <button type="button" class="duo-btn duo-btn-white" id="btnExitNoHearts">
+          VỀ TRANG CHỦ ÔN LẠI
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="words.js"></script>
+
+  <!-- Free Multi-Driver Database & Cloud Sync Engine -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js?v=20261110_v3"></script>
+  <script src="supabase-client.js?v=20261110_v3"></script>
+  <script src="auth-modal.js?v=20261110_v3"></script>
+
+  <!-- Lesson Logic Script -->
+  <script src="lesson.js?v=20261113_v2"></script>
+</body>
+</html>
+

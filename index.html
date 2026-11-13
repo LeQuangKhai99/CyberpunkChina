@@ -310,6 +310,25 @@
       border-color: #fbcfe8;
     }
 
+    .portal-card.card-duo-lesson {
+      border-color: #86efac;
+    }
+
+    .emblem-duo {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ffffff;
+    }
+
+    .btn-launch-lesson {
+      background: linear-gradient(135deg, #58cc02, #46a302);
+      box-shadow: 0 8px 18px rgba(88, 204, 2, 0.35), 0 3px 0 #3b8702;
+    }
+
+    .btn-launch-lesson:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(88, 204, 2, 0.45), 0 5px 0 #3b8702;
+    }
+
     .portal-card.card-coming-soon {
       opacity: 0.85;
       background: rgba(255, 255, 255, 0.82);
@@ -543,6 +562,7 @@
           Kết hợp hoàn hảo giữa <strong>Trò chơi gõ Pinyin Arcade phản xạ nhanh</strong> và <strong>Thẻ ghi nhớ Flashcard 3D thông minh</strong> với toàn bộ 5.000 từ vựng chuẩn HSK 1 đến HSK 6 cùng phát âm bản ngữ.
         </p>
         <div class="portal-hero-features">
+          <div class="feat-bubble">🦉 Bài học Duolingo</div>
           <div class="feat-bubble">🎮 Trò chơi phản xạ cao</div>
           <div class="feat-bubble">🗂️ Thẻ 3D Active Recall</div>
           <div class="feat-bubble">🗣️ Giọng đọc Bắc Kinh (zh-CN)</div>
@@ -560,10 +580,35 @@
 
     <!-- Main Navigation Sections -->
     <div class="portal-section-header">
-      <h2 class="portal-section-title">🎮 KHU VỰC TỰ DO: 5 PHÂN HỆ TRÒ CHƠI & LUYỆN TẬP</h2>
+      <h2 class="portal-section-title">🎮 6 PHÂN HỆ HỌC TẬP & TRÒ CHƠI TIẾNG TRUNG HSK</h2>
     </div>
 
     <div class="portal-cards-grid">
+
+      <!-- CARD 0: DUOLINGO LESSON MODE (NEW FEATURE) -->
+      <div class="portal-card card-duo-lesson">
+        <div class="card-top">
+          <div class="card-icon-emblem emblem-duo">🦉</div>
+          <div class="card-info">
+            <span class="card-status-badge status-popular">🌟 TÍNH NĂNG MỚI // PHONG CÁCH DUOLINGO</span>
+            <h3 class="card-title">BÀI HỌC DUOLINGO (LESSON MODE)</h3>
+            <p class="card-desc">
+              Lộ trình học toàn diện: 28 Chủ đề đời sống thực tế + 201 Bài học HSK 1-6 bao quát trọn vẹn kho 5.000 từ vựng. Luyện nghe gõ Pinyin, sắp xếp từ tiếng Việt, ghép cặp chữ Hán với hệ thống 5 Tim & Streak!
+            </p>
+          </div>
+        </div>
+
+        <div class="card-tags">
+          <span class="card-tag">🎧 Nghe & Gõ Pinyin</span>
+          <span class="card-tag">🧱 Sắp xếp từ tiếng Việt</span>
+          <span class="card-tag">🌟 28 Chủ đề đời sống</span>
+          <span class="card-tag">📚 201 Bài học HSK (5.000 từ)</span>
+        </div>
+
+        <a href="lesson.html" class="card-action-btn btn-launch-lesson">
+          🦉 HỌC BÀI DUOLINGO NGAY
+        </a>
+      </div>
       
       <!-- CARD 1: Pinyin Pop Arcade Game -->
       <div class="portal-card card-pinyin-game">
