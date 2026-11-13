@@ -67,10 +67,10 @@
     <!-- Mode Switcher: 28 Thematic Units vs. 201 HSK Decks (Full 5,000 Words) -->
     <div class="hub-mode-segmented">
       <button type="button" class="hub-mode-seg-btn active" id="btnModeThemes">
-        🌟 28 CHỦ ĐỀ ĐỜI SỐNG THỰC TẾ
+        🌟 28 CHỦ ĐỀ HỘI THOẠI TÌNH HUỐNG
       </button>
       <button type="button" class="hub-mode-seg-btn" id="btnModeDecks">
-        📚 201 BÀI HỌC HSK 1 - 6 (5.000 TỪ)
+        📚 201 BÀI HỌC HSK 1 - 6 (ĐỦ 5.000 TỪ VỰNG)
       </button>
     </div>
 
@@ -78,26 +78,26 @@
     <div class="hub-search-wrap">
       <span class="hub-search-icon">🔍</span>
       <input type="text" id="hubSearchInput" class="hub-search-input" 
-             placeholder="Tìm kiếm chủ đề (ẩm thực, công việc, du lịch, công nghệ...) hoặc chữ Hán, Pinyin...">
+             placeholder="Tìm kiếm chủ đề (ẩm thực, công việc, du lịch...) hoặc chữ Hán, Pinyin trong 5.000 từ...">
     </div>
 
     <!-- Quick Dynamic Generator Bar (Luyện tập Tự do theo cấp độ HSK) -->
     <section style="background:rgba(255,255,255,0.95); border:2px solid var(--duo-card-border); border-radius:24px; padding:18px 24px; box-shadow:0 4px 14px rgba(0,0,0,0.05); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;">
       <div>
         <div style="font-family:var(--font-brand); font-size:16px; font-weight:800; color:#1e1b4b; display:flex; align-items:center; gap:6px;">
-          ⚡ LUYỆN TẬP THỬ THÁCH THEO CẤP ĐỘ HSK (KHO 5.000 TỪ)
+          ⚡ LUYỆN TẬP TỰ DO THEO CẤP ĐỘ HSK (TOÀN BỘ 5.000 TỪ)
         </div>
         <div style="font-size:12px; color:#64748b; font-weight:600; margin-top:2px;">
-          Tự động sinh các câu hỏi nghe gõ Pinyin, ghép câu và trắc nghiệm từ bộ từ vựng HSK tương ứng.
+          Tự động sinh ngẫu nhiên các câu hỏi nghe gõ Pinyin, ghép câu và trắc nghiệm từ kho 5.000 từ HSK.
         </div>
       </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="duo-btn duo-btn-white" onclick="if(window.duoLessonApp) window.duoLessonApp.startDynamicHskLesson(1);" style="padding:8px 14px; font-size:12px;">🌱 HSK 1</button>
-        <button type="button" class="duo-btn duo-btn-white" onclick="if(window.duoLessonApp) window.duoLessonApp.startDynamicHskLesson(2);" style="padding:8px 14px; font-size:12px;">🌿 HSK 2</button>
-        <button type="button" class="duo-btn duo-btn-white" onclick="if(window.duoLessonApp) window.duoLessonApp.startDynamicHskLesson(3);" style="padding:8px 14px; font-size:12px;">⭐ HSK 3</button>
-        <button type="button" class="duo-btn duo-btn-white" onclick="if(window.duoLessonApp) window.duoLessonApp.startDynamicHskLesson(4);" style="padding:8px 14px; font-size:12px;">🚀 HSK 4</button>
-        <button type="button" class="duo-btn duo-btn-white" onclick="if(window.duoLessonApp) window.duoLessonApp.startDynamicHskLesson(5);" style="padding:8px 14px; font-size:12px;">🔥 HSK 5</button>
-        <button type="button" class="duo-btn duo-btn-white" onclick="if(window.duoLessonApp) window.duoLessonApp.startDynamicHskLesson(6);" style="padding:8px 14px; font-size:12px;">👑 HSK 6</button>
+        <button type="button" class="duo-btn duo-btn-white" onclick="if(window.duoLessonApp) window.duoLessonApp.startDynamicHskLesson(1);" style="padding:8px 14px; font-size:12px;">🌱 HSK 1 (150 từ)</button>
+        <button type="button" class="duo-btn duo-btn-white" onclick="if(window.duoLessonApp) window.duoLessonApp.startDynamicHskLesson(2);" style="padding:8px 14px; font-size:12px;">🌿 HSK 2 (147 từ)</button>
+        <button type="button" class="duo-btn duo-btn-white" onclick="if(window.duoLessonApp) window.duoLessonApp.startDynamicHskLesson(3);" style="padding:8px 14px; font-size:12px;">⭐ HSK 3 (298 từ)</button>
+        <button type="button" class="duo-btn duo-btn-white" onclick="if(window.duoLessonApp) window.duoLessonApp.startDynamicHskLesson(4);" style="padding:8px 14px; font-size:12px;">🚀 HSK 4 (598 từ)</button>
+        <button type="button" class="duo-btn duo-btn-white" onclick="if(window.duoLessonApp) window.duoLessonApp.startDynamicHskLesson(5);" style="padding:8px 14px; font-size:12px;">🔥 HSK 5 (1.298 từ)</button>
+        <button type="button" class="duo-btn duo-btn-white" onclick="if(window.duoLessonApp) window.duoLessonApp.startDynamicHskLesson(6);" style="padding:8px 14px; font-size:12px;">👑 HSK 6 (2.509 từ)</button>
       </div>
     </section>
 
@@ -112,12 +112,12 @@
 
     <!-- Filter Category Tabs for 201 Decks -->
     <div class="hub-filter-bar" id="deckFilterBar" style="display:none;">
-      <button type="button" class="hub-filter-btn active" data-deck-hsk="1">🌱 HSK 1 (6 Bài)</button>
-      <button type="button" class="hub-filter-btn" data-deck-hsk="2">🌿 HSK 2 (6 Bài)</button>
-      <button type="button" class="hub-filter-btn" data-deck-hsk="3">⭐ HSK 3 (12 Bài)</button>
-      <button type="button" class="hub-filter-btn" data-deck-hsk="4">🚀 HSK 4 (24 Bài)</button>
-      <button type="button" class="hub-filter-btn" data-deck-hsk="5">🔥 HSK 5 (52 Bài)</button>
-      <button type="button" class="hub-filter-btn" data-deck-hsk="6">👑 HSK 6 (101 Bài)</button>
+      <button type="button" class="hub-filter-btn active" data-deck-hsk="1">🌱 HSK 1 (6 Bài · 150 Từ)</button>
+      <button type="button" class="hub-filter-btn" data-deck-hsk="2">🌿 HSK 2 (6 Bài · 147 Từ)</button>
+      <button type="button" class="hub-filter-btn" data-deck-hsk="3">⭐ HSK 3 (12 Bài · 298 Từ)</button>
+      <button type="button" class="hub-filter-btn" data-deck-hsk="4">🚀 HSK 4 (24 Bài · 598 Từ)</button>
+      <button type="button" class="hub-filter-btn" data-deck-hsk="5">🔥 HSK 5 (52 Bài · 1.298 Từ)</button>
+      <button type="button" class="hub-filter-btn" data-deck-hsk="6">👑 HSK 6 (101 Bài · 2.509 Từ)</button>
     </div>
 
     <!-- Units Grid Container (Thematic 28 Units) -->
@@ -247,6 +247,30 @@
         </button>
         <button type="button" class="duo-btn duo-btn-white" id="btnExitNoHearts">
           VỀ TRANG CHỦ ÔN LẠI
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Deck Vocabulary Preview Modal (Chi Tiết 25 Từ Vựng HSK Mỗi Bài) -->
+  <div class="modal-overlay" id="deckWordsModal" style="display:none;">
+    <div class="modal-dialog" style="max-width: 680px; width: 92%; max-height: 85vh; display: flex; flex-direction: column; padding: 24px; text-align: left;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 12px;">
+        <div>
+          <h3 id="deckModalTitle" style="font-family: var(--font-brand); font-size: 20px; font-weight: 900; color: #1e1b4b; margin: 0;">Danh Sách Từ Vựng</h3>
+          <div id="deckModalSubtitle" style="font-size: 13px; color: #64748b; font-weight: 700; margin-top: 2px;">Bao trọn toàn bộ từ vựng của bài học này</div>
+        </div>
+        <button type="button" id="btnDeckModalClose" class="runner-close-btn" style="width: 36px; height: 36px; font-size: 20px;" title="Đóng">✕</button>
+      </div>
+      
+      <div id="deckModalWordsList" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 6px; margin-bottom: 14px;">
+        <!-- Word rows dynamically rendered here -->
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; border-top: 2px solid #e2e8f0; padding-top: 14px;">
+        <span id="deckModalCountTag" style="font-size: 12px; font-weight: 800; color: #0284c7; background: #e0f2fe; padding: 4px 10px; border-radius: 8px;">25 từ vựng</span>
+        <button type="button" class="duo-btn duo-btn-green" id="btnDeckModalStart" style="padding: 10px 24px; font-size: 14px;">
+          🚀 BẮT ĐẦU HỌC BÀI NÀY
         </button>
       </div>
     </div>

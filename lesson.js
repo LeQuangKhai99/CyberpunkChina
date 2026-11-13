@@ -160,62 +160,133 @@
      2. 28 THEMATIC UNITS (CURATED SENTENCES & DUOLINGO EXERCISES)
      ========================================================================== */
   const THEMATIC_UNITS = [
-    // --- HSK 1 (CĂN BẢN) ---
+    // --- HSK 1 (CĂN BẢN DUOLINGO: TỪNG TỪ ĐƠN LẺ DỄ ĐẾN CÂU GHÉP) ---
     {
       id: 'unit_1',
-      title: 'Chào Hỏi, Giới Thiệu & Lễ Nghi',
+      title: 'Chào Hỏi, Giới Thiệu & Làm Quen',
       level: 'HSK 1',
       hsk: 1,
       icon: '🌱',
-      desc: 'Chào hỏi, hỏi tên, giới thiệu bản thân, quốc tịch và nói cảm ơn lịch sự.',
-      skills: ['Chào hỏi', 'Tên gọi', 'Cảm ơn', 'Quốc tịch'],
+      desc: 'Học từ những chữ Hán đơn lẻ cơ bản nhất: 你, 好, 你好, 我, 谢谢.',
+      skills: ['Chào hỏi', 'Đại từ', 'Làm quen', 'Cảm ơn'],
       questions: [
         {
-          type: 'listen_pinyin',
-          title: 'Nghe và gõ lại phiên âm Pinyin',
+          type: 'introduce_word',
+          title: 'Làm quen với chữ Hán đầu tiên:',
+          icon: '👋',
+          hanzi: '你',
+          pinyin: 'nǐ',
+          meaning: 'Bạn, anh, chị (ngôi thứ 2)',
+          hint: 'Gồm bộ Nhân đứng (亻) chỉ con người',
+          options: [
+            { text: 'Bạn, anh, chị', correct: true },
+            { text: 'Tôi, mình', correct: false },
+            { text: 'Ăn cơm', correct: false }
+          ]
+        },
+        {
+          type: 'introduce_word',
+          title: 'Làm quen với chữ Hán thứ hai:',
+          icon: '✨',
+          hanzi: '好',
+          pinyin: 'hǎo',
+          meaning: 'Tốt, đẹp, khỏe, lành',
+          hint: 'Gồm chữ Nữ (女) và Tử (子) - người phụ nữ có con là điều tốt lành',
+          options: [
+            { text: 'Tốt, đẹp, khỏe', correct: true },
+            { text: 'Tạm biệt', correct: false },
+            { text: 'Uống nước', correct: false }
+          ]
+        },
+        {
+          type: 'listen_select_word',
+          title: 'Nghe âm thanh và chọn chữ Hán đúng:',
+          targetWord: '好',
+          hanzi: '好',
+          options: [
+            { hanzi: '好', pinyin: 'hǎo', correct: true },
+            { hanzi: '你', pinyin: 'nǐ', correct: false }
+          ]
+        },
+        {
+          type: 'introduce_word',
+          title: 'Ghép 2 chữ đơn thành câu chào:',
+          icon: '🤝',
           hanzi: '你好',
           pinyin: 'nǐ hǎo',
-          clean: 'ni hao',
-          meaning: 'Xin chào',
-          hint: 'N_ h_o'
+          meaning: 'Xin chào! (Bạn + Tốt)',
+          hint: 'Lời chào phổ biến và thân thiện nhất tiếng Trung',
+          options: [
+            { text: 'Xin chào!', correct: true },
+            { text: 'Cảm ơn!', correct: false },
+            { text: 'Hẹn gặp lại!', correct: false }
+          ]
         },
         {
           type: 'arrange_vn',
-          title: 'Dịch câu sau sang tiếng Việt',
-          hanzi: '很高兴认识你',
-          pinyin: 'Hěn gāoxìng rènshi nǐ',
-          meaning: 'Rất vui được làm quen với bạn',
-          correctChips: ['Rất', 'vui', 'được', 'làm quen', 'với bạn'],
-          distractors: ['buồn', 'gặp lại', 'hôm nay']
+          title: 'Dịch lời chào sau sang tiếng Việt:',
+          hanzi: '你好',
+          pinyin: 'nǐ hǎo',
+          meaning: 'Xin chào',
+          correctChips: ['Xin', 'chào'],
+          distractors: ['Tạm biệt', 'Không']
         },
         {
-          type: 'arrange_zh',
-          title: 'Sắp xếp các từ tiếng Trung thành câu hoàn chỉnh',
-          vietnamese: 'Tôi tên là Vương Minh, tôi là học sinh.',
-          hanziSentence: '我叫王明我是学生',
-          correctChips: ['我叫', '王明', '我是', '学生'],
-          distractors: ['老师', '不']
+          type: 'introduce_word',
+          title: 'Làm quen với đại từ xưng hô bản thân:',
+          icon: '🙋',
+          hanzi: '我',
+          pinyin: 'wǒ',
+          meaning: 'Tôi, mình, tao (ngôi thứ 1)',
+          hint: 'Chỉ chính bản thân người nói',
+          options: [
+            { text: 'Tôi, mình', correct: true },
+            { text: 'Anh ấy', correct: false },
+            { text: 'Bạn bè', correct: false }
+          ]
         },
         {
           type: 'match_pairs',
-          title: 'Chạm vào các cặp từ tương ứng',
+          title: 'Ghép các cặp từ bạn vừa học:',
           pairs: [
-            { zh: '谢谢', vn: 'Cảm ơn' },
-            { zh: '不客气', vn: 'Không có chi' },
-            { zh: '再见', vn: 'Tạm biệt' },
-            { zh: '老师', vn: 'Giáo viên' }
+            { zh: '你', vn: 'Bạn' },
+            { zh: '好', vn: 'Tốt' },
+            { zh: '你好', vn: 'Xin chào' },
+            { zh: '我', vn: 'Tôi' }
+          ]
+        },
+        {
+          type: 'listen_pinyin',
+          title: 'Nghe phát âm và gõ Pinyin (từ đơn):',
+          hanzi: '你',
+          pinyin: 'nǐ',
+          clean: 'ni',
+          meaning: 'Bạn, anh, chị',
+          hint: 'n_'
+        },
+        {
+          type: 'introduce_word',
+          title: 'Học cách nói lời cảm ơn lịch sự:',
+          icon: '🙏',
+          hanzi: '谢谢',
+          pinyin: 'xiè xie',
+          meaning: 'Cảm ơn',
+          hint: 'Nói lời cảm ơn khi nhận sự giúp đỡ',
+          options: [
+            { text: 'Cảm ơn', correct: true },
+            { text: 'Xin lỗi', correct: false },
+            { text: 'Tạm biệt', correct: false }
           ]
         },
         {
           type: 'multiple_choice',
           title: 'Chọn nghĩa đúng của câu:',
-          prompt: '你叫什么名字？',
-          subPrompt: 'Nǐ jiào shénme míngzi?',
+          prompt: '你好！',
+          subPrompt: 'Nǐ hǎo!',
           options: [
-            { text: 'Bạn tên là gì?', correct: true },
-            { text: 'Bạn đi đâu đấy?', correct: false },
-            { text: 'Bây giờ là mấy giờ?', correct: false },
-            { text: 'Bạn có khỏe không?', correct: false }
+            { text: 'Xin chào!', correct: true },
+            { text: 'Cảm ơn!', correct: false },
+            { text: 'Tạm biệt!', correct: false }
           ]
         }
       ]
@@ -226,44 +297,117 @@
       level: 'HSK 1',
       hsk: 1,
       icon: '⏰',
-      desc: 'Nắm vững đếm số 1-100, hỏi thứ ngày tháng và xem giờ giấc chính xác.',
-      skills: ['Số đếm', 'Thứ ngày', 'Hỏi giờ', 'Lịch trình'],
+      desc: 'Học từ số đếm dễ nhất: 一 (1), 二 (2), 三 (3), 天 (ngày) và 今天 (hôm nay).',
+      skills: ['Số đếm 1-3', 'Ngày tháng', 'Hôm nay', 'Thời gian'],
       questions: [
         {
-          type: 'listen_pinyin',
-          title: 'Nghe và gõ lại phiên âm Pinyin',
-          hanzi: '今天',
-          pinyin: 'jīn tiān',
-          clean: 'jin tian',
-          meaning: 'Hôm nay',
-          hint: 'j_n t___'
-        },
-        {
-          type: 'arrange_vn',
-          title: 'Dịch câu sau sang tiếng Việt',
-          hanzi: '现在是上午十点',
-          pinyin: 'Xiànzài shì shàngwǔ shí diǎn',
-          meaning: 'Bây giờ là mười giờ sáng',
-          correctChips: ['Bây giờ', 'là', 'mười giờ', 'sáng'],
-          distractors: ['chiều', 'tối', 'ngày mai']
-        },
-        {
-          type: 'match_pairs',
-          title: 'Chạm vào các cặp số & thời gian tương ứng',
-          pairs: [
-            { zh: '昨天', vn: 'Hôm qua' },
-            { zh: '明天', vn: 'Ngày mai' },
-            { zh: '星期三', vn: 'Thứ Tư' },
-            { zh: '分钟', vn: 'Phút' }
+          type: 'introduce_word',
+          title: 'Làm quen với số 1 trong tiếng Trung:',
+          icon: '1️⃣',
+          hanzi: '一',
+          pinyin: 'yī',
+          meaning: 'Số 1, một',
+          hint: 'Chỉ 1 nét ngang đơn giản',
+          options: [
+            { text: 'Số một (1)', correct: true },
+            { text: 'Số hai (2)', correct: false },
+            { text: 'Số ba (3)', correct: false }
           ]
         },
         {
-          type: 'arrange_zh',
-          title: 'Sắp xếp các từ tiếng Trung thành câu hoàn chỉnh',
-          vietnamese: 'Xin hỏi bây giờ bạn có thời gian không?',
-          hanziSentence: '请问你现在有时间吗',
-          correctChips: ['请问', '你现在', '有时间', '吗'],
-          distractors: ['去', '没有']
+          type: 'introduce_word',
+          title: 'Làm quen với số 2 trong tiếng Trung:',
+          icon: '2️⃣',
+          hanzi: '二',
+          pinyin: 'èr',
+          meaning: 'Số 2, hai',
+          hint: 'Gồm 2 nét ngang song song',
+          options: [
+            { text: 'Số hai (2)', correct: true },
+            { text: 'Số ba (3)', correct: false },
+            { text: 'Số bốn (4)', correct: false }
+          ]
+        },
+        {
+          type: 'introduce_word',
+          title: 'Làm quen với số 3 trong tiếng Trung:',
+          icon: '3️⃣',
+          hanzi: '三',
+          pinyin: 'sān',
+          meaning: 'Số 3, ba',
+          hint: 'Gồm 3 nét ngang',
+          options: [
+            { text: 'Số ba (3)', correct: true },
+            { text: 'Số một (1)', correct: false },
+            { text: 'Số hai (2)', correct: false }
+          ]
+        },
+        {
+          type: 'listen_select_word',
+          title: 'Nghe phát âm và chọn số đúng:',
+          targetWord: '三',
+          hanzi: '三',
+          options: [
+            { hanzi: '三', pinyin: 'sān', correct: true },
+            { hanzi: '一', pinyin: 'yī', correct: false },
+            { hanzi: '二', pinyin: 'èr', correct: false }
+          ]
+        },
+        {
+          type: 'introduce_word',
+          title: 'Làm quen với chữ Thiên (Ngày, trời):',
+          icon: '☀️',
+          hanzi: '天',
+          pinyin: 'tiān',
+          meaning: 'Ngày, bầu trời',
+          hint: 'Chữ Nhất ở trên chữ Đại',
+          options: [
+            { text: 'Ngày, bầu trời', correct: true },
+            { text: 'Đêm, tối', correct: false },
+            { text: 'Nước', correct: false }
+          ]
+        },
+        {
+          type: 'introduce_word',
+          title: 'Ghép từ chỉ thời gian:',
+          icon: '📅',
+          hanzi: '今天',
+          pinyin: 'jīn tiān',
+          meaning: 'Hôm nay',
+          hint: 'Kim (hiện tại) + Thiên (ngày) = Hôm nay',
+          options: [
+            { text: 'Hôm nay', correct: true },
+            { text: 'Hôm qua', correct: false },
+            { text: 'Ngày mai', correct: false }
+          ]
+        },
+        {
+          type: 'match_pairs',
+          title: 'Ghép các cặp số và từ vừa học:',
+          pairs: [
+            { zh: '一', vn: 'Số 1' },
+            { zh: '二', vn: 'Số 2' },
+            { zh: '三', vn: 'Số 3' },
+            { zh: '今天', vn: 'Hôm nay' }
+          ]
+        },
+        {
+          type: 'arrange_vn',
+          title: 'Dịch từ sau sang tiếng Việt:',
+          hanzi: '今天',
+          pinyin: 'jīn tiān',
+          meaning: 'Hôm nay',
+          correctChips: ['Hôm', 'nay'],
+          distractors: ['qua', 'mai']
+        },
+        {
+          type: 'listen_pinyin',
+          title: 'Nghe và gõ lại phiên âm của số 3:',
+          hanzi: '三',
+          pinyin: 'sān',
+          clean: 'san',
+          meaning: 'Số 3, ba',
+          hint: 's_n'
         }
       ]
     },
@@ -273,91 +417,205 @@
       level: 'HSK 1',
       hsk: 1,
       icon: '👨‍👩‍👧',
-      desc: 'Giới thiệu các thành viên trong gia đình, nghề nghiệp bố mẹ và bạn thân.',
-      skills: ['Gia đình', 'Nghề nghiệp', 'Bạn bè', 'Xưng hô'],
+      desc: 'Làm quen với các từ xưng hô gia đình gần gũi: 爸爸, 妈妈, 爱 (yêu), 家 (nhà).',
+      skills: ['Bố mẹ', 'Yêu thương', 'Gia đình', 'Nhà cửa'],
       questions: [
         {
-          type: 'listen_pinyin',
-          title: 'Nghe và gõ lại phiên âm Pinyin',
-          hanzi: '朋友',
-          pinyin: 'péng you',
-          clean: 'peng you',
-          meaning: 'Bạn bè',
-          hint: 'p___ y__'
-        },
-        {
-          type: 'arrange_vn',
-          title: 'Dịch câu sau sang tiếng Việt',
-          hanzi: '我爸爸是医生',
-          pinyin: 'Wǒ bàba shì yīshēng',
-          meaning: 'Bố tôi là bác sĩ',
-          correctChips: ['Bố tôi', 'là', 'bác sĩ'],
-          distractors: ['mẹ tôi', 'giáo viên', 'y tá']
-        },
-        {
-          type: 'match_pairs',
-          title: 'Chạm vào các cặp từ gia đình tương ứng',
-          pairs: [
-            { zh: '爸爸', vn: 'Bố' },
-            { zh: '妈妈', vn: 'Mẹ' },
-            { zh: '儿子', vn: 'Con trai' },
-            { zh: '女儿', vn: 'Con gái' }
+          type: 'introduce_word',
+          title: 'Làm quen với từ xưng hô Bố:',
+          icon: '👨',
+          hanzi: '爸爸',
+          pinyin: 'bà ba',
+          meaning: 'Bố, ba, cha',
+          hint: 'Từ gọi bố thân mật',
+          options: [
+            { text: 'Bố, cha', correct: true },
+            { text: 'Mẹ, má', correct: false },
+            { text: 'Anh trai', correct: false }
           ]
         },
         {
-          type: 'arrange_zh',
-          title: 'Sắp xếp các từ tiếng Trung thành câu hoàn chỉnh',
-          vietnamese: 'Anh ấy là bạn tốt của tôi.',
-          hanziSentence: '他是我的好朋友',
-          correctChips: ['他', '是', '我的', '好朋友'],
-          distractors: ['不', '谁']
+          type: 'introduce_word',
+          title: 'Làm quen với từ xưng hô Mẹ:',
+          icon: '👩',
+          hanzi: '妈妈',
+          pinyin: 'mā ma',
+          meaning: 'Mẹ, má, u',
+          hint: 'Từ gọi mẹ thân thương',
+          options: [
+            { text: 'Mẹ, má', correct: true },
+            { text: 'Chị gái', correct: false },
+            { text: 'Bà ngoại', correct: false }
+          ]
+        },
+        {
+          type: 'listen_select_word',
+          title: 'Nghe phát âm và chọn từ đúng:',
+          targetWord: '妈妈',
+          hanzi: '妈妈',
+          options: [
+            { hanzi: '妈妈', pinyin: 'mā ma', correct: true },
+            { hanzi: '爸爸', pinyin: 'bà ba', correct: false }
+          ]
+        },
+        {
+          type: 'introduce_word',
+          title: 'Làm quen với động từ Yêu thương:',
+          icon: '❤️',
+          hanzi: '爱',
+          pinyin: 'ài',
+          meaning: 'Yêu, thương, yêu thích',
+          hint: 'Biểu đạt tình cảm yêu thương',
+          options: [
+            { text: 'Yêu, thương', correct: true },
+            { text: 'Ghét', correct: false },
+            { text: 'Đi chơi', correct: false }
+          ]
+        },
+        {
+          type: 'arrange_vn',
+          title: 'Dịch câu ngắn bày tỏ tình cảm:',
+          hanzi: '我爱妈妈',
+          pinyin: 'Wǒ ài māma',
+          meaning: 'Tôi yêu mẹ',
+          correctChips: ['Tôi', 'yêu', 'mẹ'],
+          distractors: ['bố', 'ghét', 'anh']
+        },
+        {
+          type: 'match_pairs',
+          title: 'Ghép cặp các từ người thân vừa học:',
+          pairs: [
+            { zh: '爸爸', vn: 'Bố' },
+            { zh: '妈妈', vn: 'Mẹ' },
+            { zh: '爱', vn: 'Yêu' },
+            { zh: '我', vn: 'Tôi' }
+          ]
+        },
+        {
+          type: 'listen_pinyin',
+          title: 'Nghe và gõ lại phiên âm của từ Bố:',
+          hanzi: '爸爸',
+          pinyin: 'bà ba',
+          clean: 'ba ba',
+          meaning: 'Bố, cha',
+          hint: 'b_ b_'
+        },
+        {
+          type: 'multiple_choice',
+          title: 'Chọn nghĩa đúng của câu:',
+          prompt: '我爱爸爸',
+          subPrompt: 'Wǒ ài bàba',
+          options: [
+            { text: 'Tôi yêu bố', correct: true },
+            { text: 'Bố yêu mẹ', correct: false },
+            { text: 'Tôi là học sinh', correct: false }
+          ]
         }
       ]
     },
     {
       id: 'unit_4',
-      title: 'Ẩm Thực, Ăn Uống & Gọi Món',
+      title: 'Ẩm Thực, Ăn Uống & Trà Nước',
       level: 'HSK 1',
       hsk: 1,
       icon: '🧋',
-      desc: 'Tự tin gọi đồ uống trà sữa, gọi món ăn tại nhà hàng Trung Quốc.',
-      skills: ['Gọi món', 'Đồ ăn', 'Trà sữa', 'Khen ngon'],
+      desc: 'Học từ đơn căn bản: 吃 (ăn), 喝 (uống), 水 (nước), 茶 (trà), 好吃 (ngon).',
+      skills: ['Ăn uống', 'Nước uống', 'Trà', 'Khen ngon'],
       questions: [
         {
-          type: 'listen_pinyin',
-          title: 'Nghe và gõ lại phiên âm Pinyin',
-          hanzi: '喜欢',
-          pinyin: 'xǐ huan',
-          clean: 'xi huan',
-          meaning: 'Thích, ưa thích',
-          hint: 'x_ h___'
-        },
-        {
-          type: 'arrange_vn',
-          title: 'Dịch câu sau sang tiếng Việt',
-          hanzi: '我喜欢喝中国茶',
-          pinyin: 'Wǒ xǐhuan hē Zhōngguó chá',
-          meaning: 'Tôi thích uống trà Trung Quốc',
-          correctChips: ['Tôi', 'thích', 'uống', 'trà', 'Trung Quốc'],
-          distractors: ['cà phê', 'ăn', 'Việt Nam']
-        },
-        {
-          type: 'match_pairs',
-          title: 'Chạm vào các cặp từ món ăn tương ứng',
-          pairs: [
-            { zh: '米饭', vn: 'Cơm trắng' },
-            { zh: '苹果', vn: 'Quả táo' },
-            { zh: '好吃', vn: 'Ngon miệng' },
-            { zh: '喝水', vn: 'Uống nước' }
+          type: 'introduce_word',
+          title: 'Làm quen với động từ Ăn:',
+          icon: '🍚',
+          hanzi: '吃',
+          pinyin: 'chī',
+          meaning: 'Ăn',
+          hint: 'Có bộ Khẩu (口) ở trước chỉ hành động bằng miệng',
+          options: [
+            { text: 'Ăn', correct: true },
+            { text: 'Uống', correct: false },
+            { text: 'Ngủ', correct: false }
           ]
         },
         {
-          type: 'arrange_zh',
-          title: 'Sắp xếp các từ tiếng Trung thành câu hoàn chỉnh',
-          vietnamese: 'Món ăn mẹ nấu rất ngon.',
-          hanziSentence: '妈妈做的菜很好吃',
-          correctChips: ['妈妈', '做的菜', '很', '好吃'],
-          distractors: ['爸爸', '不好']
+          type: 'introduce_word',
+          title: 'Làm quen với động từ Uống:',
+          icon: '🥤',
+          hanzi: '喝',
+          pinyin: 'hē',
+          meaning: 'Uống',
+          hint: 'Cũng có bộ Khẩu (口) chỉ việc uống',
+          options: [
+            { text: 'Uống', correct: true },
+            { text: 'Chạy', correct: false },
+            { text: 'Nói', correct: false }
+          ]
+        },
+        {
+          type: 'introduce_word',
+          title: 'Làm quen với từ Nước:',
+          icon: '💧',
+          hanzi: '水',
+          pinyin: 'shuǐ',
+          meaning: 'Nước',
+          hint: 'Nước lọc, dòng nước mát',
+          options: [
+            { text: 'Nước', correct: true },
+            { text: 'Lửa', correct: false },
+            { text: 'Đất', correct: false }
+          ]
+        },
+        {
+          type: 'arrange_vn',
+          title: 'Ghép từ đơn giản:',
+          hanzi: '喝水',
+          pinyin: 'hē shuǐ',
+          meaning: 'Uống nước',
+          correctChips: ['Uống', 'nước'],
+          distractors: ['Ăn', 'cơm']
+        },
+        {
+          type: 'introduce_word',
+          title: 'Làm quen với thức uống Trà:',
+          icon: '🍵',
+          hanzi: '茶',
+          pinyin: 'chá',
+          meaning: 'Trà, chè',
+          hint: 'Bộ Thảo (艹) ở trên chỉ lá cây trà',
+          options: [
+            { text: 'Trà, chè', correct: true },
+            { text: 'Cà phê', correct: false },
+            { text: 'Sữa', correct: false }
+          ]
+        },
+        {
+          type: 'match_pairs',
+          title: 'Ghép cặp các từ ẩm thực vừa học:',
+          pairs: [
+            { zh: '吃', vn: 'Ăn' },
+            { zh: '喝', vn: 'Uống' },
+            { zh: '水', vn: 'Nước' },
+            { zh: '茶', vn: 'Trà' }
+          ]
+        },
+        {
+          type: 'listen_pinyin',
+          title: 'Nghe và gõ lại phiên âm của từ Trà:',
+          hanzi: '茶',
+          pinyin: 'chá',
+          clean: 'cha',
+          meaning: 'Trà, chè',
+          hint: 'ch_'
+        },
+        {
+          type: 'multiple_choice',
+          title: 'Chọn nghĩa đúng của cụm từ:',
+          prompt: '喝茶',
+          subPrompt: 'hē chá',
+          options: [
+            { text: 'Uống trà', correct: true },
+            { text: 'Ăn cơm', correct: false },
+            { text: 'Uống nước', correct: false }
+          ]
         }
       ]
     },
@@ -1635,7 +1893,7 @@
         const deckSlice = pool.slice(d * 25, (d + 1) * 25);
         const deckId = `deck_hsk${this.deckHskLevel}_${d}`;
         const isDone = !!this.state.completedUnits[deckId];
-        const previewStr = deckSlice.slice(0, 7).map(w => w.hanzi).join(' · ');
+        const previewStr = deckSlice.slice(0, 6).map(w => w.hanzi).join(' · ');
 
         // Search filter
         if (this.searchKeyword) {
@@ -1653,25 +1911,31 @@
         card.innerHTML = `
           <div class="deck-card-top">
             <span class="deck-card-badge">🌱 HSK ${this.deckHskLevel}</span>
-            <span style="font-size: 11px; font-weight: 800; color: ${isDone ? '#059669' : '#64748b'};">
-              ${isDone ? '✅ ĐÃ HOÀN THÀNH' : '25 TỪ'}
+            <span style="font-size: 11px; font-weight: 800; color: ${isDone ? '#059669' : '#0284c7'};">
+              ${isDone ? '✅ ĐÃ THUỘC' : `ĐỦ ${deckSlice.length} TỪ VỰNG`}
             </span>
           </div>
-          <h3 class="deck-card-title">Bài ${d + 1}: ${deckSlice[0] ? deckSlice[0].hanzi : ''} - ${deckSlice[deckSlice.length - 1] ? deckSlice[deckSlice.length - 1].hanzi : ''}</h3>
+          <h3 class="deck-card-title">Bài ${d + 1}: ${deckSlice[0] ? deckSlice[0].hanzi : ''} ~ ${deckSlice[deckSlice.length - 1] ? deckSlice[deckSlice.length - 1].hanzi : ''}</h3>
           <div class="deck-card-words-preview" title="${deckSlice.map(w => w.hanzi).join(', ')}">
-            ${previewStr}...
+            ${previewStr}... (${deckSlice.length} từ)
           </div>
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
-            <span style="font-size: 11px; font-weight: 700; color: #d97706;">
-              ${isDone ? '⭐⭐⭐' : '⭐ BẮT ĐẦU'}
-            </span>
-            <button type="button" class="hub-unit-launch-btn" style="padding: 8px 16px; font-size: 12px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; gap: 8px; flex-wrap: wrap;">
+            <button type="button" class="btn-deck-preview-words" style="background:#f1f5f9; border:2px solid #cbd5e1; border-radius:12px; padding:7px 12px; font-family:var(--font-brand); font-size:12px; font-weight:800; color:#334155; cursor:pointer;">
+              📖 XEM ${deckSlice.length} TỪ
+            </button>
+            <button type="button" class="hub-unit-launch-btn btn-deck-launch" style="padding: 8px 16px; font-size: 12px;">
               🚀 HỌC BÀI
             </button>
           </div>
         `;
 
-        card.querySelector('.hub-unit-launch-btn').addEventListener('click', () => {
+        card.querySelector('.btn-deck-preview-words').addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.audio.playTap();
+          this.showDeckWordsModal(this.deckHskLevel, d);
+        });
+
+        card.querySelector('.btn-deck-launch').addEventListener('click', () => {
           this.audio.playTap();
           this.startHskDeckLesson(this.deckHskLevel, d);
         });
@@ -1680,8 +1944,76 @@
       }
     }
 
+    /* Modal hiển thị đầy đủ danh sách 25 từ của Deck */
+    showDeckWordsModal(hskLevel, deckIndex) {
+      const modal = document.getElementById('deckWordsModal');
+      if (!modal) return;
+
+      const allWords = window.CHINESE_WORDS_5000 || [];
+      const pool = allWords.filter(w => w.level === hskLevel);
+      const deckSlice = pool.slice(deckIndex * 25, (deckIndex + 1) * 25);
+      if (deckSlice.length === 0) return;
+
+      const titleEl = document.getElementById('deckModalTitle');
+      const subtitleEl = document.getElementById('deckModalSubtitle');
+      const countTag = document.getElementById('deckModalCountTag');
+      const listEl = document.getElementById('deckModalWordsList');
+      const btnStart = document.getElementById('btnDeckModalStart');
+      const btnClose = document.getElementById('btnDeckModalClose');
+
+      if (titleEl) titleEl.textContent = `HSK ${hskLevel} - Bài ${deckIndex + 1}: ${deckSlice[0].hanzi} ~ ${deckSlice[deckSlice.length - 1].hanzi}`;
+      if (subtitleEl) subtitleEl.textContent = `Bao trọn toàn bộ ${deckSlice.length} từ vựng chuẩn HSK ${hskLevel} (Từ số ${deckIndex * 25 + 1} đến ${deckIndex * 25 + deckSlice.length})`;
+      if (countTag) countTag.textContent = `Đủ ${deckSlice.length} từ vựng`;
+
+      if (listEl) {
+        listEl.innerHTML = '';
+        deckSlice.forEach((w, idx) => {
+          const row = document.createElement('div');
+          row.className = 'deck-word-row';
+          row.innerHTML = `
+            <div class="deck-word-left">
+              <span class="deck-word-num">${idx + 1}</span>
+              <button type="button" class="deck-word-speaker-btn" title="Nghe phát âm ${w.hanzi}">🔊</button>
+              <span class="deck-word-hanzi">${w.hanzi}</span>
+              <span class="deck-word-pinyin">${w.pinyin}</span>
+            </div>
+            <span class="deck-word-meaning" title="${w.meaning_vn || w.meaning}">${w.meaning_vn || w.meaning}</span>
+          `;
+
+          row.querySelector('.deck-word-speaker-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.audio.playTap();
+            this.audio.speak(w.hanzi);
+          });
+
+          listEl.appendChild(row);
+        });
+      }
+
+      if (btnStart) {
+        btnStart.onclick = () => {
+          this.audio.playTap();
+          modal.style.display = 'none';
+          this.startHskDeckLesson(hskLevel, deckIndex);
+        };
+      }
+
+      if (btnClose) {
+        btnClose.onclick = () => {
+          this.audio.playTap();
+          modal.style.display = 'none';
+        };
+      }
+
+      modal.onclick = (e) => {
+        if (e.target === modal) modal.style.display = 'none';
+      };
+
+      modal.style.display = 'flex';
+    }
+
     /* ========================================================================
-       START HSK DECK LESSON (FROM 25 WORDS CHUNK)
+       START HSK DECK LESSON (BAO TRỌN 100% TẤT CẢ CÁC TỪ TRONG DECK)
        ======================================================================== */
     startHskDeckLesson(hskLevel, deckIndex) {
       const allWords = window.CHINESE_WORDS_5000 || [];
@@ -1693,98 +2025,126 @@
         return;
       }
 
-      const shuffled = [...deckSlice].sort(() => 0.5 - Math.random());
+      const len = deckSlice.length;
+      const otherWords = allWords.filter(w => !deckSlice.some(d => d.hanzi === w.hanzi));
+      const getWrongMeanings = (count = 2) => {
+        return otherWords.sort(() => 0.5 - Math.random()).slice(0, count).map(w => (w.meaning_vn || w.meaning).split(';')[0]);
+      };
+
       const generatedQuestions = [];
 
-      // 1. Listen & Type Pinyin (Word 1)
-      const w1 = shuffled[0];
+      // 1. DUOLINGO BƯỚC 1: LÀM QUEN TỪ VỰNG ĐẦU TIÊN (INTRODUCE WORD 0)
+      const w0 = deckSlice[0];
+      const w0Meaning = (w0.meaning_vn || w0.meaning).split(';')[0];
       generatedQuestions.push({
-        type: 'listen_pinyin',
-        title: `Nghe phát âm và gõ Pinyin (HSK ${hskLevel} - Bài ${deckIndex + 1})`,
-        hanzi: w1.hanzi,
-        pinyin: w1.pinyin,
-        clean: w1.clean,
-        meaning: w1.meaning_vn || w1.meaning,
-        hint: w1.clean ? w1.clean.slice(0, 1) + '___' : ''
+        type: 'introduce_word',
+        title: `Làm quen từ mới đầu tiên (HSK ${hskLevel} - Bài ${deckIndex + 1})`,
+        icon: '🌱',
+        hanzi: w0.hanzi,
+        pinyin: w0.pinyin,
+        meaning: w0Meaning,
+        hint: `Phiên âm: ${w0.pinyin}`,
+        options: [
+          { text: w0Meaning, correct: true },
+          ...getWrongMeanings(2).map(t => ({ text: t, correct: false }))
+        ].sort(() => 0.5 - Math.random())
       });
 
-      // 2. Rearrange Vietnamese Word Bank (Word 2)
-      const w2 = shuffled[1];
-      const vnWords = (w2.meaning_vn || w2.meaning).split(/[;,\s]+/).filter(Boolean).slice(0, 4);
-      generatedQuestions.push({
-        type: 'arrange_vn',
-        title: 'Sắp xếp các từ tiếng Việt để hoàn thành nghĩa:',
-        hanzi: w2.hanzi,
-        pinyin: w2.pinyin,
-        meaning: w2.meaning_vn || w2.meaning,
-        correctChips: vnWords.length > 0 ? vnWords : ['nghĩa', 'của', 'từ'],
-        distractors: ['rất', 'không', 'nhỏ']
-      });
-
-      // 3. Match Pairs 1 (Words 2-5)
-      const pairSet1 = shuffled.slice(2, 6);
-      generatedQuestions.push({
-        type: 'match_pairs',
-        title: `Ghép cặp 4 từ vựng HSK ${hskLevel}`,
-        pairs: pairSet1.map(w => ({ zh: w.hanzi, vn: (w.meaning_vn || w.meaning).split(';')[0] }))
-      });
-
-      // 4. Multiple Choice (Word 6)
-      const w4 = shuffled[6] || shuffled[2];
-      const wrongPool = shuffled.slice(7, 10).map(w => (w.meaning_vn || w.meaning).split(';')[0]);
-      const opts = [
-        { text: (w4.meaning_vn || w4.meaning).split(';')[0], correct: true },
-        ...wrongPool.map(t => ({ text: t, correct: false }))
-      ].sort(() => 0.5 - Math.random());
-
-      generatedQuestions.push({
-        type: 'multiple_choice',
-        title: 'Nghe phát âm và chọn nghĩa đúng:',
-        audioPrompt: w4.hanzi,
-        hanzi: w4.hanzi,
-        pinyin: w4.pinyin,
-        options: opts
-      });
-
-      // 5. Listen & Type Pinyin (Word 7)
-      const w5 = shuffled[7] || shuffled[3];
-      generatedQuestions.push({
-        type: 'listen_pinyin',
-        title: `Nghe phát âm và gõ Pinyin (HSK ${hskLevel} - Bài ${deckIndex + 1})`,
-        hanzi: w5.hanzi,
-        pinyin: w5.pinyin,
-        clean: w5.clean,
-        meaning: w5.meaning_vn || w5.meaning,
-        hint: ''
-      });
-
-      // 6. Match Pairs 2 (Words 8-11)
-      const pairSet2 = shuffled.slice(8, 12);
-      if (pairSet2.length === 4) {
+      // 2. DUOLINGO BƯỚC 2: NGHE & CHỌN CHỮ ĐÚNG (AUDIO RECOGNITION TỪ 0)
+      if (len > 1) {
         generatedQuestions.push({
-          type: 'match_pairs',
-          title: `Ghép tiếp 4 cặp từ vựng HSK ${hskLevel}`,
-          pairs: pairSet2.map(w => ({ zh: w.hanzi, vn: (w.meaning_vn || w.meaning).split(';')[0] }))
+          type: 'listen_select_word',
+          title: `Nghe phát âm và chọn chữ Hán chính xác:`,
+          targetWord: w0.hanzi,
+          hanzi: w0.hanzi,
+          options: [
+            { hanzi: w0.hanzi, pinyin: w0.pinyin, correct: true },
+            { hanzi: deckSlice[1].hanzi, pinyin: deckSlice[1].pinyin, correct: false },
+            { hanzi: (deckSlice[2] || otherWords[0]).hanzi, pinyin: (deckSlice[2] || otherWords[0]).pinyin, correct: false }
+          ].sort(() => 0.5 - Math.random())
         });
       }
 
-      // 7. Multiple Choice 2
-      const w6 = shuffled[12] || shuffled[4];
-      const wrongPool2 = shuffled.slice(13, 16).map(w => (w.meaning_vn || w.meaning).split(';')[0]);
+      // 3. DUOLINGO BƯỚC 3: LÀM QUEN TỪ VỰNG THỨ HAI (INTRODUCE WORD 1)
+      if (len > 1) {
+        const w1 = deckSlice[1];
+        const w1Meaning = (w1.meaning_vn || w1.meaning).split(';')[0];
+        generatedQuestions.push({
+          type: 'introduce_word',
+          title: `Làm quen từ mới thứ hai:`,
+          icon: '🌿',
+          hanzi: w1.hanzi,
+          pinyin: w1.pinyin,
+          meaning: w1Meaning,
+          hint: `Phiên âm: ${w1.pinyin}`,
+          options: [
+            { text: w1Meaning, correct: true },
+            ...getWrongMeanings(2).map(t => ({ text: t, correct: false }))
+          ].sort(() => 0.5 - Math.random())
+        });
+      }
+
+      // 4. DUOLINGO BƯỚC 4 - 9: GHÉP CẶP TOÀN BỘ CÁC TỪ VỰNG TRONG DECK (MỖI VÒNG 4 TỪ)
+      // Bao quát từ 0 đến len-1 không sót một từ nào!
+      for (let i = 0; i < len; i += 4) {
+        const chunk = deckSlice.slice(i, i + 4);
+        if (chunk.length >= 2) {
+          generatedQuestions.push({
+            type: 'match_pairs',
+            title: `Ghép cặp từ vựng (${i + 1} - ${Math.min(len, i + chunk.length)} / ${len} từ):`,
+            pairs: chunk.map(w => ({ zh: w.hanzi, vn: (w.meaning_vn || w.meaning).split(';')[0] }))
+          });
+        }
+      }
+
+      // 10. DUOLINGO BƯỚC 10: TRẮC NGHIỆM PHẢN XẠ NHẬN DIỆN
+      if (len > 5) {
+        const midWord = deckSlice[Math.floor(len / 2)];
+        const midMeaning = (midWord.meaning_vn || midWord.meaning).split(';')[0];
+        generatedQuestions.push({
+          type: 'multiple_choice',
+          title: 'Nghe phát âm và chọn nghĩa đúng của từ:',
+          audioPrompt: midWord.hanzi,
+          hanzi: midWord.hanzi,
+          pinyin: midWord.pinyin,
+          options: [
+            { text: midMeaning, correct: true },
+            ...getWrongMeanings(3).map(t => ({ text: t, correct: false }))
+          ].sort(() => 0.5 - Math.random())
+        });
+      }
+
+      // 11. DUOLINGO BƯỚC 11: SẮP XẾP NGHĨA TIẾNG VIỆT
+      if (len > 3) {
+        const arrWord = deckSlice[len - 2];
+        const arrMeaning = (arrWord.meaning_vn || arrWord.meaning).split(';')[0];
+        const arrWords = arrMeaning.split(/[;,\s]+/).filter(Boolean).slice(0, 3);
+        generatedQuestions.push({
+          type: 'arrange_vn',
+          title: 'Sắp xếp các từ tiếng Việt để hoàn thành nghĩa:',
+          hanzi: arrWord.hanzi,
+          pinyin: arrWord.pinyin,
+          meaning: arrMeaning,
+          correctChips: arrWords.length > 0 ? arrWords : [arrMeaning],
+          distractors: ['rất', 'không']
+        });
+      }
+
+      // 12. DUOLINGO BƯỚC 12: THỬ THÁCH NGHE & GÕ PHIÊN ÂM PINYIN TỪ CUỐI CÙNG
+      const lastWord = deckSlice[len - 1];
       generatedQuestions.push({
-        type: 'multiple_choice',
-        title: 'Chọn nghĩa chính xác của từ:',
-        prompt: w6.hanzi,
-        subPrompt: w6.pinyin,
-        options: [
-          { text: (w6.meaning_vn || w6.meaning).split(';')[0], correct: true },
-          ...wrongPool2.map(t => ({ text: t, correct: false }))
-        ].sort(() => 0.5 - Math.random())
+        type: 'listen_pinyin',
+        title: `Thử thách cuối bài: Nghe và gõ lại phiên âm Pinyin của từ "${lastWord.hanzi}":`,
+        hanzi: lastWord.hanzi,
+        pinyin: lastWord.pinyin,
+        clean: lastWord.clean,
+        meaning: (lastWord.meaning_vn || lastWord.meaning).split(';')[0],
+        hint: lastWord.clean ? lastWord.clean.slice(0, 1) + '___' : ''
       });
 
       const deckUnit = {
         id: `deck_hsk${hskLevel}_${deckIndex}`,
-        title: `HSK ${hskLevel} - Bài Học ${deckIndex + 1}`,
+        title: `HSK ${hskLevel} - Bài ${deckIndex + 1}`,
         level: `HSK ${hskLevel}`,
         hsk: hskLevel,
         questions: generatedQuestions
@@ -1872,6 +2232,12 @@
       canvas.innerHTML = '';
 
       switch (q.type) {
+        case 'introduce_word':
+          this.renderIntroduceWord(q, canvas);
+          break;
+        case 'listen_select_word':
+          this.renderListenSelectWord(q, canvas);
+          break;
         case 'listen_pinyin':
           this.renderListenPinyin(q, canvas);
           break;
@@ -1891,6 +2257,114 @@
           this.renderListenPinyin(q, canvas);
           break;
       }
+    }
+
+    /* TYPE 0: INTRODUCE NEW WORD (DUOLINGO FIRST-CONTACT SCAFFOLDING) */
+    renderIntroduceWord(q, container) {
+      container.innerHTML = `
+        <span class="exercise-type-tag tag-new-word">✨ TỪ VỰNG MỚI (LÀM QUEN)</span>
+        <h2 class="exercise-title">${q.title || 'Làm quen với từ mới sau đây:'}</h2>
+
+        <div class="duo-hero-word-card">
+          <div class="hero-word-icon">${q.icon || '💡'}</div>
+          <div class="hero-word-center">
+            <div class="hero-word-hanzi">${q.hanzi}</div>
+            <div class="hero-word-pinyin">${q.pinyin}</div>
+          </div>
+          <div class="hero-word-audio-row">
+            <button type="button" class="btn-speaker-big" id="btnIntroAudio" title="Nghe phát âm chuẩn">🔊</button>
+            <button type="button" class="btn-speaker-turtle" id="btnIntroAudioSlow" title="Nghe chậm 0.6x">🐢</button>
+          </div>
+          <div class="hero-word-meaning-box">
+            <div class="hero-meaning-label">Nghĩa tiếng Việt:</div>
+            <div class="hero-meaning-text">${q.meaning}</div>
+            ${q.hint ? `<div class="hero-hint-text">💡 Mẹo: ${q.hint}</div>` : ''}
+          </div>
+        </div>
+
+        <div class="exercise-sub-prompt">Chạm vào nghĩa đúng bên dưới để ghi nhớ:</div>
+        <div class="choice-options-grid" id="introOptionsGrid"></div>
+      `;
+
+      // Phát âm tự động sau 350ms
+      setTimeout(() => this.audio.speak(q.hanzi), 350);
+
+      const btnAudio = container.querySelector('#btnIntroAudio');
+      const btnSlow = container.querySelector('#btnIntroAudioSlow');
+      if (btnAudio) btnAudio.addEventListener('click', () => {
+        this.audio.playTap();
+        this.audio.speak(q.hanzi, false);
+      });
+      if (btnSlow) btnSlow.addEventListener('click', () => {
+        this.audio.playTap();
+        this.audio.speak(q.hanzi, true);
+      });
+
+      const grid = container.querySelector('#introOptionsGrid');
+      const badges = ['A', 'B', 'C', 'D'];
+      (q.options || []).forEach((opt, idx) => {
+        const card = document.createElement('div');
+        card.className = 'choice-option-card';
+        card.innerHTML = `
+          <div class="choice-option-badge">${badges[idx]}</div>
+          <div class="choice-option-text">${opt.text}</div>
+        `;
+        card.addEventListener('click', () => {
+          this.audio.playTap();
+          container.querySelectorAll('.choice-option-card').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          this.onAnswerChange(opt);
+        });
+        grid.appendChild(card);
+      });
+    }
+
+    /* TYPE 0.5: LISTEN & SELECT WORD (AUDIO RECOGNITION TAP) */
+    renderListenSelectWord(q, container) {
+      container.innerHTML = `
+        <span class="exercise-type-tag tag-listen-select">👂 NGHE & CHỌN TỪ ĐÚNG</span>
+        <h2 class="exercise-title">${q.title || 'Nghe âm thanh và chọn chữ Hán chính xác:'}</h2>
+
+        <div class="audio-prompt-row" style="margin: 20px 0;">
+          <button type="button" class="btn-speaker-big" id="btnListenSelectNormal" style="width:72px; height:72px; font-size:32px;" title="Nghe phát âm">🔊</button>
+          <button type="button" class="btn-speaker-turtle" id="btnListenSelectSlow" style="width:50px; height:50px; font-size:22px;" title="Nghe chậm 0.6x">🐢</button>
+        </div>
+
+        <div class="exercise-sub-prompt">Chạm vào từng thẻ để nghe thử và chọn chữ Hán chuẩn:</div>
+        <div class="listen-word-cards-grid" id="listenWordCardsGrid"></div>
+      `;
+
+      const targetWord = q.targetWord || q.hanzi;
+      setTimeout(() => this.audio.speak(targetWord), 350);
+
+      const btnAudio = container.querySelector('#btnListenSelectNormal');
+      const btnSlow = container.querySelector('#btnListenSelectSlow');
+      if (btnAudio) btnAudio.addEventListener('click', () => {
+        this.audio.playTap();
+        this.audio.speak(targetWord, false);
+      });
+      if (btnSlow) btnSlow.addEventListener('click', () => {
+        this.audio.playTap();
+        this.audio.speak(targetWord, true);
+      });
+
+      const grid = container.querySelector('#listenWordCardsGrid');
+      (q.options || []).forEach(opt => {
+        const card = document.createElement('div');
+        card.className = 'listen-word-card';
+        card.innerHTML = `
+          <div class="listen-word-card-hanzi">${opt.hanzi}</div>
+          <div class="listen-word-card-pinyin">${opt.pinyin || ''}</div>
+        `;
+        card.addEventListener('click', () => {
+          this.audio.playTap();
+          this.audio.speak(opt.hanzi, false);
+          grid.querySelectorAll('.listen-word-card').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          this.onAnswerChange(opt);
+        });
+        grid.appendChild(card);
+      });
     }
 
     /* TYPE 1: LISTEN & TYPE PINYIN */
@@ -2234,10 +2708,10 @@
       } else if (q.type === 'match_pairs') {
         isCorrect = this.currentSelectedAnswer === 'ALL_MATCHED';
         targetDisplay = 'Đã ghép hoàn hảo!';
-      } else if (q.type === 'multiple_choice') {
+      } else if (q.type === 'multiple_choice' || q.type === 'introduce_word' || q.type === 'listen_select_word') {
         isCorrect = !!(this.currentSelectedAnswer && this.currentSelectedAnswer.correct);
-        const correctOpt = q.options.find(o => o.correct);
-        targetDisplay = correctOpt ? correctOpt.text : '';
+        const correctOpt = q.options ? q.options.find(o => o.correct) : null;
+        targetDisplay = correctOpt ? (correctOpt.text || `${correctOpt.hanzi} (${correctOpt.pinyin || ''})`) : (q.meaning || '');
       }
 
       this.isAnswerChecked = true;
@@ -2549,15 +3023,17 @@
             }
           } else if (e.key === '1' || e.key === '2' || e.key === '3' || e.key === '4') {
             const cards = this.dom.exerciseCanvas.querySelectorAll('.choice-option-card');
+            const listenCards = this.dom.exerciseCanvas.querySelectorAll('.listen-word-card');
             const idx = parseInt(e.key, 10) - 1;
             if (cards[idx]) cards[idx].click();
+            else if (listenCards[idx]) listenCards[idx].click();
           } else if (e.key.toLowerCase() === 'r' && (e.ctrlKey || e.altKey)) {
             e.preventDefault();
-            const btnA = this.dom.exerciseCanvas.querySelector('#btnAudioNormal') || this.dom.exerciseCanvas.querySelector('#btnSentenceAudio') || this.dom.exerciseCanvas.querySelector('#btnMcAudio');
+            const btnA = this.dom.exerciseCanvas.querySelector('#btnIntroAudio') || this.dom.exerciseCanvas.querySelector('#btnListenSelectNormal') || this.dom.exerciseCanvas.querySelector('#btnAudioNormal') || this.dom.exerciseCanvas.querySelector('#btnSentenceAudio') || this.dom.exerciseCanvas.querySelector('#btnMcAudio');
             if (btnA) btnA.click();
           } else if (e.key.toLowerCase() === 't' && (e.ctrlKey || e.altKey)) {
             e.preventDefault();
-            const btnT = this.dom.exerciseCanvas.querySelector('#btnAudioSlow');
+            const btnT = this.dom.exerciseCanvas.querySelector('#btnIntroAudioSlow') || this.dom.exerciseCanvas.querySelector('#btnListenSelectSlow') || this.dom.exerciseCanvas.querySelector('#btnAudioSlow');
             if (btnT) btnT.click();
           }
         }
